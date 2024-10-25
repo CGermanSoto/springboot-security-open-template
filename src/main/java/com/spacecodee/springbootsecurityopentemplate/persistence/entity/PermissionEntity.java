@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Entity(name = "PermissionEntity")
+@Entity()
 @Table(name = "permission", schema = "public")
 public class PermissionEntity implements Serializable {
     @Serial

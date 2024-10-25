@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Entity(name = "UserEntity")
+@Entity()
 @Table(name = "\"user\"", schema = "public")
 public class UserEntity implements Serializable {
     @Serial

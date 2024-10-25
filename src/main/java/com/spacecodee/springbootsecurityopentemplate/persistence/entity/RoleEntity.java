@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.persistence.entity;
 
-import com.spacecodee.ticklyspace.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Entity(name = "RoleEntity")
+@Entity()
 @Table(name = "role", schema = "public")
 public class RoleEntity implements Serializable {
     @Serial

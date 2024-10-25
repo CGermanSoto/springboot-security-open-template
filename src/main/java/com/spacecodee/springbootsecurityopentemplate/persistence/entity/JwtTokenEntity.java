@@ -17,7 +17,7 @@ import java.time.Instant;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Entity(name = "JwtTokenEntity")
+@Entity()
 @Table(name = "jwt_token", schema = "public")
 public class JwtTokenEntity implements Serializable {
     @Serial
