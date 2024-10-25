@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers;
 
-import com.spacecodee.ticklyspace.data.dto.JwtTokenDTO;
-import com.spacecodee.ticklyspace.persistence.entity.JwtTokenEntity;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IUserMapper.class})

@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.ticklyspace.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.ticklyspace.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface IAuthenticationService {

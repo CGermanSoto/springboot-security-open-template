@@ -1,14 +1,14 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.impl;
 
-import com.spacecodee.ticklyspace.controller.IAuthenticationController;
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.ticklyspace.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.ticklyspace.data.pojo.ApiResponsePojo;
-import com.spacecodee.ticklyspace.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.ticklyspace.data.vo.auth.LoginUserVO;
-import com.spacecodee.ticklyspace.language.MessageUtilComponent;
-import com.spacecodee.ticklyspace.service.IAuthenticationService;
-import com.spacecodee.ticklyspace.service.user.IUserService;
+import com.spacecodee.springbootsecurityopentemplate.controller.IAuthenticationController;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
+import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
+import com.spacecodee.springbootsecurityopentemplate.service.user.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

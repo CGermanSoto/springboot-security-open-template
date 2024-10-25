@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.user;
 
-import com.spacecodee.ticklyspace.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.ticklyspace.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.ticklyspace.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

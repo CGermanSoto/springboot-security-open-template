@@ -1,9 +1,9 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.ticklyspace.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.ticklyspace.data.vo.auth.LoginUserVO;
-import com.spacecodee.ticklyspace.service.IAuthenticationService;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

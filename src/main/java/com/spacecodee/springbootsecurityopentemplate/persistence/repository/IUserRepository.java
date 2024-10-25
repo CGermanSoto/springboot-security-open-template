@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.persistence.repository;
 
-import com.spacecodee.ticklyspace.persistence.entity.UserEntity;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

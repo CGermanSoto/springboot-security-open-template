@@ -1,11 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.impl.user;
 
-import com.spacecodee.ticklyspace.controller.user.IUserAdminController;
-import com.spacecodee.ticklyspace.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.ticklyspace.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.ticklyspace.data.vo.auth.AddAdminVO;
-import com.spacecodee.ticklyspace.language.MessageUtilComponent;
-import com.spacecodee.ticklyspace.service.user.IUserAdminService;
+import com.spacecodee.springbootsecurityopentemplate.controller.user.IUserAdminController;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
+import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

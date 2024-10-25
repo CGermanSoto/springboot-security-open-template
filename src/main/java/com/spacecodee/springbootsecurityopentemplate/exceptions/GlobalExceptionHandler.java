@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions;
 
-import com.spacecodee.ticklyspace.data.pojo.ApiErrorDataPojo;
-import com.spacecodee.ticklyspace.data.pojo.ApiErrorPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;

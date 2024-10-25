@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers;
 
-import com.spacecodee.ticklyspace.data.dto.OperationEntityDto;
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsOperationDTO;
-import com.spacecodee.ticklyspace.persistence.entity.OperationEntity;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationEntityDto;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.OperationEntity;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IModuleMapper.class})

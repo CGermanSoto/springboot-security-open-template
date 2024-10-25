@@ -1,12 +1,12 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsRoleDTO;
-import com.spacecodee.ticklyspace.enums.RoleEnum;
-import com.spacecodee.ticklyspace.exceptions.RoleNotFoundException;
-import com.spacecodee.ticklyspace.mappers.IRoleMapper;
-import com.spacecodee.ticklyspace.persistence.entity.RoleEntity;
-import com.spacecodee.ticklyspace.persistence.repository.IRoleRepository;
-import com.spacecodee.ticklyspace.service.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.RoleNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.mappers.IRoleMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
+import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

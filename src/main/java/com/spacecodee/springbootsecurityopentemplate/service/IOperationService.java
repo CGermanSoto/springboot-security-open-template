@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
 
 import java.util.List;
 

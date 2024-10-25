@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.persistence.repository;
 
-import com.spacecodee.ticklyspace.persistence.entity.OperationEntity;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.OperationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

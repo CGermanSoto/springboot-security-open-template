@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.utils;
 
-import com.spacecodee.ticklyspace.exceptions.InvalidPasswordException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.InvalidPasswordException;
 import org.springframework.util.StringUtils;
 
 public class AppUtils {

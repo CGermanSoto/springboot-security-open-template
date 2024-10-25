@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions;
 
-import com.spacecodee.ticklyspace.language.MessageUtilComponent;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

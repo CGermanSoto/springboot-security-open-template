@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.persistence.repository;
 
-import com.spacecodee.ticklyspace.enums.RoleEnum;
-import com.spacecodee.ticklyspace.persistence.entity.RoleEntity;
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

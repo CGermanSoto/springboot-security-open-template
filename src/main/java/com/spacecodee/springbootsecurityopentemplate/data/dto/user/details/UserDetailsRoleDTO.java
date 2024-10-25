@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.data.dto.user.details;
 
-import com.spacecodee.ticklyspace.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import lombok.*;
 
 import java.io.Serial;

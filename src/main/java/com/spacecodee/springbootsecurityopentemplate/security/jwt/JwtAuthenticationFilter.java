@@ -1,9 +1,9 @@
 package com.spacecodee.springbootsecurityopentemplate.security.jwt;
 
-import com.spacecodee.ticklyspace.data.dto.security.SecurityJwtTokenDTO;
-import com.spacecodee.ticklyspace.security.jwt.service.IJwtService;
-import com.spacecodee.ticklyspace.service.IJwtTokenService;
-import com.spacecodee.ticklyspace.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
+import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

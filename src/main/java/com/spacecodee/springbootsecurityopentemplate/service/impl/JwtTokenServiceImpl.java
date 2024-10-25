@@ -1,9 +1,9 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
-import com.spacecodee.ticklyspace.data.dto.security.SecurityJwtTokenDTO;
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsJwtTokenDTO;
-import com.spacecodee.ticklyspace.data.vo.jwt.JwtTokeUVO;
-import com.spacecodee.ticklyspace.service.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

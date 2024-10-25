@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.security.core;
 
-import com.spacecodee.ticklyspace.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

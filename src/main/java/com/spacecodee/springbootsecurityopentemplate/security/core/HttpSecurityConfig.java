@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.security.core;
 
-import com.spacecodee.ticklyspace.security.jwt.JwtAuthenticationFilter;
+import com.spacecodee.springbootsecurityopentemplate.security.jwt.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

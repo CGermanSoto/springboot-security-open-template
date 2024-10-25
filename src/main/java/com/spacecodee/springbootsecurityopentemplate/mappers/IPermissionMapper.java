@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers;
 
-import com.spacecodee.ticklyspace.data.dto.PermissionDTO;
-import com.spacecodee.ticklyspace.persistence.entity.PermissionEntity;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.PermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.PermissionEntity;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IRoleMapper.class, IOperationMapper.class})

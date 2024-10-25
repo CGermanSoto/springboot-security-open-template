@@ -7,9 +7,6 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 
-/**
- * DTO for {@link com.spacecodee.ticklyspace.persistence.entity.PermissionEntity}
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

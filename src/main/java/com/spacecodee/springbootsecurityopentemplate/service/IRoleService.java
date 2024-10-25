@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsRoleDTO;
-import com.spacecodee.ticklyspace.enums.RoleEnum;
-import com.spacecodee.ticklyspace.persistence.entity.RoleEntity;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 
 import java.util.Optional;
 

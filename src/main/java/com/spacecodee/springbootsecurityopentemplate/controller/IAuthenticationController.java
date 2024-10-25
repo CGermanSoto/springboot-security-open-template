@@ -1,10 +1,10 @@
 package com.spacecodee.springbootsecurityopentemplate.controller;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.ticklyspace.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.ticklyspace.data.pojo.ApiResponsePojo;
-import com.spacecodee.ticklyspace.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.ticklyspace.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

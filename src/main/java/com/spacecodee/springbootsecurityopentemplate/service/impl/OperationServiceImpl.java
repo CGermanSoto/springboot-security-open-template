@@ -1,9 +1,9 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsOperationDTO;
-import com.spacecodee.ticklyspace.mappers.IOperationMapper;
-import com.spacecodee.ticklyspace.persistence.repository.IOperationRepository;
-import com.spacecodee.ticklyspace.service.IOperationService;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.mappers.IOperationMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
+import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

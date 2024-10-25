@@ -1,9 +1,9 @@
 package com.spacecodee.springbootsecurityopentemplate.security.core.authorization;
 
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsOperationDTO;
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsPermissionDTO;
-import com.spacecodee.ticklyspace.service.IOperationService;
-import com.spacecodee.ticklyspace.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
+import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;

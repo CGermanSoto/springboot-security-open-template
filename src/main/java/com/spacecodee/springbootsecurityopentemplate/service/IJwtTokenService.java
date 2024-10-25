@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service;
 
-import com.spacecodee.ticklyspace.data.dto.security.SecurityJwtTokenDTO;
-import com.spacecodee.ticklyspace.data.dto.user.details.UserDetailsJwtTokenDTO;
-import com.spacecodee.ticklyspace.data.vo.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
 
 import java.util.Optional;
 

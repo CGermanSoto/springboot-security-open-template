@@ -1,12 +1,12 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
 
-import com.spacecodee.ticklyspace.data.vo.auth.AddAdminVO;
-import com.spacecodee.ticklyspace.exceptions.CannotSaveException;
-import com.spacecodee.ticklyspace.mappers.IUserMapper;
-import com.spacecodee.ticklyspace.persistence.repository.IUserRepository;
-import com.spacecodee.ticklyspace.service.IRoleService;
-import com.spacecodee.ticklyspace.service.user.IUserService;
-import com.spacecodee.ticklyspace.utils.AppUtils;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
+import com.spacecodee.springbootsecurityopentemplate.mappers.IUserMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
+import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.user.IUserService;
+import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
