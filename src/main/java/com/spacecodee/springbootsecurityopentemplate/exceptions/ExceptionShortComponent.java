@@ -10,6 +10,14 @@ public class ExceptionShortComponent {
 
     private final MessageUtilComponent messageUtilComponent;
 
+    public DoNotExistsByIdException doNotExistsByIdException(String message, String locale) {
+        return new DoNotExistsByIdException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public PasswordDoNotMatchException passwordDoNotMatchException(String message, String locale) {
+        return new PasswordDoNotMatchException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
     public RoleNotFoundException roleNotFoundException(String message, String locale) {
         return new RoleNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }

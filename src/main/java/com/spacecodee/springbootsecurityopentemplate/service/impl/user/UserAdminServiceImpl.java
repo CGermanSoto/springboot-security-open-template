@@ -1,7 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
@@ -21,6 +22,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     private final PasswordEncoder passwordEncoder;
     private static AppUtils appUtils;
+    private final MessageUtilComponent messageUtilComponent;
 
     private final IUserRepository userRepository;
     private final IRoleService roleService;
@@ -31,8 +33,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     @Override
     @Transactional
-    public void add(AddAdminVO adminVO, String locale) {
-        AppUtils.validatePassword(adminVO.getPassword(), adminVO.getRepeatPassword());
+    public void add(AdminVO adminVO, String locale) {
+        AppUtils.validatePassword(adminVO.getPassword(), adminVO.getRepeatPassword(), locale);
         this.alreadyExistByUsername(adminVO.getUsername());
 
         var adminRoleEntity = this.roleService.findAdminRole();
@@ -49,9 +51,22 @@ public class UserAdminServiceImpl implements IUserAdminService {
         }
     }
 
+    @Override
+    public void update(int id, AdminVO adminVO, String locale) {
+        this.alreadyExistByUsername(adminVO.getUsername());
+
+    }
+
     private void alreadyExistByUsername(String username) {
         var alreadyExist = this.userRepository.existsByUsername(username);
         if (alreadyExist) {
+            throw new CannotSaveException("User already exists with username: " + username);
+        }
+    }
+
+    private void doNotExistsById(int id) {
+        var doNotExistsById = this.userRepository.existsById(id);
+        if (!doNotExistsById) {
             throw new CannotSaveException("User already exists with username: " + username);
         }
     }

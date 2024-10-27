@@ -1,8 +1,10 @@
 package com.spacecodee.springbootsecurityopentemplate.service.user;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 
 public interface IUserAdminService {
 
-    void add(AddAdminVO adminVO, String locale);
+    void add(AdminVO adminVO, String locale);
+
+    void update(int id, AdminVO adminVO, String locale);
 }

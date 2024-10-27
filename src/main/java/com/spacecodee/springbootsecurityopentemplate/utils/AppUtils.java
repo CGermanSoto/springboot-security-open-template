@@ -9,7 +9,7 @@ public class AppUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static void validatePassword(String password, String repeatedPassword) {
+    public static void validatePassword(String password, String repeatedPassword, String locale) {
         if (!StringUtils.hasText(password) || !StringUtils.hasText(repeatedPassword)) {
             throw new InvalidPasswordException("Passwords do not match");
         }

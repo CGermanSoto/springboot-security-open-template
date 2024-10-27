@@ -3,7 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.controller.impl.user;
 import com.spacecodee.springbootsecurityopentemplate.controller.user.IUserAdminController;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class UserAdminControllerImpl implements IUserAdminController {
     private final MessageUtilComponent messageUtilComponent;
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(AddAdminVO request, String locale) {
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(AdminVO request, String locale) {
         var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
         this.userAdminService.add(request, locale);
 

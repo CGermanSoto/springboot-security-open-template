@@ -2,7 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.mappers;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.UserDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.AddAdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import org.mapstruct.*;
 
@@ -16,7 +16,7 @@ public interface IUserMapper {
 
     @Mapping(target = "username", source = "username")
     @Mapping(target = "roleEntity", ignore = true)
-    UserEntity toEntity(AddAdminVO addAdminVO);
+    UserEntity toEntity(AdminVO adminVO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     UserEntity partialUpdate(UserDTO UserDTO, @MappingTarget UserEntity userEntity);

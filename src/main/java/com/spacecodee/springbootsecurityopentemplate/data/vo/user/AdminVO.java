@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.vo.auth;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AddAdminVO implements Serializable {
+public class AdminVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
