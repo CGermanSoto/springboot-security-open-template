@@ -24,18 +24,8 @@ public class GlobalExceptionHandler {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(AlreadyExistsException.class)
-    public ResponseEntity<ApiErrorPojo> handleAlreadyExistsException(AlreadyExistsException exception, HttpServletRequest request) {
-        return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(LastAdminException.class)
     public ResponseEntity<ApiErrorPojo> handleLastAdminException(LastAdminException exception, HttpServletRequest request) {
-        return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(RoleNotFoundException.class)
-    public ResponseEntity<ApiErrorPojo> handleRoleNotFoundException(RoleNotFoundException exception, HttpServletRequest request) {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
     }
 
@@ -86,7 +76,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorPojo> handlerGenericException(Exception exception, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorPojo> handlerGenericException(Exception exception, HttpServletRequest request) { // this exception will occur when you are handling exception that are in the service layer and do not require the "cause" attribute
         this.apiErrorPojo.setBackendMessage(exception.getLocalizedMessage());
         this.apiErrorPojo.setMessage("An error occurred while processing your request");
         this.apiErrorPojo.setTimestamp(LocalDateTime.now());

@@ -45,6 +45,10 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Override
     @Transactional
     public void add(AdminVO adminVO, String locale) {
+        if (adminVO == null) {
+            throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
+        }
+
         AppUtils.validatePassword(adminVO.getPassword(), adminVO.getRepeatPassword(), locale);
         this.alreadyExistByUsername(adminVO.getUsername(), locale);
 

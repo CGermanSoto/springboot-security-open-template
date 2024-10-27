@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.RoleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.IRoleMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class RoleServiceImpl implements IRoleService {
@@ -22,10 +25,14 @@ public class RoleServiceImpl implements IRoleService {
     private String defaultRoleName;
     @Value("${security.default.roles}")
     private String adminRole;
+    private final ExceptionShortComponent exceptionShortComponent;
 
-    public RoleServiceImpl(IRoleRepository roleRepository, IRoleMapper roleDTOMapper) {
+    private static final Logger logger = Logger.getLogger(RoleServiceImpl.class.getName());
+
+    public RoleServiceImpl(IRoleRepository roleRepository, IRoleMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
         this.roleRepository = roleRepository;
         this.roleDTOMapper = roleDTOMapper;
+        this.exceptionShortComponent = exceptionShortComponent;
     }
 
     @Override
@@ -39,6 +46,7 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public Integer findAdminRoleId() {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
+        logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .map(RoleEntity::getId)
                 .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
@@ -47,8 +55,9 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public RoleEntity findAdminRole() {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
+        logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
         return this.roleRepository.findAdminRole(adminRoleEnum)
-                .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
+                .orElseThrow(() -> this.exceptionShortComponent.roleNotFoundException("role.exists.not", "en"));
     }
 
     @Override

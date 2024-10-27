@@ -21,9 +21,9 @@ public class UserAdminControllerImpl implements IUserAdminController {
     private final MessageUtilComponent messageUtilComponent;
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(AdminVO request, String locale) {
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(AdminVO adminVO, String locale) {
         var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
-        this.userAdminService.add(request, locale);
+        this.userAdminService.add(adminVO, locale);
 
         apiResponse.setMessage(this.messageUtilComponent.getMessage("admin.added.success", locale));
         apiResponse.setHttpStatus(HttpStatus.CREATED);
@@ -37,7 +37,13 @@ public class UserAdminControllerImpl implements IUserAdminController {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(String locale) {
-        return null;
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(String locale, int id) {
+        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
+        this.userAdminService.delete(id, locale);
+
+        apiResponse.setMessage(this.messageUtilComponent.getMessage("admin.deleted.success", locale));
+        apiResponse.setHttpStatus(HttpStatus.OK);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
     }
 }

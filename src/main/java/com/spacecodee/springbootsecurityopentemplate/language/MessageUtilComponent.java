@@ -5,21 +5,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
-import java.util.logging.Logger;
 
 @Component
 @Getter
 public class MessageUtilComponent {
 
     private final MessageSource messageSource;
-    private static final Logger logger = Logger.getLogger(MessageUtilComponent.class.getName());
 
     public MessageUtilComponent(MessageSource messageSource) {
         this.messageSource = messageSource;
-    }
-
-    public String getMessage(String message, Object[] obj, String locale) {
-        return getMessageSource().getMessage(message, obj, this.getLocaleApp(locale));
     }
 
     public String getMessage(String message, String locale) {

@@ -15,6 +15,6 @@ public interface IUserAdminController {
     @PutMapping()
     ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> update(@RequestHeader(name = "Accept-Language", required = false) String locale);
 
-    @DeleteMapping()
-    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(@RequestHeader(name = "Accept-Language", required = false) String locale);
+    @DeleteMapping("/{id}")
+    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(@RequestHeader(name = "Accept-Language", required = false) String locale, @PathVariable int id);
 }

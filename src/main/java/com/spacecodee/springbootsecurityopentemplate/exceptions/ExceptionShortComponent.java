@@ -34,6 +34,10 @@ public class ExceptionShortComponent {
         return new RoleNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }
 
+    public RoleNotFoundException roleNotFoundException(String message, String locale, Throwable cause) {
+        return new RoleNotFoundException(this.messageUtilComponent.getMessage(message, locale), cause);
+    }
+
     public CannotSaveException cannotSaveUpdateException(String message, String locale) {
         return new CannotSaveException(this.messageUtilComponent.getMessage(message, locale));
     }
