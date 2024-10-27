@@ -7,6 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.IRoleMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     public Integer findAdminRoleId() {
-        var adminRoleEnum = this.getRoleEnum(adminRole);
+        var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .map(RoleEntity::getId)
                 .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
@@ -45,7 +46,7 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     public RoleEntity findAdminRole() {
-        var adminRoleEnum = this.getRoleEnum(adminRole);
+        var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
     }
@@ -61,9 +62,5 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public boolean existsById(int roleId) {
         return this.roleRepository.existsById(roleId);
-    }
-
-    private RoleEnum getRoleEnum(String roleName) {
-        return RoleEnum.valueOf(roleName);
     }
 }

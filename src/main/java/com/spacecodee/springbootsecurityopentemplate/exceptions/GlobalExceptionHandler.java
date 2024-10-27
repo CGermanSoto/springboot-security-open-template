@@ -19,6 +19,21 @@ public class GlobalExceptionHandler {
     private final ApiErrorPojo apiErrorPojo = new ApiErrorPojo();
     private final ApiErrorDataPojo<List<String>> apiErrorDataPojo = new ApiErrorDataPojo<>();
 
+    @ExceptionHandler(NoDeletedException.class)
+    public ResponseEntity<ApiErrorPojo> handleNoDeletedException(NoDeletedException exception, HttpServletRequest request) {
+        return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiErrorPojo> handleAlreadyExistsException(AlreadyExistsException exception, HttpServletRequest request) {
+        return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(LastAdminException.class)
+    public ResponseEntity<ApiErrorPojo> handleLastAdminException(LastAdminException exception, HttpServletRequest request) {
+        return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<ApiErrorPojo> handleRoleNotFoundException(RoleNotFoundException exception, HttpServletRequest request) {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);

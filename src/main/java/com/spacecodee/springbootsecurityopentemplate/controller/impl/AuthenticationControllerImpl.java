@@ -8,7 +8,6 @@ import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationRes
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationControllerImpl implements IAuthenticationController {
 
     private final IAuthenticationService authenticationService;
-    private final IUserService userService;
     private final MessageUtilComponent messageUtilComponent;
 
     @Override

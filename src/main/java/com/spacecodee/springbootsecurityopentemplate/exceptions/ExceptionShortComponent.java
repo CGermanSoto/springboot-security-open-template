@@ -10,6 +10,18 @@ public class ExceptionShortComponent {
 
     private final MessageUtilComponent messageUtilComponent;
 
+    public NoDeletedException noDeletedException(String message, String locale) {
+        return new NoDeletedException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public AlreadyExistsException alreadyExistsException(String message, String locale) {
+        return new AlreadyExistsException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public LastAdminException lastAdminException(String message, String locale) {
+        return new LastAdminException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
     public DoNotExistsByIdException doNotExistsByIdException(String message, String locale) {
         return new DoNotExistsByIdException(this.messageUtilComponent.getMessage(message, locale));
     }

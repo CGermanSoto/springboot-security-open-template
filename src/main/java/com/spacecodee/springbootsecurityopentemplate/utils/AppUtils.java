@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.utils;
 
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.InvalidPasswordException;
 import org.springframework.util.StringUtils;
 
@@ -17,5 +18,9 @@ public class AppUtils {
         if (!password.equals(repeatedPassword)) {
             throw new InvalidPasswordException("Passwords do not match");
         }
+    }
+
+    public static RoleEnum getRoleEnum(String roleName) {
+        return RoleEnum.valueOf(roleName);
     }
 }
