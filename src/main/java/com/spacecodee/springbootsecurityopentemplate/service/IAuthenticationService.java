@@ -7,11 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface IAuthenticationService {
 
-    AuthenticationResponsePojo login(LoginUserVO request);
+    AuthenticationResponsePojo login(String locale, LoginUserVO request);
 
-    boolean validateToken(String jwt);
+    boolean validateToken(String locale, String jwt);
 
-    UserDetailsDTO findLoggedInUser();
+    UserDetailsDTO findLoggedInUser(String locale);
 
-    void logout(HttpServletRequest request);
+    void logout(String locale, HttpServletRequest request);
 }

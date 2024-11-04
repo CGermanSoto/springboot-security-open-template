@@ -30,12 +30,12 @@ public class ExceptionShortComponent {
         return new PasswordDoNotMatchException(this.messageUtilComponent.getMessage(message, locale));
     }
 
-    public RoleNotFoundException roleNotFoundException(String message, String locale) {
-        return new RoleNotFoundException(this.messageUtilComponent.getMessage(message, locale));
+    public UsernameNotFoundException usernameNotFoundException(String message, String locale) {
+        return new UsernameNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }
 
-    public RoleNotFoundException roleNotFoundException(String message, String locale, Throwable cause) {
-        return new RoleNotFoundException(this.messageUtilComponent.getMessage(message, locale), cause);
+    public RoleNotFoundException roleNotFoundException(String message, String locale) {
+        return new RoleNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }
 
     public CannotSaveException cannotSaveUpdateException(String message, String locale) {

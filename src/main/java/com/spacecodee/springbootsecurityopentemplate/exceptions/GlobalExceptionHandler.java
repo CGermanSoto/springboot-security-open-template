@@ -44,7 +44,6 @@ public class GlobalExceptionHandler {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
     }
 
-    // I might deleted bellow exception classes
     @ExceptionHandler(NoDisabledException.class)
     public ResponseEntity<ApiErrorPojo> noDisabledHException(NoDisabledException exception, HttpServletRequest request) {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.BAD_REQUEST);

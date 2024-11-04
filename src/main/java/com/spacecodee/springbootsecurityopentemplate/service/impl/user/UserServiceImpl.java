@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements IUserService {
     // Password encoder
     private final PasswordEncoder passwordEncoder;
     private static AppUtils appUtils;
+    private final ExceptionShortComponent exceptionShortComponent;
 
     // Repositories
     private final IUserRepository userRepository;

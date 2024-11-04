@@ -6,5 +6,7 @@ import java.util.Optional;
 
 public interface IUserDetailsService {
 
+    UserDetailsDTO findOneByUsername(String locale, String username);
+
     Optional<UserDetailsDTO> findByUsername(String username);
 }

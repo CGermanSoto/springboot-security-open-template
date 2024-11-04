@@ -11,7 +11,6 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -29,9 +28,7 @@ public class RoleEntity implements Serializable {
     @Setter
     private RoleEnum name;
 
-    private Set<PermissionEntity> permissionEntities = new LinkedHashSet<>();
-
-    private Set<UserEntity> userEntities = new LinkedHashSet<>();
+    private Set<PermissionEntity> permissionEntities;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_gen")
@@ -48,14 +45,8 @@ public class RoleEntity implements Serializable {
         return name;
     }
 
-    @OneToMany(mappedBy = "roleEntity")
+    @OneToMany(mappedBy = "roleEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = PermissionEntity.class)
     public Set<PermissionEntity> getPermissionEntities() {
         return permissionEntities;
     }
-
-    @OneToMany(mappedBy = "roleEntity")
-    public Set<UserEntity> getUserEntities() {
-        return userEntities;
-    }
-
 }

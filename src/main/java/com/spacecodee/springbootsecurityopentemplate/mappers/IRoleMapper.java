@@ -5,12 +5,15 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IPermissionMapper.class})
 public interface IRoleMapper {
     RoleEntity toEntity(RoleDTO roleDTO);
 
     RoleDTO toDto(RoleEntity roleEntity);
 
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "userDetailsPermissionDTOList", source = "permissionEntities", qualifiedByName = "toUserDetailsPermissionDTOList")
     UserDetailsRoleDTO toUserDetailsRoleDTO(RoleEntity roleEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

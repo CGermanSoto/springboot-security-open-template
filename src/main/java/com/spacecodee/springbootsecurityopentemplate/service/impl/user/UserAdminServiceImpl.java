@@ -99,9 +99,19 @@ public class UserAdminServiceImpl implements IUserAdminService {
         }
     }
 
+    /**
+     * Checks the number of admin users in the system and throws an exception if there is only one admin left.
+     *
+     * @param locale the locale to use for exception messages
+     */
     private void howManyAdmins(String locale) {
+        // Convert the admin role from String to the appropriate enum type
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
+
+        // Count the number of admin users with the specified role
         var howManyAdmins = this.userRepository.countAdmins(adminRoleEnum);
+
+        // If there is only one admin left, log the count and throw an exception
         if (howManyAdmins == 1) {
             logger.log(Level.SEVERE, "UserServiceImpl.howManyAdmins: {0}", howManyAdmins);
             throw this.exceptionShortComponent.lastAdminException("admin.deleted.failed.last", locale);

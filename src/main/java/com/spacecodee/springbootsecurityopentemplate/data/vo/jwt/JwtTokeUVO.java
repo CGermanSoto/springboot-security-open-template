@@ -21,7 +21,7 @@ public class JwtTokeUVO implements Serializable {
     @NotNull
     private String token;
     @NotNull
-    private Boolean isValid;
+    private Boolean valid;
     @NotNull
     private Instant expiryDate;
     @NotNull

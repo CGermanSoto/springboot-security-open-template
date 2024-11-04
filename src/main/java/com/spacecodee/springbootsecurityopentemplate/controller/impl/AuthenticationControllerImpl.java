@@ -24,48 +24,48 @@ public class AuthenticationControllerImpl implements IAuthenticationController {
     private final MessageUtilComponent messageUtilComponent;
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<Boolean>> validate(String jwt, String lang) {
+    public ResponseEntity<ApiResponseDataPojo<Boolean>> validate(String locale, String jwt) {
         var apiResponse = new ApiResponseDataPojo<Boolean>();
-        boolean isTokenValid = this.authenticationService.validateToken(jwt);
+        boolean isTokenValid = this.authenticationService.validateToken(locale, jwt);
 
         apiResponse.setData(isTokenValid);
         apiResponse.setHttpStatus(HttpStatus.OK);
         if (!isTokenValid) {
-            apiResponse.setMessage(this.messageUtilComponent.getMessage("token.inValid", lang));
+            apiResponse.setMessage(this.messageUtilComponent.getMessage("token.inValid", locale));
         }
 
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("token.valid", lang));
+        apiResponse.setMessage(this.messageUtilComponent.getMessage("token.valid", locale));
         return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(LoginUserVO request, String lang) {
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale, LoginUserVO request) {
         var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
-        var rsp = this.authenticationService.login(request);
-        apiResponse.setData(rsp);
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("login.success", lang));
+        var authenticationResponsePojo = this.authenticationService.login(locale, request);
+        apiResponse.setData(authenticationResponsePojo);
+        apiResponse.setMessage(this.messageUtilComponent.getMessage("login.success", locale));
         apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
 
         return new ResponseEntity<>(apiResponse, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(String lang) {
+    public ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(String locale) {
         var udUser = new ApiResponseDataPojo<UserDetailsDTO>();
-        udUser.setData(this.authenticationService.findLoggedInUser());
-        udUser.setMessage(this.messageUtilComponent.getMessage("user.profile", lang));
+        udUser.setData(this.authenticationService.findLoggedInUser(locale));
+        udUser.setMessage(this.messageUtilComponent.getMessage("user.profile", locale));
         udUser.setHttpStatus(HttpStatus.OK);
 
         return new ResponseEntity<>(udUser, HttpStatus.valueOf(udUser.getStatus()));
     }
 
     @Override
-    public ResponseEntity<ApiResponsePojo> logout(HttpServletRequest request, String lang) {
+    public ResponseEntity<ApiResponsePojo> logout(String locale, HttpServletRequest request) {
         var apiResponse = new ApiResponsePojo();
 
-        this.authenticationService.logout(request);
+        this.authenticationService.logout(locale, request);
 
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("logout.success", lang));
+        apiResponse.setMessage(this.messageUtilComponent.getMessage("logout.success", locale));
         apiResponse.setHttpStatus(HttpStatus.OK);
 
         return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));

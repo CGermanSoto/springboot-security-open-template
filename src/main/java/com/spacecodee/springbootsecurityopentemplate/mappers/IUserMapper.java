@@ -8,10 +8,23 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IRoleMapper.class})
 public interface IUserMapper {
-    UserEntity toEntity(UserDTO UserDTO);
+
+    @Named("mapUserIdToUserEntity")
+    default UserEntity mapUserIdToUserEntity(int userId) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userId);
+        return userEntity;
+    }
+
+    UserEntity toEntity(UserDTO userDTO);
 
     UserDTO toDto(UserEntity userEntity);
 
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "username", source = "username")
+    @Mapping(target = "name", source = "fullname")
+    @Mapping(target = "password", source = "password")
+    @Mapping(target = "userDetailsRoleDTO", source = "roleEntity")
     UserDetailsDTO toUserDetailsDTO(UserEntity userEntity);
 
     @Mapping(target = "username", source = "username")
@@ -19,5 +32,5 @@ public interface IUserMapper {
     UserEntity toEntity(AdminVO adminVO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    UserEntity partialUpdate(UserDTO UserDTO, @MappingTarget UserEntity userEntity);
+    UserEntity partialUpdate(UserDTO userDTO, @MappingTarget UserEntity userEntity);
 }

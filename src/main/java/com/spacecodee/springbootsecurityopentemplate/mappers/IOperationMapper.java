@@ -11,6 +11,7 @@ public interface IOperationMapper {
 
     OperationEntityDto toDTO(OperationEntity operationEntity);
 
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "moduleDTO", source = "moduleEntity")
     UserDetailsOperationDTO toUserDetailsOperationDTO(OperationEntity operationEntity);
 
