@@ -21,7 +21,7 @@ public interface IPermissionMapper {
 
         List<UserDetailsPermissionDTO> list = new ArrayList<>(permissionEntities.size());
         for (PermissionEntity permissionEntity : permissionEntities) {
-            list.add(toUserDetailsPermissionDTO(permissionEntity));
+            list.add(this.toUserDetailsPermissionDTO(permissionEntity));
         }
 
         return list;
@@ -31,10 +31,6 @@ public interface IPermissionMapper {
     @Mapping(target = "roleDTO", ignore = true)
     @Mapping(target = "operationDTO", source = "operationEntity")
     UserDetailsPermissionDTO toUserDetailsPermissionDTO(PermissionEntity permissionEntity);
-
-    PermissionEntity toEntity(PermissionDTO permissionDTO);
-
-    PermissionDTO toDto(PermissionEntity permissionEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     PermissionEntity partialUpdate(PermissionDTO permissionDTO, @MappingTarget PermissionEntity permissionEntity);

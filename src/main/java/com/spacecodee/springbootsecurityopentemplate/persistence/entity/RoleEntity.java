@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -23,12 +24,12 @@ import java.util.Set;
 public class RoleEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -4118972354508428674L;
-    private Integer id;
 
+
+    private Integer id;
     @Setter
     private RoleEnum name;
-
-    private Set<PermissionEntity> permissionEntities;
+    private Set<PermissionEntity> permissionEntities = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_gen")

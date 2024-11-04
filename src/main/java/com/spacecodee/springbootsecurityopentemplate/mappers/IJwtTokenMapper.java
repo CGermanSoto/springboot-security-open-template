@@ -17,6 +17,8 @@ public interface IJwtTokenMapper {
     @Mapping(target = "expiryDate", source = "expireDate")
     JwtTokeUVO toUVO(String token, Date expireDate, int userDetailsId);
 
+    JwtTokenEntity voToEntity(JwtTokeUVO jwtTokeUVO);
+
     JwtTokenEntity toEntity(JwtTokenDTO jwtTokenDTO);
 
     JwtTokenDTO toDto(JwtTokenEntity jwtTokenEntity);

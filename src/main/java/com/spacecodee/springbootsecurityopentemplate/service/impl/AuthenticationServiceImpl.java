@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -34,9 +35,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Override
     public AuthenticationResponsePojo login(String locale, LoginUserVO userVO) {
         var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
-        this.authenticationManager.authenticate(authentication);
+        Authentication authResult = this.authenticationManager.authenticate(authentication);
+        UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
 
-        var userDetailsDTO = this.userService.findOneByUsername(locale, userVO.getUsername());
         String jwt = this.jwtService.generateToken(userDetailsDTO, this.generateExtraClaims(userDetailsDTO));
 
         var expiry = this.jwtService.extractExpiration(jwt);

@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -35,8 +36,8 @@ public class PermissionEntity implements Serializable {
         return id;
     }
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     public RoleEntity getRoleEntity() {
         return roleEntity;

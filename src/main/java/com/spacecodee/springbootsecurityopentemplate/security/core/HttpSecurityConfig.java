@@ -1,16 +1,19 @@
 package com.spacecodee.springbootsecurityopentemplate.security.core;
 
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.JwtAuthenticationFilter;
+import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -28,19 +31,23 @@ import java.util.List;
 @EnableWebSecurity
 public class HttpSecurityConfig {
 
-    private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationEntryPoint customAuthenticationEntryPoint;
     private final AccessDeniedHandler customAccessDeniedHandler;
     private final AuthorizationManager<RequestAuthorizationContext> authorizationManager;
+    private final IUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(this.userDetailsService);
+        authProvider.setPasswordEncoder(this.passwordEncoder());
+
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(this.authenticationProvider)
+                .authenticationProvider(authProvider)
                 .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth.anyRequest().access(this.authorizationManager))
                 .exceptionHandling(exception -> {
@@ -48,6 +55,11 @@ public class HttpSecurityConfig {
                     exception.accessDeniedHandler(this.customAccessDeniedHandler);
                 })
                 .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
