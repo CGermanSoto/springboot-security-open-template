@@ -69,6 +69,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public void logout(String locale, HttpServletRequest request) {
+        var jwtToken = this.jwtService.extractJwtFromRequest(request);
+        var existsToken = this.jwtTokenService.existsByJwtTokenToken(locale, jwtToken);
+        if (!existsToken) {
+            logger.warn("Token not found in the database");
+        } else {
+            this.jwtTokenService.deleteByToken(locale, jwtToken);
+            logger.info("Token invalidated successfully");
+        }
     }
 
     @Contract("_ -> new")

@@ -4,6 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwtTokenRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
@@ -18,6 +19,18 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
 
     private final IJwtTokenRepository jwtTokenRepository;
     private final IJwtTokenMapper jwtTokenMapper;
+    private final ExceptionShortComponent exceptionShortComponent;
+
+    @Override
+    public boolean existsByJwtTokenToken(String lang, String jwt) {
+        var existsByToken = this.jwtTokenRepository.existsByToken(jwt);
+
+        if (!existsByToken) {
+            throw this.exceptionShortComponent.tokenNotFoundException("token.exists.not", lang);
+        }
+
+        return true;
+    }
 
     @Override
     public Optional<JwtTokenDTO> findTokenByUsername(String username) {
@@ -43,5 +56,14 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     @Override
     public void save(JwtTokeUVO token) {
         this.jwtTokenRepository.save(this.jwtTokenMapper.voToEntity(token));
+    }
+
+    @Override
+    public void deleteByToken(String lang, String token) {
+        try {
+            this.jwtTokenRepository.deleteByToken(token);
+        } catch (Exception e) {
+            throw this.exceptionShortComponent.tokenNotFoundException("token.delete.not", lang);
+        }
     }
 }

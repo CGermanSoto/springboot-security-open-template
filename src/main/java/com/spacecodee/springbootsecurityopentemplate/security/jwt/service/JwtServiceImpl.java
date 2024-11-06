@@ -5,7 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,9 +25,11 @@ public class JwtServiceImpl implements IJwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
+    private final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
+
     // Generate a JWT token with the given userDetails details and extra claims
     @Override
-    public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
+    public String generateToken(@NotNull UserDetails userDetails, Map<String, Object> extraClaims) {
         var issuedAt = new Date(System.currentTimeMillis());
         var expiration = new Date((this.expirationInMinutes * 60 * 1000) + issuedAt.getTime());
 
@@ -48,11 +52,12 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public String extractJwtFromRequest(HttpServletRequest request) {
+    public String extractJwtFromRequest(@NotNull HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
 
         // Check if the Authorization header is null or empty
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ") || !StringUtils.hasText(authorizationHeader)) {
+            logger.warn("Authorization header is missing or does not contain a Bearer token");
             return null;
         }
 

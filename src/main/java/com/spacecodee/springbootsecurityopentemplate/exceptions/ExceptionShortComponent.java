@@ -10,6 +10,10 @@ public class ExceptionShortComponent {
 
     private final MessageUtilComponent messageUtilComponent;
 
+    public TokenNotFoundException tokenNotFoundException(String message, String locale) {
+        return new TokenNotFoundException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
     public NoDeletedException noDeletedException(String message, String locale) {
         return new NoDeletedException(this.messageUtilComponent.getMessage(message, locale));
     }

@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface IJwtTokenService {
 
+    boolean existsByJwtTokenToken(String lang, String jwt);
+
     Optional<JwtTokenDTO> findTokenByUsername(String jwt);
 
     Optional<SecurityJwtTokenDTO> findBySecurityToken(String jwt);
@@ -18,4 +20,6 @@ public interface IJwtTokenService {
     void save(SecurityJwtTokenDTO securityJwtTokenDTO);
 
     void save(JwtTokeUVO token);
+
+    void deleteByToken(String lang, String token);
 }
