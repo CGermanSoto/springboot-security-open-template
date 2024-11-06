@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @AllArgsConstructor
@@ -25,10 +24,11 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     private static final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class.getName());
 
     @Override
-    public Optional<UserDetailsDTO> findByUsername(String username) {
+    public UserDetailsDTO findByUsername(String username) {
         var user = this.userRepository.findByUsername(username);
 
-        return user.map(this.userDTOMapper::toUserDetailsDTO).or(Optional::empty);
+        return user.map(this.userDTOMapper::toUserDetailsDTO)
+                .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.exists.not.by.username", "en"));
     }
 
     @Transactional(readOnly = true)

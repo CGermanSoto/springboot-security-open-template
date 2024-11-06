@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
+import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
@@ -19,13 +20,9 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     private final IJwtTokenMapper jwtTokenMapper;
 
     @Override
-    public Optional<UserDetailsJwtTokenDTO> findByToken(String jwt, String lang) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<UserDetailsJwtTokenDTO> findByToken(String jwt) {
-        return Optional.empty();
+    public Optional<JwtTokenDTO> findTokenByUsername(String username) {
+        return this.jwtTokenRepository.findByUserEntity_Username(username)
+                .map(this.jwtTokenMapper::toDTO);
     }
 
     @Override
@@ -40,7 +37,7 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
 
     @Override
     public void save(SecurityJwtTokenDTO securityJwtTokenDTO) {
-
+        this.jwtTokenRepository.save(this.jwtTokenMapper.dtoToEntity(securityJwtTokenDTO));
     }
 
     @Override

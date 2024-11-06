@@ -7,7 +7,6 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -23,7 +22,6 @@ import java.util.Map;
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
 
-    private final IUserDetailsService userService;
     private final IJwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IJwtTokenService jwtTokenService;
@@ -34,6 +32,17 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public AuthenticationResponsePojo login(String locale, LoginUserVO userVO) {
+        // Check if a JWT already exists for the user
+        var existingToken = this.jwtTokenService.findTokenByUsername(userVO.getUsername());
+
+        if (existingToken.isPresent()) {
+            var newToken = existingToken.get();
+            if (newToken.isValid()) {
+                logger.info("Token is still valid, returning the token");
+                return new AuthenticationResponsePojo(newToken.token());
+            }
+        }
+
         var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
         Authentication authResult = this.authenticationManager.authenticate(authentication);
         UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
@@ -48,7 +57,13 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public boolean validateToken(String locale, String jwt) {
-        return false;
+        try {
+            this.jwtService.extractUsername(jwt);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

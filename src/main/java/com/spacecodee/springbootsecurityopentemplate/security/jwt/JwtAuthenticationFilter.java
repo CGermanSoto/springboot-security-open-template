@@ -49,8 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var username = this.jwtService.extractUsername(jwt);
 
         // Retrieve user details using the extracted username
-        // TODO: Handle Optional to avoid potential NoSuchElementException
-        var userDetailsDTO = this.userService.findByUsername(username).get();
+        var userDetailsDTO = this.userService.findByUsername(username);
 
         // Create an authentication token using the username and user authorities
         var authenticationToken = new UsernamePasswordAuthenticationToken(username, null, userDetailsDTO.getAuthorities());

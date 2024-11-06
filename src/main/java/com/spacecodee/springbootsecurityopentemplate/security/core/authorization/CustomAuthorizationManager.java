@@ -65,8 +65,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private List<UserDetailsOperationDTO> obtainOperations(Authentication authentication) {
         var authToken = (UsernamePasswordAuthenticationToken) authentication;
         var username = authToken.getPrincipal().toString();
-        // TODO: Handle Optional to avoid potential NoSuchElementException
-        var user = this.userService.findByUsername(username).get();
+        var user = this.userService.findByUsername(username);
 
         return user.getUserDetailsRoleDTO().getUserDetailsPermissionDTOList().stream()
                 .map(UserDetailsPermissionDTO::getOperationDTO).toList();
