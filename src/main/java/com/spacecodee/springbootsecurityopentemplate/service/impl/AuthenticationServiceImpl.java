@@ -9,6 +9,10 @@ import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationServ
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,17 +35,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     @Override
-    public AuthenticationResponsePojo login(String locale, LoginUserVO userVO) {
-        // Check if a JWT already exists for the user
-        var existingToken = this.jwtTokenService.findTokenByUsername(userVO.getUsername());
-
-        if (existingToken.isPresent()) {
-            var newToken = existingToken.get();
-            if (newToken.isValid()) {
-                logger.info("Token is still valid, returning the token");
-                return new AuthenticationResponsePojo(newToken.token());
-            }
-        }
+    public AuthenticationResponsePojo login(String locale, @NotNull LoginUserVO userVO) {
+        AuthenticationResponsePojo newToken = this.validateExistsValidToken(userVO);
+        if (newToken != null) return newToken;
 
         var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
         Authentication authResult = this.authenticationManager.authenticate(authentication);
@@ -75,11 +71,26 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     public void logout(String locale, HttpServletRequest request) {
     }
 
-    private Map<String, Object> generateExtraClaims(UserDetailsDTO userDetailsDTO) {
+    @Contract("_ -> new")
+    private @NotNull @Unmodifiable Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {
         return Map.of(
                 "name", userDetailsDTO.getName(),
                 "role", userDetailsDTO.getUserDetailsRoleDTO().getName(),
                 "authorities", userDetailsDTO.getAuthorities()
         );
+    }
+
+    private @Nullable AuthenticationResponsePojo validateExistsValidToken(@NotNull LoginUserVO userVO) {
+        // Check if a JWT already exists for the user
+        var existingToken = this.jwtTokenService.findTokenByUsername(userVO.getUsername());
+
+        if (existingToken.isPresent()) {
+            var newToken = existingToken.get();
+            if (newToken.isValid()) {
+                logger.info("Token is still valid, returning the token");
+                return new AuthenticationResponsePojo(newToken.token());
+            }
+        }
+        return null;
     }
 }
