@@ -31,7 +31,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final IJwtTokenService jwtTokenService;
     private final IJwtTokenMapper jwtTokenMapper;
 
-    //implement logger below
     private final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     @Override

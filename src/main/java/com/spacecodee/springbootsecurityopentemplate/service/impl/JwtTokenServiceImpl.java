@@ -45,7 +45,7 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
 
     @Override
     public void save(UserDetailsJwtTokenDTO token) {
-
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
