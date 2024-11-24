@@ -18,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -78,11 +77,11 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     private @NotNull @UnmodifiableView Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {
-        return Collections.unmodifiableMap(Map.of(
+        return Map.of(
                 "name", userDetailsDTO.getName(),
                 "role", userDetailsDTO.getUserDetailsRoleDTO().getName(),
                 "authorities", userDetailsDTO.getAuthorities()
-        ));
+        );
     }
 
     private AuthenticationResponsePojo validateExistsValidToken(LoginUserVO userVO) {
