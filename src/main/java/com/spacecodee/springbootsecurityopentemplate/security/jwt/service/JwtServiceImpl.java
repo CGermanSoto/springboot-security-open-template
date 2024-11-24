@@ -5,10 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,7 +29,7 @@ public class JwtServiceImpl implements IJwtService {
 
     // Generate a JWT token with the given userDetails details and extra claims
     @Override
-    public String generateToken(@NotNull UserDetails userDetails, Map<String, Object> extraClaims) {
+    public String generateToken(@NonNull UserDetails userDetails, Map<String, Object> extraClaims) {
         var issuedAt = new Date(System.currentTimeMillis());
         var expiration = new Date((this.expirationInMinutes * 60 * 1000) + issuedAt.getTime());
 
@@ -52,7 +52,7 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public String extractJwtFromRequest(@NotNull HttpServletRequest request) {
+    public String extractJwtFromRequest(@NonNull HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
 
         // Check if the Authorization header is null or empty
@@ -82,7 +82,7 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     // Generate the secret key
-    @NotNull
+    @NonNull
     private SecretKey generateKey() {
         var passDecoder = Decoders.BASE64.decode(this.secretKey);
         return Keys.hmacShaKeyFor(passDecoder);

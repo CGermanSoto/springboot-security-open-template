@@ -9,10 +9,8 @@ import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationServ
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -34,7 +33,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
     @Override
-    public AuthenticationResponsePojo login(String locale, @NotNull LoginUserVO userVO) {
+    public AuthenticationResponsePojo login(String locale, LoginUserVO userVO) {
         AuthenticationResponsePojo newToken = this.validateExistsValidToken(userVO);
         if (newToken != null) return newToken;
 
@@ -78,16 +77,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
     }
 
-    @Contract("_ -> new")
-    private @NotNull @Unmodifiable Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {
-        return Map.of(
+    private @NotNull @UnmodifiableView Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {
+        return Collections.unmodifiableMap(Map.of(
                 "name", userDetailsDTO.getName(),
                 "role", userDetailsDTO.getUserDetailsRoleDTO().getName(),
                 "authorities", userDetailsDTO.getAuthorities()
-        );
+        ));
     }
 
-    private @Nullable AuthenticationResponsePojo validateExistsValidToken(@NotNull LoginUserVO userVO) {
+    private AuthenticationResponsePojo validateExistsValidToken(LoginUserVO userVO) {
         // Check if a JWT already exists for the user
         var existingToken = this.jwtTokenService.findTokenByUsername(userVO.getUsername());
 
