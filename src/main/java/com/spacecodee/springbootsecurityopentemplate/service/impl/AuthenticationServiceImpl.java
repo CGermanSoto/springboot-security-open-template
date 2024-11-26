@@ -7,6 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Map;
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
 
+    private final IUserDetailsService userDetailsService;
     private final IJwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final IJwtTokenService jwtTokenService;
@@ -61,7 +64,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public UserDetailsDTO findLoggedInUser(String locale) {
-        return null;
+        var auth = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        var username = auth.getPrincipal().toString();
+        return this.userDetailsService.findByUsername(username);
     }
 
     @Override

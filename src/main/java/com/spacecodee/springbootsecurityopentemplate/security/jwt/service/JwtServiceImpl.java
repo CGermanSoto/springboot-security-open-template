@@ -5,8 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +15,10 @@ import org.springframework.util.StringUtils;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+@Slf4j
 @Service
 public class JwtServiceImpl implements IJwtService {
 
@@ -25,7 +27,7 @@ public class JwtServiceImpl implements IJwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    private final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
+    private static final Logger logger = Logger.getLogger(JwtServiceImpl.class.getName());
 
     // Generate a JWT token with the given userDetails details and extra claims
     @Override
@@ -42,7 +44,7 @@ public class JwtServiceImpl implements IJwtService {
                 .expiration(expiration) // Set the expiration date
                 .claims(extraClaims) // Set the extra claims
                 .signWith(this.generateKey(), Jwts.SIG.HS256) // Sign the token with the secret key and the HS256
-                                                              // algorithm
+                // algorithm
                 .compact();
     }
 
@@ -59,7 +61,7 @@ public class JwtServiceImpl implements IJwtService {
         // Check if the Authorization header is null or empty
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")
                 || !StringUtils.hasText(authorizationHeader)) {
-            logger.warn("Authorization header is missing or does not contain a Bearer token");
+            logger.log(Level.WARNING, "Authorization header is missing or does not contain a Bearer token");
             return null;
         }
 

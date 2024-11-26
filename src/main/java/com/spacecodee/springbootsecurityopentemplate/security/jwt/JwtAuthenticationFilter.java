@@ -19,6 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @AllArgsConstructor
 @Component
@@ -27,6 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final IJwtService jwtService;
     private final IUserDetailsService userService;
     private final IJwtTokenService jwtTokenService;
+    private static final Logger logger = Logger.getLogger(JwtAuthenticationFilter.class.getName());
+
 
     // Check if the JWT token is valid and set the authentication token
     @Override
