@@ -39,8 +39,10 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     }
 
     @Override
-    public Optional<SecurityJwtTokenDTO> findBySecurityToken(String jwt) {
-        return Optional.empty();
+    public SecurityJwtTokenDTO findBySecurityToken(String jwt) {
+        var foundToken = this.jwtTokenRepository.findByToken(jwt);
+        return foundToken.map(jwtTokenMapper::toSecurityJwtTokenDTO)
+                .orElseThrow(() -> this.exceptionShortComponent.tokenNotFoundException("token.found.not", "eng"));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.UserDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IRoleMapper.class})
@@ -14,6 +15,11 @@ public interface IUserMapper {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(userId);
         return userEntity;
+    }
+
+    @Named("mapUserIdEntityToUser")
+    default int mapUserIdEntityToUser(@NotNull UserEntity userEntity) {
+        return userEntity.getId();
     }
 
     UserEntity toEntity(UserDTO userDTO);

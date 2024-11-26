@@ -9,7 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -30,14 +30,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Check if the JWT token is valid and set the authentication token
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
         var jwt = this.jwtService.extractJwtFromRequest(request);
         if (!StringUtils.hasText(jwt)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        var jwtTokenDTO = this.jwtTokenService.findBySecurityToken(jwt).get();
+        var jwtTokenDTO = this.jwtTokenService.findBySecurityToken(jwt);
         var isValid = this.validateToken(jwtTokenDTO);
 
         if (!isValid) {
@@ -52,7 +53,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var userDetailsDTO = this.userService.findByUsername(username);
 
         // Create an authentication token using the username and user authorities
-        var authenticationToken = new UsernamePasswordAuthenticationToken(username, null, userDetailsDTO.getAuthorities());
+        var authenticationToken = new UsernamePasswordAuthenticationToken(username, null,
+                userDetailsDTO.getAuthorities());
 
         // Set additional details for the authentication token
         authenticationToken.setDetails(new WebAuthenticationDetails(request));
@@ -79,7 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return isValid;
     }
 
-    private void updateTokenStatus(SecurityJwtTokenDTO token) {
+    private void updateTokenStatus(@NotNull SecurityJwtTokenDTO token) {
         token.setValid(false);
         this.jwtTokenService.save(token);
     }

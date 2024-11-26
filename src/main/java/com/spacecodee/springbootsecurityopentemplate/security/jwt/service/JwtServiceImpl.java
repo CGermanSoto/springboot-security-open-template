@@ -41,7 +41,8 @@ public class JwtServiceImpl implements IJwtService {
                 .issuedAt(issuedAt) // Set the issued at date
                 .expiration(expiration) // Set the expiration date
                 .claims(extraClaims) // Set the extra claims
-                .signWith(this.generateKey(), Jwts.SIG.HS256) // Sign the token with the secret key and the HS256 algorithm
+                .signWith(this.generateKey(), Jwts.SIG.HS256) // Sign the token with the secret key and the HS256
+                                                              // algorithm
                 .compact();
     }
 
@@ -52,11 +53,12 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public String extractJwtFromRequest(@NonNull HttpServletRequest request) {
+    public String extractJwtFromRequest(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
 
         // Check if the Authorization header is null or empty
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ") || !StringUtils.hasText(authorizationHeader)) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")
+                || !StringUtils.hasText(authorizationHeader)) {
             logger.warn("Authorization header is missing or does not contain a Bearer token");
             return null;
         }

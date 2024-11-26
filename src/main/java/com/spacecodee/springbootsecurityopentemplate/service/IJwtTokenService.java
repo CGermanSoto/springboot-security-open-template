@@ -13,7 +13,7 @@ public interface IJwtTokenService {
 
     Optional<JwtTokenDTO> findTokenByUsername(String jwt);
 
-    Optional<SecurityJwtTokenDTO> findBySecurityToken(String jwt);
+    SecurityJwtTokenDTO findBySecurityToken(String jwt);
 
     void save(UserDetailsJwtTokenDTO token);
 

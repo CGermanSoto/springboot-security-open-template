@@ -7,7 +7,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +16,7 @@ import java.util.Collections;
 @Getter
 @Setter
 @ToString
-public class UserDetailsDTO implements UserDetails, Serializable {
+public class UserDetailsDTO implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -30,7 +29,8 @@ public class UserDetailsDTO implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.userDetailsRoleDTO == null) return Collections.emptyList();
+        if (this.userDetailsRoleDTO == null)
+            return Collections.emptyList();
 
         var authorities = new ArrayList<>(this.userDetailsRoleDTO.getUserDetailsPermissionDTOList()
                 .stream()
