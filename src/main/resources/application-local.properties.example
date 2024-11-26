@@ -1,0 +1,9 @@
+# Database configuration for PostgreSQL
+spring.datasource.url=jdbc:postgresql://localhost:5432/your_db_name
+spring.datasource.username=your_db_username
+spring.datasource.password=your_db_password
+security.jwt.expiration-in-minutes=1440
+# To encode this = https://www.base64encode.org/
+security.jwt.secret-key=
+security.default.roles=
+security.default.role=
