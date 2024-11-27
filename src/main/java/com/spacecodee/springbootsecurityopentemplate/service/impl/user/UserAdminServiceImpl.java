@@ -32,7 +32,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Value("${security.default.roles}")
     private String adminRole;
 
-    private static final Logger logger = Logger.getLogger(UserAdminServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(UserAdminServiceImpl.class.getName());
 
     public UserAdminServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent, IUserRepository userRepository, IRoleService roleService, IUserMapper userDTOMapper) {
         this.passwordEncoder = passwordEncoder;
@@ -61,7 +61,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         try {
             this.userRepository.save(userEntity);
         } catch (CannotSaveException e) {
-            logger.log(Level.SEVERE, "UserServiceImpl.addAdmin: error", e);
+            this.logger.log(Level.SEVERE, "UserServiceImpl.addAdmin: error", e);
             throw this.exceptionShortComponent.noCreatedException("admin.added.failed", locale);
         }
     }
@@ -79,7 +79,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         try {
             this.userRepository.deleteById(id);
         } catch (NoDeletedException e) {
-            logger.log(Level.SEVERE, "UserServiceImpl.delete: error", e);
+            this.logger.log(Level.SEVERE, "UserServiceImpl.delete: error", e);
             throw this.exceptionShortComponent.noDeletedException("admin.deleted.failed", locale);
         }
     }
@@ -94,7 +94,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private void doNotExistsById(int id, String locale) {
         var doNotExistsById = this.userRepository.existsById(id);
         if (!doNotExistsById) {
-            logger.log(Level.SEVERE, "UserServiceImpl.doNotExistsById: {0}", false);
+            this.logger.log(Level.SEVERE, "UserServiceImpl.doNotExistsById: {0}", false);
             throw this.exceptionShortComponent.doNotExistsByIdException("admin.exists.not.by.id", locale);
         }
     }
@@ -113,7 +113,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
         // If there is only one admin left, log the count and throw an exception
         if (howManyAdmins == 1) {
-            logger.log(Level.SEVERE, "UserServiceImpl.howManyAdmins: {0}", howManyAdmins);
+            this.logger.log(Level.SEVERE, "UserServiceImpl.howManyAdmins: {0}", howManyAdmins);
             throw this.exceptionShortComponent.lastAdminException("admin.deleted.failed.last", locale);
         }
     }

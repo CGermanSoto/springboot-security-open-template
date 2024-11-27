@@ -27,7 +27,7 @@ public class RoleServiceImpl implements IRoleService {
     private String adminRole;
     private final ExceptionShortComponent exceptionShortComponent;
 
-    private static final Logger logger = Logger.getLogger(RoleServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(RoleServiceImpl.class.getName());
 
     public RoleServiceImpl(IRoleRepository roleRepository, IRoleMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
         this.roleRepository = roleRepository;
@@ -46,7 +46,7 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public Integer findAdminRoleId() {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
-        logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
+        this.logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .map(RoleEntity::getId)
                 .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
@@ -55,7 +55,7 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public RoleEntity findAdminRole() {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
-        logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
+        this.logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .orElseThrow(() -> this.exceptionShortComponent.roleNotFoundException("role.exists.not", "en"));
     }

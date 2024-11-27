@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     private final IUserMapper userDTOMapper;
 
     private final ExceptionShortComponent exceptionShortComponent;
-    private static final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class.getName());
 
     @Override
     public UserDetailsDTO findByUsername(String username) {
@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
                 .map(user -> {
                     Hibernate.initialize(user.getRoleEntity());
                     Hibernate.initialize(user.getRoleEntity().getPermissionEntities());
-                    logger.info("User found with username: " + username);
+                    this.logger.info("User found with username: " + username);
                     return this.userDTOMapper.toUserDetailsDTO(user);
                 })
                 .orElseThrow(() -> this.exceptionShortComponent.usernameNotFoundException("user.exists.not.by.username", "en"));

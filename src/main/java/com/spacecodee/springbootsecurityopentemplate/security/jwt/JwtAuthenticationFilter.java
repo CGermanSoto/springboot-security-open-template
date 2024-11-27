@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final IJwtService jwtService;
     private final IUserDetailsService userService;
     private final IJwtTokenService jwtTokenService;
-    private static final Logger logger = Logger.getLogger(JwtAuthenticationFilter.class.getName());
+    private final Logger jwtAuthFilterLogger = Logger.getLogger(JwtAuthenticationFilter.class.getName());
 
 
     // Check if the JWT token is valid and set the authentication token
@@ -52,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Extract the username from the JWT token
         var username = this.jwtService.extractUsername(jwt);
+        this.jwtAuthFilterLogger.log(Level.INFO, "Username extracted from JWT: {0}", username);
 
         // Retrieve user details using the extracted username
         var userDetailsDTO = this.userService.findByUsername(username);
