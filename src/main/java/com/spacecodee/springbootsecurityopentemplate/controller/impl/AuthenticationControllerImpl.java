@@ -7,6 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
+import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -20,27 +21,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthenticationControllerImpl implements IAuthenticationController {
 
+    private final IJwtService jwtService;
     private final IAuthenticationService authenticationService;
     private final MessageUtilComponent messageUtilComponent;
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<Boolean>> validate(String locale, String jwt) {
+    public ResponseEntity<ApiResponseDataPojo<Boolean>> validate(String locale, HttpServletRequest request) {
         var apiResponse = new ApiResponseDataPojo<Boolean>();
+
+        // Extract token from Authorization header
+        var jwt = this.jwtService.extractJwtFromRequest(request);
+        if (jwt == null) {
+            apiResponse.setData(false);
+            apiResponse.setMessage(this.messageUtilComponent.getMessage("token.missing", locale));
+            apiResponse.setHttpStatus(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+
         boolean isTokenValid = this.authenticationService.validateToken(locale, jwt);
 
         apiResponse.setData(isTokenValid);
         apiResponse.setHttpStatus(HttpStatus.OK);
-        if (!isTokenValid) {
-            apiResponse.setMessage(this.messageUtilComponent.getMessage("token.inValid", locale));
-        }
+        apiResponse.setMessage(isTokenValid ? this.messageUtilComponent.getMessage("token.valid", locale)
+                : this.messageUtilComponent.getMessage("token.inValid", locale));
 
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("token.valid", locale));
         return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
-            LoginUserVO request) {
+                                                                                        LoginUserVO request) {
         var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
         var authenticationResponsePojo = this.authenticationService.login(locale, request);
         apiResponse.setData(authenticationResponsePojo);
