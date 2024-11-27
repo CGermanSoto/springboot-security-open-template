@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.core.authorizatio
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
-                                       @NotNull RequestAuthorizationContext object) {
+            @NotNull RequestAuthorizationContext object) {
 
         HttpServletRequest request = object.getRequest();
         var url = this.extractUrl(request);
@@ -66,7 +67,8 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private List<UserDetailsOperationDTO> obtainOperations(Authentication authentication) {
         var authToken = (UsernamePasswordAuthenticationToken) authentication;
         var username = authToken.getPrincipal().toString();
-        var user = this.userService.findByUsername(username);
+        var locale = LocaleResolverFilter.getCurrentLocale();
+        var user = this.userService.findByUsername(locale, username);
 
         return user.getUserDetailsRoleDTO().getUserDetailsPermissionDTOList().stream()
                 .map(UserDetailsPermissionDTO::getOperationDTO).toList();

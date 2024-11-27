@@ -4,5 +4,5 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface IUserDetailsService extends UserDetailsService {
-    UserDetailsDTO findByUsername(String username);
+    UserDetailsDTO findByUsername(String locale, String username);
 }

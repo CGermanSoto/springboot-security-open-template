@@ -76,7 +76,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         var auth = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         var username = auth.getPrincipal().toString();
-        return this.userDetailsService.findByUsername(username);
+        return this.userDetailsService.findByUsername(locale, username);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         // Get username from an old token
         var username = this.jwtService.extractUsername(oldToken);
-        var userDetails = this.userDetailsService.findByUsername(username);
+        var userDetails = this.userDetailsService.findByUsername(locale, username);
 
         // Check if the token is expired
         if (this.jwtService.isTokenExpired(oldToken)) {

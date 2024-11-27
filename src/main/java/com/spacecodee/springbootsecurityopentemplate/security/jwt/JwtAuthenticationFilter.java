@@ -1,6 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.security.jwt;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
@@ -19,7 +20,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @AllArgsConstructor
@@ -30,7 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final IUserDetailsService userService;
     private final IJwtTokenService jwtTokenService;
     private final Logger jwtAuthFilterLogger = Logger.getLogger(JwtAuthenticationFilter.class.getName());
-
 
     // Check if the JWT token is valid and set the authentication token
     @Override
@@ -52,10 +51,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Extract the username from the JWT token
         var username = this.jwtService.extractUsername(jwt);
-        this.jwtAuthFilterLogger.log(Level.INFO, "Username extracted from JWT: {0}", username);
 
         // Retrieve user details using the extracted username
-        var userDetailsDTO = this.userService.findByUsername(username);
+        var locale = LocaleResolverFilter.getCurrentLocale();
+        var userDetailsDTO = this.userService.findByUsername(locale, username);
 
         // Create an authentication token using the username and user authorities
         var authenticationToken = new UsernamePasswordAuthenticationToken(username, null,

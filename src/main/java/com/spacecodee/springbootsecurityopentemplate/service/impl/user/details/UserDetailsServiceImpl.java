@@ -24,10 +24,10 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
 
     @Transactional(readOnly = true, noRollbackFor = UsernameNotFoundException.class)
     @Override
-    public UserDetailsDTO findByUsername(String username) {
+    public UserDetailsDTO findByUsername(String locale, String username) {
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserDetailsDTO)
-                .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.exists.not.by.username", "en"));
+                .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.exists.not.by.username", locale));
     }
 
     @Transactional(readOnly = true)

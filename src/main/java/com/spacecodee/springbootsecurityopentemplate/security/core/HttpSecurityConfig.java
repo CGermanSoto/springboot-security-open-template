@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.security.core;
 
+import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.JwtAuthenticationFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,8 @@ public class HttpSecurityConfig {
     private final IUserDetailsService userDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LocaleResolverFilter localeResolverFilter)
+            throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(this.userDetailsService);
         authProvider.setPasswordEncoder(this.passwordEncoder());
@@ -51,7 +53,8 @@ public class HttpSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authProvider)
-                .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(this.jwtAuthenticationFilter, LocaleResolverFilter.class)
                 .authorizeHttpRequests(auth -> auth.anyRequest().access(this.authorizationManager))
                 .exceptionHandling(exception -> {
                     exception.authenticationEntryPoint(this.customAuthenticationEntryPoint);
