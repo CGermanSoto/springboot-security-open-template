@@ -12,41 +12,45 @@ import java.util.List;
 @Getter
 public enum RoleEnum {
 
-    OTI_ADMIN, DEVELOPER(Arrays.asList(
-            RolePermissionEnum.READ_ALL_SONGS,
-            RolePermissionEnum.READ_ONE_SONG,
-            RolePermissionEnum.CREATE_ONE_SONG,
-            RolePermissionEnum.UPDATE_ONE_SONG,
-            RolePermissionEnum.DISABLE_ONE_SONG,
+    DEVELOPER(Arrays.asList(
+            RolePermissionEnum.REGISTER_ONE_ADMIN,
 
-            RolePermissionEnum.READ_ALL_GENRES,
-            RolePermissionEnum.READ_ONE_GENRE,
-            RolePermissionEnum.CREATE_ONE_GENRE,
-            RolePermissionEnum.UPDATE_ONE_GENRE,
-            RolePermissionEnum.DISABLE_ONE_GENRE,
+            RolePermissionEnum.SHOW_PROFILE,
+            RolePermissionEnum.VALIDATE_TOKEN,
+            RolePermissionEnum.LOGOUT,
+            RolePermissionEnum.REFRESH_TOKEN,
 
-            RolePermissionEnum.DELETE_NO_ACTIVE_TOKENS,
-            RolePermissionEnum.CREATE_ONE_USER_SYSTEM,
+            RolePermissionEnum.MODULE,
+            RolePermissionEnum.OPERATION,
+            RolePermissionEnum.PERMISSION,
+            RolePermissionEnum.PERMISSION_DELETE,
+            RolePermissionEnum.OPERATION_DELETE,
+            RolePermissionEnum.MODULE_DELETE
+    )),
 
-            RolePermissionEnum.READ_MY_PROFILE
+    OTI_ADMIN(Arrays.asList(
+            RolePermissionEnum.REGISTER_ONE_ADMIN,
+
+            RolePermissionEnum.SHOW_PROFILE,
+            RolePermissionEnum.VALIDATE_TOKEN,
+            RolePermissionEnum.LOGOUT,
+            RolePermissionEnum.REFRESH_TOKEN
     )),
 
     TECHNICIAN(Arrays.asList(
-            RolePermissionEnum.READ_ALL_SONGS,
-            RolePermissionEnum.READ_ONE_SONG,
-            RolePermissionEnum.UPDATE_ONE_SONG,
+            RolePermissionEnum.REGISTER_ONE_ADMIN,
 
-            RolePermissionEnum.READ_ALL_GENRES,
-            RolePermissionEnum.READ_ONE_GENRE,
-            RolePermissionEnum.UPDATE_ONE_GENRE,
-
-            RolePermissionEnum.DELETE_NO_ACTIVE_TOKENS,
-
-            RolePermissionEnum.READ_MY_PROFILE
+            RolePermissionEnum.SHOW_PROFILE,
+            RolePermissionEnum.VALIDATE_TOKEN,
+            RolePermissionEnum.LOGOUT,
+            RolePermissionEnum.REFRESH_TOKEN
     )),
 
     USER(List.of(
-            RolePermissionEnum.READ_MY_PROFILE
+            RolePermissionEnum.SHOW_PROFILE,
+            RolePermissionEnum.VALIDATE_TOKEN,
+            RolePermissionEnum.LOGOUT,
+            RolePermissionEnum.REFRESH_TOKEN
     ));
 
     private List<RolePermissionEnum> permissions;

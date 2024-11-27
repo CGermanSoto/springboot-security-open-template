@@ -19,7 +19,6 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRol
 import com.spacecodee.springbootsecurityopentemplate.service.IEndpointManagementService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,6 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     private final ExceptionShortComponent exceptionComponent;
 
     @Override
-    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
     @Transactional
     public ModuleDTO createModule(String locale, ModuleVO moduleVO) {
         var moduleEntity = this.moduleMapper.dtoToEntity(moduleVO);
@@ -46,7 +44,6 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
     @Transactional
     public OperationDTO createOperation(String locale, @NotNull OperationVO operationVO) {
         var moduleEntity = this.moduleRepository.findById(operationVO.getModuleId())
@@ -60,7 +57,6 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
     @Transactional
     public PermissionDTO assignPermission(String locale, PermissionVO permissionVO) {
         var roleEntity = this.roleRepository.findById(permissionVO.getRoleId())
@@ -78,7 +74,6 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
     @Transactional
     public void removePermission(String locale, Integer permissionId) {
         if (!this.permissionRepository.existsById(permissionId)) {
@@ -88,7 +83,6 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
     @Transactional
     public void removeOperation(String locale, Integer operationId) {
         if (!this.operationRepository.existsById(operationId)) {
@@ -98,7 +92,6 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
     @Transactional
     public void removeModule(String locale, Integer moduleId) {
         if (!this.moduleRepository.existsById(moduleId)) {
