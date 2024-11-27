@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 @Service
 public class UserDetailsServiceImpl implements IUserDetailsService {
     private final IUserRepository userRepository;
-    private final IUserDetailsMapper IUserDetailsMapper; // Change to new mapper
+    private final IUserDetailsMapper userDetailsMapper; // Change to new mapper
     private final ExceptionShortComponent exceptionShortComponent;
     private final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class.getName());
 
@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     @Override
     public UserDetailsDTO findByUsername(String username) {
         return this.userRepository.findByUsername(username)
-                .map(this.IUserDetailsMapper::toUserDetailsDTO)
+                .map(this.userDetailsMapper::toUserDetailsDTO)
                 .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.exists.not.by.username", "en"));
     }
 
@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
                     Hibernate.initialize(user.getRoleEntity());
                     Hibernate.initialize(user.getRoleEntity().getPermissionEntities());
                     this.logger.info("User found with username: " + username);
-                    return this.IUserDetailsMapper.toUserDetailsDTO(user);
+                    return this.userDetailsMapper.toUserDetailsDTO(user);
                 })
                 .orElseThrow(() -> this.exceptionShortComponent.usernameNotFoundException("user.exists.not.by.username",
                         "en"));

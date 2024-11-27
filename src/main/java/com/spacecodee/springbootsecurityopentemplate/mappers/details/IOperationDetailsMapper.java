@@ -11,9 +11,10 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
-        IModuleDetailsMapper.class })
+        IModuleDetailsMapper.class})
 public interface IOperationDetailsMapper {
 
+    @Mapping(target = "moduleDTO", source = "moduleEntity")
     UserDetailsOperationDTO toUserDetailsOperationDTO(OperationEntity operationEntity);
 
     @Mapping(target = "id", ignore = true)
