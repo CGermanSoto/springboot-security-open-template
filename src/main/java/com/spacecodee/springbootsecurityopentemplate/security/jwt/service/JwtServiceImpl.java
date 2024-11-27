@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Slf4j
 @Service
 public class JwtServiceImpl implements IJwtService {
 
@@ -27,7 +25,7 @@ public class JwtServiceImpl implements IJwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    private static final Logger logger = Logger.getLogger(JwtServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(JwtServiceImpl.class.getName());
 
     // Generate a JWT token with the given userDetails details and extra claims
     @Override
@@ -61,7 +59,7 @@ public class JwtServiceImpl implements IJwtService {
         // Check if the Authorization header is null or empty
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")
                 || !StringUtils.hasText(authorizationHeader)) {
-            logger.log(Level.WARNING, "Authorization header is missing or does not contain a Bearer token");
+            this.logger.log(Level.WARNING, "Authorization header is missing or does not contain a Bearer token");
             return null;
         }
 
@@ -74,6 +72,17 @@ public class JwtServiceImpl implements IJwtService {
     public Date extractExpiration(String jwt) {
         return this.extractAllClaims(jwt)
                 .getExpiration();
+    }
+
+    @Override
+    public boolean isTokenExpired(String jwt) {
+        try {
+            var expiration = this.extractExpiration(jwt);
+            return expiration.before(new Date());
+        } catch (Exception e) {
+            this.logger.log(Level.WARNING, "An error occurred while checking if the token is expired", e);
+        }
+        return false;
     }
 
     // Extract all claims from the JWT

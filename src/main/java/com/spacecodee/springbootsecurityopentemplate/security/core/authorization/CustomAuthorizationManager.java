@@ -6,8 +6,6 @@ import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 @AllArgsConstructor
@@ -28,7 +27,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private final IOperationService operationService;
     private final IUserDetailsService userService;
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomAuthorizationManager.class);
+    private final Logger logger = Logger.getLogger(CustomAuthorizationManager.class.getName());
 
     @Override
     public void verify(Supplier<Authentication> authentication, RequestAuthorizationContext object) {

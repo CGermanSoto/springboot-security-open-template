@@ -17,4 +17,6 @@ public interface IJwtService {
     String extractJwtFromRequest(HttpServletRequest request);
 
     Date extractExpiration(String jwt);
+
+    boolean isTokenExpired(String jwt);
 }

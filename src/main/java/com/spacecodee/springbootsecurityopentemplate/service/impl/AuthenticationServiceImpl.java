@@ -11,6 +11,7 @@ import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserD
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public AuthenticationResponsePojo login(String locale, LoginUserVO userVO) {
-        AuthenticationResponsePojo newToken = this.validateExistsValidToken(userVO);
+        AuthenticationResponsePojo newToken = this.validateExistsValidToken(locale, userVO);
         if (newToken != null) return newToken;
 
         var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
@@ -90,15 +91,19 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         );
     }
 
-    private AuthenticationResponsePojo validateExistsValidToken(LoginUserVO userVO) {
+    private @Nullable AuthenticationResponsePojo validateExistsValidToken(String locale, @NotNull LoginUserVO userVO) {
         // Check if a JWT already exists for the user
         var existingToken = this.jwtTokenService.findTokenByUsername(userVO.getUsername());
-
         if (existingToken.isPresent()) {
             var newToken = existingToken.get();
-            if (newToken.isValid()) {
-                logger.info("Token is still valid, returning the token");
+            var isTokenValid = this.jwtService.isTokenExpired(newToken.token());
+
+            if (isTokenValid) {
+                this.logger.info("Token is still valid, returning the token");
                 return new AuthenticationResponsePojo(newToken.token());
+            } else {
+                this.logger.info("Token is expired, invalidating the token");
+                this.jwtTokenService.deleteByToken(locale, newToken.token());
             }
         }
         return null;
