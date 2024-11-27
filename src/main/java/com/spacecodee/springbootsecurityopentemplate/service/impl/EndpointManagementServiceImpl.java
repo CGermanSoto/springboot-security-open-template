@@ -8,9 +8,9 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.module.ModuleVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.operation.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.permission.PermissionVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.mappers.IModuleMapper;
-import com.spacecodee.springbootsecurityopentemplate.mappers.IOperationMapper;
-import com.spacecodee.springbootsecurityopentemplate.mappers.IPermissionMapper;
+import com.spacecodee.springbootsecurityopentemplate.mappers.details.IModuleDetailsMapper;
+import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
+import com.spacecodee.springbootsecurityopentemplate.mappers.details.IPermissionDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.PermissionEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IModuleRepository;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
@@ -30,9 +30,9 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     private final IOperationRepository operationRepository;
     private final IPermissionRepository permissionRepository;
     private final IRoleRepository roleRepository;
-    private final IModuleMapper moduleMapper;
-    private final IOperationMapper operationMapper;
-    private final IPermissionMapper permissionMapper;
+    private final IModuleDetailsMapper moduleMapper;
+    private final IOperationDetailsMapper operationMapper;
+    private final IPermissionDetailsMapper permissionMapper;
     private final ExceptionShortComponent exceptionComponent;
 
     @Override
@@ -40,7 +40,7 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     public ModuleDTO createModule(String locale, ModuleVO moduleVO) {
         var moduleEntity = this.moduleMapper.dtoToEntity(moduleVO);
         var savedEntity = this.moduleRepository.save(moduleEntity);
-        return this.moduleMapper.toDto(savedEntity);
+        return this.moduleMapper.toDTO(savedEntity);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
                 .setOperationEntity(operationEntity);
 
         var savedEntity = this.permissionRepository.save(permissionEntity);
-        return this.permissionMapper.toDto(savedEntity);
+        return this.permissionMapper.toDTO(savedEntity);
     }
 
     @Override

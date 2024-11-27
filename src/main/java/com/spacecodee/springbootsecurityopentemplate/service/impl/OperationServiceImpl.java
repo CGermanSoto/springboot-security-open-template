@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.mappers.IOperationMapper;
+import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 public class OperationServiceImpl implements IOperationService {
 
     private final IOperationRepository operationRepository;
-    private final IOperationMapper operationDTOMapper;
+    private final IOperationDetailsMapper operationDTOMapper;
 
     @Override
     public List<UserDetailsOperationDTO> findByPublicAccess() {
