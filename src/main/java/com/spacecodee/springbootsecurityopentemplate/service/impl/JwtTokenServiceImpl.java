@@ -6,12 +6,14 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.IJwtTokenMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwtTokenRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @AllArgsConstructor
 @Service
@@ -30,6 +32,13 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
         }
 
         return true;
+    }
+
+    @Override
+    public String getTokenByUsername(String username) {
+        return this.jwtTokenRepository.findByUserEntity_Username(username)
+                .map(JwtTokenEntity::getToken)
+                .orElseThrow(() -> this.exceptionShortComponent.tokenNotFoundException("token.found.not", "eng"));
     }
 
     @Override
@@ -63,6 +72,7 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     @Override
     public void deleteByToken(String lang, String token) {
         try {
+            Logger.getLogger(JwtTokenServiceImpl.class.getName()).info("Deleting token: {0}"+  token);
             this.jwtTokenRepository.deleteByToken(token);
         } catch (Exception e) {
             throw this.exceptionShortComponent.tokenNotFoundException("token.delete.not", lang);

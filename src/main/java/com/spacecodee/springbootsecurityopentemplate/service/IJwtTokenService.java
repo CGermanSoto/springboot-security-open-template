@@ -11,6 +11,8 @@ public interface IJwtTokenService {
 
     boolean existsByJwtTokenToken(String lang, String jwt);
 
+    String getTokenByUsername(String username);
+
     Optional<JwtTokenDTO> findTokenByUsername(String jwt);
 
     SecurityJwtTokenDTO findBySecurityToken(String jwt);

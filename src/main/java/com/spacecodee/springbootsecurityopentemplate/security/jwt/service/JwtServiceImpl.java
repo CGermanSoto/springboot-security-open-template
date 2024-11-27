@@ -80,7 +80,7 @@ public class JwtServiceImpl implements IJwtService {
             var expiration = this.extractExpiration(jwt);
             return expiration.before(new Date());
         } catch (Exception e) {
-            this.logger.log(Level.WARNING, "An error occurred while checking if the token is expired", e);
+            this.logger.log(Level.WARNING, "The token is already expired, this is a warning", e);
         }
         return false;
     }
