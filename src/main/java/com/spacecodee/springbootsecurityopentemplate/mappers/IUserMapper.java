@@ -1,9 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.UserDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface IUserMapper {
@@ -20,13 +22,7 @@ public interface IUserMapper {
         return userEntity != null ? userEntity.getId() : null;
     }
 
-    @Mapping(target = "roleDTO.id", source = "roleEntity.id")
-    @Mapping(target = "roleDTO.name", source = "roleEntity.name")
-    UserDTO toDto(UserEntity userEntity);
-
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "roleEntity", ignore = true)
     UserEntity toEntity(AdminVO adminVO);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    UserEntity partialUpdate(UserDTO userDTO, @MappingTarget UserEntity userEntity);
 }

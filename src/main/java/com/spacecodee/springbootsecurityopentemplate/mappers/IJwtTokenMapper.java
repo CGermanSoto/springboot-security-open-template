@@ -2,10 +2,12 @@ package com.spacecodee.springbootsecurityopentemplate.mappers;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.Date;
 
@@ -34,8 +36,6 @@ public interface IJwtTokenMapper {
     @Mapping(target = "userEntity", source = "userDetailsId", qualifiedByName = "mapUserIdToUserEntity")
     JwtTokenEntity dtoToEntity(SecurityJwtTokenDTO jwtTokeUVO);
 
-    JwtTokenEntity toEntity(JwtTokenDTO jwtTokenDTO);
-
     @Mapping(target = "id", source = "id")
     @Mapping(target = "token", source = "token")
     @Mapping(target = "expiryDate", source = "expiryDate")
@@ -46,16 +46,6 @@ public interface IJwtTokenMapper {
     @Mapping(target = "token", source = "token")
     @Mapping(target = "expiryDate", source = "expiryDate")
     @Mapping(target = "valid", source = "isValid")
-    @Mapping(target = "userDetailsDTO", source = "userEntity")
-    UserDetailsJwtTokenDTO toUDDTO(JwtTokenEntity jwtTokenEntity);
-
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "token", source = "token")
-    @Mapping(target = "expiryDate", source = "expiryDate")
-    @Mapping(target = "valid", source = "isValid")
     @Mapping(target = "userDetailsId", source = "userEntity", qualifiedByName = "mapUserIdEntityToUser")
     SecurityJwtTokenDTO toSecurityJwtTokenDTO(JwtTokenEntity jwtTokenEntity);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    JwtTokenEntity partialUpdate(JwtTokenDTO jwtTokenDTO, @MappingTarget JwtTokenEntity jwtTokenEntity);
 }
