@@ -4,7 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.RoleNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.mappers.IRoleMapper;
+import com.spacecodee.springbootsecurityopentemplate.mappers.details.IRoleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class RoleServiceImpl implements IRoleService {
 
     private final IRoleRepository roleRepository;
-    private final IRoleMapper roleDTOMapper;
+    private final IRoleDetailsMapper roleDTOMapper;
     @Value("${security.default.role}")
     private String defaultRoleName;
     @Value("${security.default.roles}")
@@ -29,7 +29,7 @@ public class RoleServiceImpl implements IRoleService {
 
     private final Logger logger = Logger.getLogger(RoleServiceImpl.class.getName());
 
-    public RoleServiceImpl(IRoleRepository roleRepository, IRoleMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
+    public RoleServiceImpl(IRoleRepository roleRepository, IRoleDetailsMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
         this.roleRepository = roleRepository;
         this.roleDTOMapper = roleDTOMapper;
         this.exceptionShortComponent = exceptionShortComponent;

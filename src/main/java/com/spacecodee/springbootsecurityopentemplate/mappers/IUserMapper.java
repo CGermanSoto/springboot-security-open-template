@@ -1,39 +1,29 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.UserDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IRoleMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface IUserMapper {
 
     @Named("mapUserIdToUserEntity")
     default UserEntity mapUserIdToUserEntity(int userId) {
-        UserEntity userEntity = new UserEntity();
+        var userEntity = new UserEntity();
         userEntity.setId(userId);
         return userEntity;
     }
 
     @Named("mapUserIdEntityToUser")
-    default int mapUserIdEntityToUser(@NotNull UserEntity userEntity) {
-        return userEntity.getId();
+    default Integer mapUserIdEntityToUser(UserEntity userEntity) {
+        return userEntity != null ? userEntity.getId() : null;
     }
 
-    UserEntity toEntity(UserDTO userDTO);
-
+    @Mapping(target = "roleDTO.id", source = "roleEntity.id")
+    @Mapping(target = "roleDTO.name", source = "roleEntity.name")
     UserDTO toDto(UserEntity userEntity);
 
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "username", source = "username")
-    @Mapping(target = "name", source = "fullname")
-    @Mapping(target = "password", source = "password")
-    @Mapping(target = "userDetailsRoleDTO", source = "roleEntity")
-    UserDetailsDTO toUserDetailsDTO(UserEntity userEntity);
-
-    @Mapping(target = "username", source = "username")
     @Mapping(target = "roleEntity", ignore = true)
     UserEntity toEntity(AdminVO adminVO);
 

@@ -9,7 +9,8 @@ import org.mapstruct.*;
 
 import java.util.Date;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {IUserMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
+        IUserMapper.class})
 public interface IJwtTokenMapper {
 
     @Mapping(target = "id", ignore = true)
