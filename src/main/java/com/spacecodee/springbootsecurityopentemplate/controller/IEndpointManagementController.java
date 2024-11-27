@@ -16,31 +16,31 @@ import org.springframework.web.bind.annotation.*;
 public interface IEndpointManagementController {
     @PostMapping("/module")
     ResponseEntity<ApiResponseDataPojo<ModuleDTO>> createModule(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @Valid @RequestBody ModuleVO moduleVO);
 
     @PostMapping("/operation")
     ResponseEntity<ApiResponseDataPojo<OperationDTO>> createOperation(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @Valid @RequestBody OperationVO operationVO);
 
     @PostMapping("/permission")
     ResponseEntity<ApiResponseDataPojo<PermissionDTO>> assignPermission(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @Valid @RequestBody PermissionVO permissionVO);
 
     @DeleteMapping("/permission/{id}")
     ResponseEntity<ApiResponsePojo> removePermission(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @PathVariable("id") Integer permissionId);
 
     @DeleteMapping("/operation/{id}")
     ResponseEntity<ApiResponsePojo> removeOperation(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @PathVariable("id") Integer operationId);
 
     @DeleteMapping("/module/{id}")
     ResponseEntity<ApiResponsePojo> removeModule(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @PathVariable("id") Integer moduleId);
 }

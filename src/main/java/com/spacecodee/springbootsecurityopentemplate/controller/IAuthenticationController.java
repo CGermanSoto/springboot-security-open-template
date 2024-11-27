@@ -14,24 +14,24 @@ public interface IAuthenticationController {
 
     @GetMapping("/validate-token")
     ResponseEntity<ApiResponseDataPojo<Boolean>> validate(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             HttpServletRequest request);
 
     @PostMapping("/authenticate")
     ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             @RequestBody @Valid LoginUserVO request);
 
     @GetMapping("/profile")
     ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(
-            @RequestHeader(name = "Accept-Language", required = false) String locale);
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale);
 
     @PostMapping("/logout")
-    ResponseEntity<ApiResponsePojo> logout(@RequestHeader(name = "Accept-Language", required = false) String locale,
+    ResponseEntity<ApiResponsePojo> logout(@RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
                                            HttpServletRequest request);
 
     @PutMapping("/refresh-token")
     ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> refreshToken(
-            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
             HttpServletRequest request);
 }
