@@ -41,32 +41,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        var jwtTokenDTO = this.jwtTokenService.findBySecurityToken(jwt);
-        var isValid = this.validateToken(jwtTokenDTO);
+        // Get locale early
+        var locale = LocaleResolverFilter.getCurrentLocale();
 
-        if (!isValid) {
-            filterChain.doFilter(request, response);
-            return;
+        try {
+            var jwtTokenDTO = this.jwtTokenService.findBySecurityToken(locale, jwt);
+            var isValid = this.validateToken(jwtTokenDTO);
+
+            if (!isValid) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            var username = this.jwtService.extractUsername(jwt);
+            var userDetailsDTO = this.userService.findByUsername(locale, username);
+
+            var authenticationToken = new UsernamePasswordAuthenticationToken(
+                    username,
+                    null,
+                    userDetailsDTO.getAuthorities());
+
+            authenticationToken.setDetails(new WebAuthenticationDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        } catch (Exception e) {
+            this.jwtAuthFilterLogger.warning("JWT validation failed: " + e.getMessage());
         }
 
-        // Extract the username from the JWT token
-        var username = this.jwtService.extractUsername(jwt);
-
-        // Retrieve user details using the extracted username
-        var locale = LocaleResolverFilter.getCurrentLocale();
-        var userDetailsDTO = this.userService.findByUsername(locale, username);
-
-        // Create an authentication token using the username and user authorities
-        var authenticationToken = new UsernamePasswordAuthenticationToken(username, null,
-                userDetailsDTO.getAuthorities());
-
-        // Set additional details for the authentication token
-        authenticationToken.setDetails(new WebAuthenticationDetails(request));
-
-        // Set the authentication token in the SecurityContext
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        // Continue the filter chain
         filterChain.doFilter(request, response);
     }
 

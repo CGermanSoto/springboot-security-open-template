@@ -10,9 +10,7 @@ public interface IRoleService {
 
     Optional<UserDetailsRoleDTO> findDefaultRole(String lang);
 
-    Integer findAdminRoleId();
-
-    RoleEntity findAdminRole();
+    RoleEntity findAdminRole(String locale);
 
     Optional<RoleEnum> getRoleEnum(String roleName, String lang);
 

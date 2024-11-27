@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     public UserDetailsDTO findByUsername(String locale, String username) {
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserDetailsDTO)
-                .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.exists.not.by.username", locale));
+                .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.not.exists.by.username", locale));
     }
 
     @Transactional(readOnly = true)
@@ -40,7 +40,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
                     this.logger.info("User found with username: " + username);
                     return this.userDetailsMapper.toUserDetailsDTO(user);
                 })
-                .orElseThrow(() -> this.exceptionShortComponent.usernameNotFoundException("user.exists.not.by.username",
+                .orElseThrow(() -> this.exceptionShortComponent.usernameNotFoundException("user.not.exists.by.username",
                         "en"));
     }
 }

@@ -15,7 +15,7 @@ public interface IJwtTokenService {
 
     Optional<JwtTokenDTO> findTokenByUsername(String jwt);
 
-    SecurityJwtTokenDTO findBySecurityToken(String jwt);
+    SecurityJwtTokenDTO findBySecurityToken(String locale, String jwt);
 
     void save(UserDetailsJwtTokenDTO token);
 
@@ -23,5 +23,5 @@ public interface IJwtTokenService {
 
     void save(JwtTokeUVO token);
 
-    void deleteByToken(String lang, String token);
+    void deleteByToken(String locale, String token);
 }

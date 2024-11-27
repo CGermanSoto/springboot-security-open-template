@@ -27,7 +27,7 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
         var existsByToken = this.jwtTokenRepository.existsByToken(jwt);
 
         if (!existsByToken) {
-            throw this.exceptionShortComponent.tokenNotFoundException("token.exists.not", lang);
+            throw this.exceptionShortComponent.tokenNotFoundException("token.not.exists", lang);
         }
 
         return true;
@@ -47,10 +47,10 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     }
 
     @Override
-    public SecurityJwtTokenDTO findBySecurityToken(String jwt) {
+    public SecurityJwtTokenDTO findBySecurityToken(String locale, String jwt) {
         var foundToken = this.jwtTokenRepository.findByToken(jwt);
         return foundToken.map(jwtTokenMapper::toSecurityJwtTokenDTO)
-                .orElseThrow(() -> this.exceptionShortComponent.tokenNotFoundException("token.found.not", "eng"));
+                .orElseThrow(() -> this.exceptionShortComponent.tokenNotFoundException("token.not.found", locale));
     }
 
     @Override
@@ -69,11 +69,11 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     }
 
     @Override
-    public void deleteByToken(String lang, String token) {
+    public void deleteByToken(String locale, String token) {
         try {
             this.jwtTokenRepository.deleteByToken(token);
         } catch (Exception e) {
-            throw this.exceptionShortComponent.tokenNotFoundException("token.delete.not", lang);
+            throw this.exceptionShortComponent.tokenNotFoundException("token.not.delete", locale);
         }
     }
 }

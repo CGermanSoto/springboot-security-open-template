@@ -3,7 +3,6 @@ package com.spacecodee.springbootsecurityopentemplate.service.impl;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.RoleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IRoleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
@@ -40,18 +39,10 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public Integer findAdminRoleId() {
+    public RoleEntity findAdminRole(String locale) {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
         return this.roleRepository.findAdminRole(adminRoleEnum)
-                .map(RoleEntity::getId)
-                .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
-    }
-
-    @Override
-    public RoleEntity findAdminRole() {
-        var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
-        return this.roleRepository.findAdminRole(adminRoleEnum)
-                .orElseThrow(() -> this.exceptionShortComponent.roleNotFoundException("role.exists.not", "en"));
+                .orElseThrow(() -> this.exceptionShortComponent.roleNotFoundException("role.not.exists", locale));
     }
 
     @Override

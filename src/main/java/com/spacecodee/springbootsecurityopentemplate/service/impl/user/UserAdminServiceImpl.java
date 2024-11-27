@@ -52,7 +52,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         AppUtils.validatePassword(adminVO.getPassword(), adminVO.getRepeatPassword(), locale);
         this.alreadyExistByUsername(adminVO.getUsername(), locale);
 
-        var adminRoleEntity = this.roleService.findAdminRole();
+        var adminRoleEntity = this.roleService.findAdminRole(locale);
         var userEntity = this.userDTOMapper.toEntity(adminVO);
 
         userEntity.setPassword(this.passwordEncoder.encode(userEntity.getPassword()));
@@ -95,7 +95,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         var doNotExistsById = this.userRepository.existsById(id);
         if (!doNotExistsById) {
             this.logger.log(Level.SEVERE, "UserServiceImpl.doNotExistsById: {0}", false);
-            throw this.exceptionShortComponent.doNotExistsByIdException("admin.exists.not.by.id", locale);
+            throw this.exceptionShortComponent.doNotExistsByIdException("admin.not.exists.by.id", locale);
         }
     }
 
