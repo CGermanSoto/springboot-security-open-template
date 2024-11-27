@@ -7,11 +7,13 @@ import lombok.ToString;
 
 import java.util.Date;
 
+import com.spacecodee.springbootsecurityopentemplate.data.base.IJwtTokenFields;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @ToString
-public class SecurityJwtTokenDTO {
+public class SecurityJwtTokenDTO implements IJwtTokenFields {
 
     private int id;
     private String token;
