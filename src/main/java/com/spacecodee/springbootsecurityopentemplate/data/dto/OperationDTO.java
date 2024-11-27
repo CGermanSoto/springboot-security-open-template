@@ -6,6 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record UserDTO(Integer id, @NotNull String username, @NotNull String password, @NotNull String fullname,
-                      @NotNull String lastname, @NotNull RoleDTO roleDTO) implements Serializable {
+public record OperationDTO(Integer id, @NotNull String tag, @NotNull String path, @NotNull String httpMethod,
+                           @NotNull Boolean permitAll, @NotNull Integer moduleId) implements Serializable {
 }

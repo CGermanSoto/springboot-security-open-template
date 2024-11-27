@@ -34,4 +34,9 @@ public interface IPermissionMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     PermissionEntity partialUpdate(PermissionDTO permissionDTO, @MappingTarget PermissionEntity permissionEntity);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "operationDTO", source = "operationEntity")
+    @Mapping(target = "roleDTO", source = "roleEntity")
+    PermissionDTO toDto(PermissionEntity savedEntity);
 }

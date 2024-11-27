@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions;
 
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
@@ -64,5 +65,17 @@ public class ExceptionShortComponent {
 
     public NoDisabledException noDisabledException(String message, String locale) {
         return new NoDisabledException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public @NotNull ModuleNotFoundException moduleNotFoundException(String message, String locale) {
+        return new ModuleNotFoundException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public @NotNull OperationNotFoundException operationNotFoundException(String message, String locale) {
+        return new OperationNotFoundException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public PermissionNotFoundException permissionNotFoundException(String message, String locale) {
+        return new PermissionNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }
 }
