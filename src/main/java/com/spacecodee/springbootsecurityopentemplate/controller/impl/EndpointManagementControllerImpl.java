@@ -1,4 +1,3 @@
-// EndpointManagementControllerImpl.java
 package com.spacecodee.springbootsecurityopentemplate.controller.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.controller.IEndpointManagementController;
