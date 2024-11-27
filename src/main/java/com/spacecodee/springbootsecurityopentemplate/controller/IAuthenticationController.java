@@ -8,10 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 public interface IAuthenticationController {
 
@@ -33,7 +30,7 @@ public interface IAuthenticationController {
     ResponseEntity<ApiResponsePojo> logout(@RequestHeader(name = "Accept-Language", required = false) String locale,
                                            HttpServletRequest request);
 
-    @PostMapping("/refresh-token")
+    @PutMapping("/refresh-token")
     ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> refreshToken(
             @RequestHeader(name = "Accept-Language", required = false) String locale,
             HttpServletRequest request);
