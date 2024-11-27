@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.mappers;
+package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
