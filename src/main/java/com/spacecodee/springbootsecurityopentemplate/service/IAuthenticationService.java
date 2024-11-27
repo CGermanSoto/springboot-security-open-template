@@ -14,4 +14,6 @@ public interface IAuthenticationService {
     UserDetailsDTO findLoggedInUser(String locale);
 
     void logout(String locale, HttpServletRequest request);
+
+    AuthenticationResponsePojo refreshToken(String locale, HttpServletRequest request);
 }

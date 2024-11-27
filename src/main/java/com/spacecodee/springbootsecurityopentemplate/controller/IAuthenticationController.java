@@ -13,14 +13,24 @@ import org.springframework.web.bind.annotation.*;
 public interface IAuthenticationController {
 
     @GetMapping("/validate-token")
-    ResponseEntity<ApiResponseDataPojo<Boolean>> validate(@RequestHeader(name = "Accept-Language", required = false) String locale, @RequestParam String jwt);
+    ResponseEntity<ApiResponseDataPojo<Boolean>> validate(
+            @RequestHeader(name = "Accept-Language", required = false) String locale, @RequestParam String jwt);
 
     @PostMapping("/authenticate")
-    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(@RequestHeader(name = "Accept-Language", required = false) String locale, @RequestBody @Valid LoginUserVO request);
+    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(
+            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            @RequestBody @Valid LoginUserVO request);
 
     @GetMapping("/profile")
-    ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(@RequestHeader(name = "Accept-Language", required = false) String locale);
+    ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(
+            @RequestHeader(name = "Accept-Language", required = false) String locale);
 
     @PostMapping("/logout")
-    ResponseEntity<ApiResponsePojo> logout(@RequestHeader(name = "Accept-Language", required = false) String locale, HttpServletRequest request);
+    ResponseEntity<ApiResponsePojo> logout(@RequestHeader(name = "Accept-Language", required = false) String locale,
+            HttpServletRequest request);
+
+    @PostMapping("/refresh-token")
+    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> refreshToken(
+            @RequestHeader(name = "Accept-Language", required = false) String locale,
+            HttpServletRequest request);
 }

@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @AllArgsConstructor
 @Service
@@ -72,7 +71,6 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     @Override
     public void deleteByToken(String lang, String token) {
         try {
-            Logger.getLogger(JwtTokenServiceImpl.class.getName()).info("Deleting token: {0}"+  token);
             this.jwtTokenRepository.deleteByToken(token);
         } catch (Exception e) {
             throw this.exceptionShortComponent.tokenNotFoundException("token.delete.not", lang);

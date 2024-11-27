@@ -19,4 +19,6 @@ public interface IJwtService {
     Date extractExpiration(String jwt);
 
     boolean isTokenExpired(String jwt);
+
+    String refreshToken(String oldToken, UserDetails userDetails);
 }

@@ -39,7 +39,8 @@ public class AuthenticationControllerImpl implements IAuthenticationController {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale, LoginUserVO request) {
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
+            LoginUserVO request) {
         var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
         var authenticationResponsePojo = this.authenticationService.login(locale, request);
         apiResponse.setData(authenticationResponsePojo);
@@ -69,5 +70,18 @@ public class AuthenticationControllerImpl implements IAuthenticationController {
         apiResponse.setHttpStatus(HttpStatus.OK);
 
         return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> refreshToken(
+            String locale, HttpServletRequest request) {
+        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
+        var refreshedToken = this.authenticationService.refreshToken(locale, request);
+
+        apiResponse.setData(refreshedToken);
+        apiResponse.setMessage(this.messageUtilComponent.getMessage("token.refreshed", locale));
+        apiResponse.setHttpStatus(HttpStatus.OK);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

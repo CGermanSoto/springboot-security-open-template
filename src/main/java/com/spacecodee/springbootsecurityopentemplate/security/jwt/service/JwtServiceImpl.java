@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,7 +54,7 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public String extractJwtFromRequest(HttpServletRequest request) {
+    public String extractJwtFromRequest(@NotNull HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
 
         // Check if the Authorization header is null or empty
@@ -83,6 +84,28 @@ public class JwtServiceImpl implements IJwtService {
             this.logger.log(Level.WARNING, "The token is already expired, this is a warning", e);
         }
         return false;
+    }
+
+    // JwtServiceImpl.java - Implement refresh method
+    @Override
+    public String refreshToken(String oldToken, UserDetails userDetails) {
+        try {
+            // Extract existing claims from old token
+            Claims claims = extractAllClaims(oldToken);
+            // Generate new token with existing claims
+            return Jwts.builder()
+                    .header()
+                    .type("JWT")
+                    .and()
+                    .claims(claims)
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis() + (this.expirationInMinutes * 60 * 1000)))
+                    .signWith(this.generateKey(), Jwts.SIG.HS256)
+                    .compact();
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error refreshing token", e);
+            return null;
+        }
     }
 
     // Extract all claims from the JWT
