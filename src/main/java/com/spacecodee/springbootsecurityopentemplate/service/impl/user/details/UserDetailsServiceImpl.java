@@ -23,6 +23,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     private final ExceptionShortComponent exceptionShortComponent;
     private final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class.getName());
 
+    @Transactional(readOnly = true, noRollbackFor = UsernameNotFoundException.class)
     @Override
     public UserDetailsDTO findByUsername(String username) {
         var user = this.userRepository.findByUsername(username);

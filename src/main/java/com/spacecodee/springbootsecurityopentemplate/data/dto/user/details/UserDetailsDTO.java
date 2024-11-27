@@ -43,25 +43,25 @@ public class UserDetailsDTO implements UserDetails {
         return authorities;
     }
 
-    public static UserDetailsDTO build(UserDetailsDTO user) {
-        return user;
-    }
-
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;

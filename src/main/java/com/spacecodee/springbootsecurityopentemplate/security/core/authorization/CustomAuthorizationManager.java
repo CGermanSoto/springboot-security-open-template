@@ -6,6 +6,8 @@ import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -36,7 +38,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
-                                       RequestAuthorizationContext object) {
+                                       @NotNull RequestAuthorizationContext object) {
 
         HttpServletRequest request = object.getRequest();
         var url = this.extractUrl(request);
@@ -77,7 +79,8 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
                 .anyMatch(CustomAuthorizationManager.getOperationDtoPredicate(url, httpMethod));
     }
 
-    private static Predicate<UserDetailsOperationDTO> getOperationDtoPredicate(String url, String httpMethod) {
+    @Contract(pure = true)
+    private static @NotNull Predicate<UserDetailsOperationDTO> getOperationDtoPredicate(String url, String httpMethod) {
         return operation -> {
             var basePath = operation.getModuleDTO().getBasePath();
             var pattern = Pattern.compile(basePath.concat(operation.getPath()));
@@ -86,7 +89,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         };
     }
 
-    private String extractUrl(HttpServletRequest request) {
+    private @NotNull String extractUrl(@NotNull HttpServletRequest request) {
         var contextPath = request.getContextPath();
         var url = request.getRequestURI();
         url = url.replaceFirst(contextPath, "");

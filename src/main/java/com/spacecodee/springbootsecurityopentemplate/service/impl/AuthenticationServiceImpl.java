@@ -48,9 +48,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             this.jwtTokenService.deleteByToken(locale, existingToken);
         }
 
-        // Continue with the normal login flow
-        this.validateValidToken(locale, userVO);
-
         var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
         Authentication authResult = this.authenticationManager.authenticate(authentication);
         UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
@@ -128,19 +125,5 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 "name", userDetailsDTO.getName(),
                 "role", userDetailsDTO.getUserDetailsRoleDTO().getName(),
                 "authorities", userDetailsDTO.getAuthorities());
-    }
-
-    private void validateValidToken(String locale, @NotNull LoginUserVO userVO) {
-        var existingToken = this.jwtTokenService.getTokenByUsername(userVO.getUsername());
-        if (StringUtils.hasText(existingToken)) {
-            var isTokenValid = this.jwtService.isTokenExpired(existingToken);
-
-            if (isTokenValid) {
-                this.logger.info("Token is still valid, returning the token");
-            } else {
-                this.logger.info("Token is expired, invalidating the token");
-                this.jwtTokenService.deleteByToken(locale, existingToken);
-            }
-        }
     }
 }

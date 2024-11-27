@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,7 +21,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private final ApiErrorPojo apiErrorPojo = new ApiErrorPojo();
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
+    public void handle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull AccessDeniedException accessDeniedException)
             throws IOException {
         this.apiErrorPojo.setBackendMessage(accessDeniedException.getLocalizedMessage());
         this.apiErrorPojo.setMessage("Access denied, you don't have permission to access this resource, please contact the administrator for more information");

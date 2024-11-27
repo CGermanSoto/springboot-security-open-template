@@ -37,7 +37,7 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     public String getTokenByUsername(String username) {
         return this.jwtTokenRepository.findByUserEntity_Username(username)
                 .map(JwtTokenEntity::getToken)
-                .orElseThrow(() -> this.exceptionShortComponent.tokenNotFoundException("token.found.not", "eng"));
+                .orElse("");
     }
 
     @Override
