@@ -4,6 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.TokenNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @AllArgsConstructor
@@ -82,12 +84,32 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Override
     public void logout(String locale, HttpServletRequest request) {
         var jwtToken = this.jwtService.extractJwtFromRequest(request);
-        var existsToken = this.jwtTokenService.existsByJwtTokenToken(locale, jwtToken);
-        if (!existsToken) {
-            this.logger.warning("Token not found in the database");
-        } else {
-            this.jwtTokenService.deleteByToken(locale, jwtToken);
-            logger.info("Token invalidated successfully");
+
+        if (!StringUtils.hasText(jwtToken)) {
+            this.logger.warning("No token found in request");
+            return;
+        }
+
+        try {
+            var existsToken = this.jwtTokenService.existsByJwtTokenToken(locale, jwtToken);
+
+            if (!existsToken) {
+                // Check if token has "Bearer " prefix
+                if (jwtToken.startsWith("Bearer ")) {
+                    var cleanToken = jwtToken.substring(7);
+                    existsToken = this.jwtTokenService.existsByJwtTokenToken(locale, cleanToken);
+                    if (existsToken) {
+                        this.jwtTokenService.deleteByToken(locale, cleanToken);
+                        this.logger.info("Token invalidated successfully after removing Bearer prefix");
+                    }
+                }
+            } else {
+                this.jwtTokenService.deleteByToken(locale, jwtToken);
+                this.logger.info("Token invalidated successfully");
+            }
+        } catch (TokenNotFoundException e) {
+            this.logger.log(Level.SEVERE, "Error during logout: {0}", e.getMessage());
+            throw this.exceptionShortComponent.tokenNotFoundException("token.not.found", locale);
         }
     }
 

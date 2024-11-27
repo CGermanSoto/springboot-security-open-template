@@ -9,6 +9,8 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapp
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwtTokenRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -69,9 +71,13 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     }
 
     @Override
+    @Transactional
     public void deleteByToken(String locale, String token) {
         try {
-            this.jwtTokenRepository.deleteByToken(token);
+            var jwtToken = this.jwtTokenRepository.findByToken(token)
+                    .orElseThrow(() -> this.exceptionShortComponent.tokenNotFoundException("token.not.found", locale));
+
+            this.jwtTokenRepository.delete(jwtToken);
         } catch (Exception e) {
             throw this.exceptionShortComponent.tokenNotFoundException("token.not.delete", locale);
         }
