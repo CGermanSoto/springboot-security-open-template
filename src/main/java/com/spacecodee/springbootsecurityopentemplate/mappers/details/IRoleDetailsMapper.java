@@ -10,8 +10,9 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
-        IAuthPermissionMapper.class})
+        IAuthPermissionMapper.class })
 public interface IRoleDetailsMapper {
+    // Authentication specific mappings
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")

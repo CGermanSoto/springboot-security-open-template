@@ -8,6 +8,7 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface IRoleMapper {
+    // Basic CRUD mappings
 
     @Mapping(target = "permissionEntities", ignore = true)
     RoleEntity toEntity(RoleDTO roleDTO);

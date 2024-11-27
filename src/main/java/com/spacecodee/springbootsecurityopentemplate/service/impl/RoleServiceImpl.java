@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service
 public class RoleServiceImpl implements IRoleService {
@@ -26,8 +24,6 @@ public class RoleServiceImpl implements IRoleService {
     @Value("${security.default.roles}")
     private String adminRole;
     private final ExceptionShortComponent exceptionShortComponent;
-
-    private final Logger logger = Logger.getLogger(RoleServiceImpl.class.getName());
 
     public RoleServiceImpl(IRoleRepository roleRepository, IRoleDetailsMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
         this.roleRepository = roleRepository;
@@ -46,7 +42,6 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public Integer findAdminRoleId() {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
-        this.logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .map(RoleEntity::getId)
                 .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
@@ -55,7 +50,6 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public RoleEntity findAdminRole() {
         var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
-        this.logger.log(Level.SEVERE, "adminRoleEnum: {0}", adminRoleEnum);
         return this.roleRepository.findAdminRole(adminRoleEnum)
                 .orElseThrow(() -> this.exceptionShortComponent.roleNotFoundException("role.exists.not", "en"));
     }
