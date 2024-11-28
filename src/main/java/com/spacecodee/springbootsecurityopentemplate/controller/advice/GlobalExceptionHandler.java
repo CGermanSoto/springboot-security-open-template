@@ -2,7 +2,12 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.advice;
 
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.*;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.CannotSaveException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoDeletedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoUpdatedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.RoleNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

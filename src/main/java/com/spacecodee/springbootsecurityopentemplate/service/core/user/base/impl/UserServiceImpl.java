@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.base.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.CannotSaveException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;

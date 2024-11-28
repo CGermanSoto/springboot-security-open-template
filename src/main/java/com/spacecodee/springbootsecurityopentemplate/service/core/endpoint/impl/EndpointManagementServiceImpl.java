@@ -7,7 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.PermissionDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.module.ModuleVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.operation.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.permission.PermissionVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IModuleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IPermissionDetailsMapper;

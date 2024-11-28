@@ -4,7 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwtTokenRepository;

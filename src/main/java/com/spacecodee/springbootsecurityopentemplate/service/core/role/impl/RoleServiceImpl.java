@@ -2,7 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.core.role.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IRoleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
