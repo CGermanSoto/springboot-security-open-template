@@ -7,9 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOper
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -18,7 +16,6 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -33,35 +30,36 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private final Logger logger = Logger.getLogger(CustomAuthorizationManager.class.getName());
 
     @Override
-    public void verify(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
-        AuthorizationManager.super.verify(authentication, object);
-    }
-
-    @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
-            @NotNull RequestAuthorizationContext object) {
+                                       @NotNull RequestAuthorizationContext object) {
 
         HttpServletRequest request = object.getRequest();
         var url = this.extractUrl(request);
         var httpMethod = request.getMethod();
 
-        var isPublic = this.isPublic(url, httpMethod);
-        if (isPublic) {
+        // First check if endpoint is public
+        if (isPublic(url, httpMethod)) {
             return new AuthorizationDecision(true);
         }
 
-        var isGranted = this.isGranted(authentication.get(), url, httpMethod);
-        return new AuthorizationDecision(isGranted);
+        // If not public, verify user has required permissions
+        var auth = authentication.get();
+        if (auth == null || !auth.isAuthenticated()) {
+            return new AuthorizationDecision(false);
+        }
+
+        return new AuthorizationDecision(isGranted(auth, url, httpMethod));
     }
 
     private boolean isGranted(Authentication authentication, String url, String httpMethod) {
         if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
-            throw new AuthenticationCredentialsNotFoundException("Authentication credentials weren't found.");
+            logger.warning("Invalid authentication type");
+            return false;
         }
 
-        List<UserDetailsOperationDTO> operations = this.obtainOperations(authentication);
+        var operations = obtainOperations(authentication);
         return operations.stream()
-                .anyMatch(CustomAuthorizationManager.getOperationDtoPredicate(url, httpMethod));
+                .anyMatch(operation -> matches(operation, url, httpMethod));
     }
 
     private List<UserDetailsOperationDTO> obtainOperations(Authentication authentication) {
@@ -75,20 +73,15 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     }
 
     private boolean isPublic(String url, String httpMethod) {
-        var publicAccessEndpoints = this.operationService.findByPublicAccess();
-        return publicAccessEndpoints
-                .stream()
-                .anyMatch(CustomAuthorizationManager.getOperationDtoPredicate(url, httpMethod));
+        var publicOperations = operationService.findByPublicAccess();
+        return publicOperations.stream()
+                .anyMatch(operation -> matches(operation, url, httpMethod));
     }
 
-    @Contract(pure = true)
-    private static @NotNull Predicate<UserDetailsOperationDTO> getOperationDtoPredicate(String url, String httpMethod) {
-        return operation -> {
-            var basePath = operation.getModuleDTO().getBasePath();
-            var pattern = Pattern.compile(basePath.concat(operation.getPath()));
-            var matcher = pattern.matcher(url);
-            return matcher.matches() && operation.getHttpMethod().equals(httpMethod);
-        };
+    private boolean matches(UserDetailsOperationDTO operation, String url, String httpMethod) {
+        var pattern = Pattern.compile(operation.getModuleDTO().getBasePath() + operation.getPath());
+        return pattern.matcher(url).matches() &&
+                operation.getHttpMethod().equalsIgnoreCase(httpMethod);
     }
 
     private @NotNull String extractUrl(@NotNull HttpServletRequest request) {

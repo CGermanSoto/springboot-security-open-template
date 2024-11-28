@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.config;
 
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.JwtAuthenticationFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
+import com.spacecodee.springbootsecurityopentemplate.security.authorization.manager.CustomAuthorizationManager;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAccessDeniedHandler;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAuthenticationEntryPoint;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAuthenticationSuccessHandler;
@@ -28,6 +29,7 @@ public class HttpSecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private final LocaleResolverFilter localeResolverFilter;
+    private final CustomAuthorizationManager authorizationManager;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,10 +37,7 @@ public class HttpSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/**").permitAll();
-                    auth.anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(auth -> auth.anyRequest().access(authorizationManager))
                 .addFilterBefore(localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
