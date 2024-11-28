@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements IUserService {
     private static final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
 
     @Override
-    public void addUser(AdminVO adminVO, String lang) {
+    public void addUser(AdminAVO adminAVO, String lang) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

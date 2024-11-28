@@ -1,6 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.security.jwt;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.TokenNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
@@ -20,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @AllArgsConstructor
@@ -63,8 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             authenticationToken.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (Exception e) {
-            this.jwtAuthFilterLogger.warning("JWT validation failed: " + e.getMessage());
+        } catch (TokenNotFoundException e) {
+            this.jwtAuthFilterLogger.log(Level.WARNING, "JWT validation failed: {0}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

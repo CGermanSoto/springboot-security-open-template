@@ -14,6 +14,8 @@ public enum RoleEnum {
 
     DEVELOPER(Arrays.asList(
             RolePermissionEnum.REGISTER_ONE_ADMIN,
+            RolePermissionEnum.UPDATE_ONE_ADMIN,
+            RolePermissionEnum.DELETE_ONE_ADMIN,
 
             RolePermissionEnum.SHOW_PROFILE,
             RolePermissionEnum.VALIDATE_TOKEN,
@@ -30,6 +32,8 @@ public enum RoleEnum {
 
     OTI_ADMIN(Arrays.asList(
             RolePermissionEnum.REGISTER_ONE_ADMIN,
+            RolePermissionEnum.UPDATE_ONE_ADMIN,
+            RolePermissionEnum.DELETE_ONE_ADMIN,
 
             RolePermissionEnum.SHOW_PROFILE,
             RolePermissionEnum.VALIDATE_TOKEN,

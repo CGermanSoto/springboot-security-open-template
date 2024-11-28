@@ -1,11 +1,12 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.impl.user;
 
 import com.spacecodee.springbootsecurityopentemplate.controller.user.IUserAdminController;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,9 @@ public class UserAdminControllerImpl implements IUserAdminController {
     private final MessageUtilComponent messageUtilComponent;
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(AdminVO adminVO, String locale) {
-        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
-        this.userAdminService.add(adminVO, locale);
+    public ResponseEntity<ApiResponsePojo> add(AdminAVO adminAVO, String locale) {
+        var apiResponse = new ApiResponsePojo();
+        this.userAdminService.add(adminAVO, locale);
 
         apiResponse.setMessage(this.messageUtilComponent.getMessage("admin.added.success", locale));
         apiResponse.setHttpStatus(HttpStatus.CREATED);
@@ -32,10 +33,10 @@ public class UserAdminControllerImpl implements IUserAdminController {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> update(String locale, int id,
-            AdminVO adminVO) {
-        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
-        this.userAdminService.update(id, adminVO, locale);
+    public ResponseEntity<ApiResponsePojo> update(String locale, int id,
+                                                  @Valid AdminUVO adminAVO) {
+        var apiResponse = new ApiResponsePojo();
+        this.userAdminService.update(id, adminAVO, locale);
 
         apiResponse.setMessage(this.messageUtilComponent.getMessage("admin.updated.success", locale));
         apiResponse.setHttpStatus(HttpStatus.OK);
@@ -44,8 +45,8 @@ public class UserAdminControllerImpl implements IUserAdminController {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(String locale, int id) {
-        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
+    public ResponseEntity<ApiResponsePojo> delete(String locale, int id) {
+        var apiResponse = new ApiResponsePojo();
         this.userAdminService.delete(id, locale);
 
         apiResponse.setMessage(this.messageUtilComponent.getMessage("admin.deleted.success", locale));

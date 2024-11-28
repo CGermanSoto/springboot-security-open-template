@@ -1,6 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.NoDeletedException;
@@ -47,16 +48,16 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     @Override
     @Transactional
-    public void add(AdminVO adminVO, String locale) {
-        if (adminVO == null) {
+    public void add(AdminAVO adminAVO, String locale) {
+        if (adminAVO == null) {
             throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
         }
 
-        AppUtils.validatePassword(adminVO.getPassword(), adminVO.getRepeatPassword(), locale);
-        this.alreadyExistByUsername(adminVO.getUsername(), locale);
+        AppUtils.validatePassword(adminAVO.getPassword(), adminAVO.getRepeatPassword(), locale);
+        this.alreadyExistByUsername(adminAVO.getUsername(), locale);
 
         var adminRoleEntity = this.roleService.findAdminRole(locale);
-        var userEntity = this.userDTOMapper.toEntity(adminVO);
+        var userEntity = this.userDTOMapper.toEntity(adminAVO);
 
         userEntity.setPassword(this.passwordEncoder.encode(userEntity.getPassword()));
         userEntity.setRoleEntity(adminRoleEntity);
@@ -71,7 +72,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     @Override
     @Transactional
-    public void update(int id, AdminVO adminVO, String locale) {
+    public void update(int id, AdminUVO adminAVO, String locale) {
         // Validate positive ID
         if (id <= 0) {
             throw this.exceptionShortComponent.invalidParameterException("admin.invalid.id", locale);
@@ -82,12 +83,12 @@ public class UserAdminServiceImpl implements IUserAdminService {
                 .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException("admin.not.exists.by.id", locale));
 
         // If the username is changing, validate it's not taken
-        if (!existingAdmin.getUsername().equals(adminVO.getUsername())) {
-            this.alreadyExistByUsername(adminVO.getUsername(), locale);
+        if (!existingAdmin.getUsername().equals(adminAVO.getUsername())) {
+            this.alreadyExistByUsername(adminAVO.getUsername(), locale);
         }
 
         // Check if any changes are needed and Only save if there are changes
-        if (this.checkAndUpdateAdminFields(adminVO, existingAdmin)) {
+        if (this.checkAndUpdateAdminFields(adminAVO, existingAdmin)) {
             try {
                 this.userRepository.save(existingAdmin);
             } catch (NoUpdatedException e) {
@@ -99,21 +100,21 @@ public class UserAdminServiceImpl implements IUserAdminService {
         }
     }
 
-    private boolean checkAndUpdateAdminFields(@NotNull AdminVO adminVO, @NotNull UserEntity existingAdmin) {
+    private boolean checkAndUpdateAdminFields(@NotNull AdminUVO adminAVO, @NotNull UserEntity existingAdmin) {
         var hasChanges = false;
 
-        if (!existingAdmin.getUsername().equals(adminVO.getUsername())) {
-            existingAdmin.setUsername(adminVO.getUsername());
+        if (!existingAdmin.getUsername().equals(adminAVO.getUsername())) {
+            existingAdmin.setUsername(adminAVO.getUsername());
             hasChanges = true;
         }
 
-        if (!existingAdmin.getFullname().equals(adminVO.getFullname())) {
-            existingAdmin.setFullname(adminVO.getFullname());
+        if (!existingAdmin.getFullname().equals(adminAVO.getFullname())) {
+            existingAdmin.setFullname(adminAVO.getFullname());
             hasChanges = true;
         }
 
-        if (!existingAdmin.getLastname().equals(adminVO.getLastname())) {
-            existingAdmin.setLastname(adminVO.getLastname());
+        if (!existingAdmin.getLastname().equals(adminAVO.getLastname())) {
+            existingAdmin.setLastname(adminAVO.getLastname());
             hasChanges = true;
         }
         return hasChanges;
