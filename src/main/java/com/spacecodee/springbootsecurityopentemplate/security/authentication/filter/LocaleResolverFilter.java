@@ -1,5 +1,5 @@
 // LocaleResolverFilter.java
-package com.spacecodee.springbootsecurityopentemplate.security.filter;
+package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

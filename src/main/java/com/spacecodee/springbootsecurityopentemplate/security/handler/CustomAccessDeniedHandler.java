@@ -1,35 +1,36 @@
-package com.spacecodee.springbootsecurityopentemplate.security.core.handler;
+package com.spacecodee.springbootsecurityopentemplate.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Component
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ApiErrorPojo apiErrorPojo = new ApiErrorPojo();
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+    public void handle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull AccessDeniedException accessDeniedException)
             throws IOException {
-        this.apiErrorPojo.setBackendMessage(authException.getLocalizedMessage());
-        this.apiErrorPojo.setMessage("There are no credentials for this authentication, please log in to access this resource.");
+        this.apiErrorPojo.setBackendMessage(accessDeniedException.getLocalizedMessage());
+        this.apiErrorPojo.setMessage("Access denied, you don't have permission to access this resource, please contact the administrator for more information");
         this.apiErrorPojo.setTimestamp(LocalDateTime.now());
         this.apiErrorPojo.setPath(request.getRequestURI());
         this.apiErrorPojo.setMethod(request.getMethod());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
 
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());

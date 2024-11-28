@@ -1,7 +1,7 @@
-package com.spacecodee.springbootsecurityopentemplate.security.core;
+package com.spacecodee.springbootsecurityopentemplate.security.config;
 
-import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
-import com.spacecodee.springbootsecurityopentemplate.security.jwt.JwtAuthenticationFilter;
+import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
+import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.JwtAuthenticationFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

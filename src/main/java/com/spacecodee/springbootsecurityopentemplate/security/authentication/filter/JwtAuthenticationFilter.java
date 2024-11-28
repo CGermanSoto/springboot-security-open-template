@@ -1,8 +1,7 @@
-package com.spacecodee.springbootsecurityopentemplate.security.jwt;
+package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.TokenNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
