@@ -10,9 +10,8 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserTechnicianService;
-import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
+import com.spacecodee.springbootsecurityopentemplate.validations.service.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
-import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,8 +42,8 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     private static final String TECHNICIAN_PREFIX = "technician";
 
     public UserTechnicianServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-            IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
-            ITechnicianMapper technicianMapper, IUserValidationService userValidationService) {
+                                     IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
+                                     ITechnicianMapper technicianMapper, IUserValidationService userValidationService) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
@@ -82,7 +81,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     public void update(int id, TechnicianUVO technicianUVO, String locale) {
         var existingTechnician = this.userValidationService.validateUserUpdate(id, technicianUVO.getUsername(),
                 TECHNICIAN_PREFIX, locale);
-        boolean hasChanges = UserUpdateUtils.checkForChanges(technicianUVO, existingTechnician);
+        boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(technicianUVO, existingTechnician);
 
         if (hasChanges) {
             try {

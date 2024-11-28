@@ -8,9 +8,8 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
-import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
+import com.spacecodee.springbootsecurityopentemplate.validations.service.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
-import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +35,9 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Value("${security.default.roles}")
     private String adminRole;
 
-    public UserAdminServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService, IUserMapper userDTOMapper, IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
+    public UserAdminServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository,
+                                IRoleService roleService, IJwtTokenService jwtTokenService, IUserMapper userDTOMapper,
+                                IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -77,7 +78,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     public void update(int id, @NotNull AdminUVO adminVO, String locale) {
         var existingAdmin = this.userValidationService.validateUserUpdate(id, adminVO.getUsername(), ADMIN_PREFIX,
                 locale);
-        boolean hasChanges = UserUpdateUtils.checkForChanges(adminVO, existingAdmin);
+        boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(adminVO, existingAdmin);
 
         if (hasChanges) {
             try {

@@ -10,9 +10,8 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserDeveloperService;
-import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
+import com.spacecodee.springbootsecurityopentemplate.validations.service.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
-import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +38,9 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Value("${security.default.developer.role}")
     private String developerRole;
 
-    public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService, IDeveloperMapper developerMapper, IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
+    public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository,
+                                    IRoleService roleService, IJwtTokenService jwtTokenService, IDeveloperMapper developerMapper,
+                                    IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -76,7 +77,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     public void update(int id, @NotNull DeveloperUVO developerUVO, String locale) {
         var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(),
                 DEVELOPER_PREFIX, locale);
-        boolean hasChanges = UserUpdateUtils.checkForChanges(developerUVO, existingDeveloper);
+        boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(developerUVO, existingDeveloper);
 
         if (hasChanges) {
             try {
