@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.controller;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.auth;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;

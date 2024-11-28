@@ -1,5 +1,5 @@
 // IUserDeveloperController.java
-package com.spacecodee.springbootsecurityopentemplate.controller.user;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.user.developer;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;

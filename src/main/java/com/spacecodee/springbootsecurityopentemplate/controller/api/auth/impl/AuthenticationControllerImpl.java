@@ -1,51 +1,46 @@
-package com.spacecodee.springbootsecurityopentemplate.controller.impl;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.auth.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.controller.IAuthenticationController;
+import com.spacecodee.springbootsecurityopentemplate.controller.api.auth.IAuthenticationController;
+import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
-public class AuthenticationControllerImpl implements IAuthenticationController {
-
+public class AuthenticationControllerImpl extends AbstractController implements IAuthenticationController {
     private final IJwtService jwtService;
     private final IAuthenticationService authenticationService;
-    private final MessageUtilComponent messageUtilComponent;
+
+    public AuthenticationControllerImpl(MessageUtilComponent messageUtilComponent,
+                                        IJwtService jwtService,
+                                        IAuthenticationService authenticationService) {
+        super(messageUtilComponent);
+        this.jwtService = jwtService;
+        this.authenticationService = authenticationService;
+    }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<Boolean>> validate(String locale, HttpServletRequest request) {
-        var apiResponse = new ApiResponseDataPojo<Boolean>();
-
-        // Extract token from Authorization header
         var jwt = this.jwtService.extractJwtFromRequest(request);
         if (jwt == null) {
-            apiResponse.setData(false);
-            apiResponse.setMessage(this.messageUtilComponent.getMessage("token.missing", locale));
-            apiResponse.setHttpStatus(HttpStatus.BAD_REQUEST);
-            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest()
+                    .body(super.createDataResponse(false, "token.missing", locale, HttpStatus.BAD_REQUEST));
         }
 
         boolean isTokenValid = this.authenticationService.validateToken(locale, jwt);
-
-        apiResponse.setData(isTokenValid);
-        apiResponse.setHttpStatus(HttpStatus.OK);
-        apiResponse.setMessage(isTokenValid ? this.messageUtilComponent.getMessage("token.valid", locale)
-                : this.messageUtilComponent.getMessage("token.inValid", locale));
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
+        return ResponseEntity.ok(super.createDataResponse(isTokenValid,
+                isTokenValid ? "token.valid" : "token.inValid", locale, HttpStatus.OK));
     }
 
     @Override

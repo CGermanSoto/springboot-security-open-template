@@ -1,5 +1,5 @@
 // IEndpointManagementController.java
-package com.spacecodee.springbootsecurityopentemplate.controller;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.ModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationDTO;

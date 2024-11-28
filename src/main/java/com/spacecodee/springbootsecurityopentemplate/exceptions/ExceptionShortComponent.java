@@ -11,6 +11,10 @@ public class ExceptionShortComponent {
 
     private final MessageUtilComponent messageUtilComponent;
 
+    public UserNotFoundException userNotFoundException(String message, String locale) {
+        return new UserNotFoundException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
     public TokenNotFoundException tokenNotFoundException(String message, String locale) {
         return new TokenNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }

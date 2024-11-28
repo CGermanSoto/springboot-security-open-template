@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.controller.impl.user;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.user.technician.impl;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spacecodee.springbootsecurityopentemplate.controller.user.IUserTechnicianController;
+import com.spacecodee.springbootsecurityopentemplate.controller.api.user.technician.IUserTechnicianController;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
@@ -18,7 +18,6 @@ import com.spacecodee.springbootsecurityopentemplate.service.core.user.technicia
 
 import lombok.AllArgsConstructor;
 
-// UserTechnicianControllerImpl.java
 @RestController
 @RequestMapping("/user-technician")
 @AllArgsConstructor

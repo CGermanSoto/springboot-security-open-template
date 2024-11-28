@@ -1,6 +1,6 @@
-package com.spacecodee.springbootsecurityopentemplate.controller.impl.user;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.user.admin.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.controller.user.IUserAdminController;
+import com.spacecodee.springbootsecurityopentemplate.controller.api.user.admin.IUserAdminController;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;

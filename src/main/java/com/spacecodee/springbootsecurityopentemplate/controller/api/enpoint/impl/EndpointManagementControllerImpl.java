@@ -1,6 +1,6 @@
-package com.spacecodee.springbootsecurityopentemplate.controller.impl;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.controller.IEndpointManagementController;
+import com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint.IEndpointManagementController;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.ModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.PermissionDTO;

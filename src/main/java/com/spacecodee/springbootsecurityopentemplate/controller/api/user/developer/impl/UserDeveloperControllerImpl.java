@@ -1,7 +1,7 @@
 // UserDeveloperControllerImpl.java
-package com.spacecodee.springbootsecurityopentemplate.controller.impl.user;
+package com.spacecodee.springbootsecurityopentemplate.controller.api.user.developer.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.controller.user.IUserDeveloperController;
+import com.spacecodee.springbootsecurityopentemplate.controller.api.user.developer.IUserDeveloperController;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
