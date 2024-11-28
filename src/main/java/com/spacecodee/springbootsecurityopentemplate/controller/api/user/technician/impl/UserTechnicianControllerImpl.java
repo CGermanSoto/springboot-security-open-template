@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user-technician")
+@RequestMapping("/user-technician")
 public class UserTechnicianControllerImpl extends AbstractController implements IUserTechnicianController {
     private final IUserTechnicianService userTechnicianService;
 

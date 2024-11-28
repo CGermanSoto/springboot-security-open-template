@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/user-admin")
+@RequestMapping("/user-admin")
 public class UserAdminControllerImpl extends AbstractController implements IUserAdminController {
     private final IUserAdminService userAdminService;
 

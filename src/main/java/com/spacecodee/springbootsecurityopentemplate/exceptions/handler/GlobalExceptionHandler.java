@@ -4,7 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BusinessException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
@@ -18,6 +18,8 @@ import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilCompone
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,16 +35,16 @@ import java.util.List;
 public class GlobalExceptionHandler {
     private final MessageUtilComponent messageUtilComponent;
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiErrorPojo> handleBusinessException(BusinessException ex, HttpServletRequest request) {
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ApiErrorPojo> handleBusinessException(BaseException ex, HttpServletRequest request) {
         var errorResponse = createErrorResponse(ex, request);
         return ResponseEntity.status(determineHttpStatus(ex)).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorDataPojo<List<String>>> handleValidationException(
-            MethodArgumentNotValidException ex,
-            HttpServletRequest request) {
+            @NotNull MethodArgumentNotValidException ex,
+            @NotNull HttpServletRequest request) {
         var errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -67,7 +69,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    private ApiErrorPojo createErrorResponse(BusinessException ex, HttpServletRequest request) {
+    private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex, @NotNull HttpServletRequest request) {
         var errorResponse = new ApiErrorPojo();
         errorResponse.setMessage(messageUtilComponent.getMessage(ex.getMessageKey(), ex.getLocale()));
         errorResponse.setTimestamp(LocalDateTime.now());
@@ -76,7 +78,7 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
-    private ApiErrorPojo createGenericErrorResponse(Exception ex, HttpServletRequest request) {
+    private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex, @NotNull HttpServletRequest request) {
         var errorResponse = new ApiErrorPojo();
         errorResponse.setBackendMessage(ex.getLocalizedMessage());
         errorResponse.setMessage(messageUtilComponent.getMessage("error.unexpected", "en"));
@@ -86,7 +88,8 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
-    private HttpStatus determineHttpStatus(BusinessException ex) {
+    @Contract(pure = true)
+    private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
         return switch (ex) {
             case InvalidCredentialsException ignored -> HttpStatus.UNAUTHORIZED;
             case UnauthorizedException _ -> HttpStatus.FORBIDDEN;

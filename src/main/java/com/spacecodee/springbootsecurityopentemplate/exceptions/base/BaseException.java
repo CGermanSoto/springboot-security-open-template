@@ -11,5 +11,4 @@ public abstract class BaseException extends RuntimeException {
         this.messageKey = messageKey;
         this.locale = locale;
     }
-
 }

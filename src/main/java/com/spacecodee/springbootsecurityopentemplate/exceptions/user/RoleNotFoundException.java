@@ -1,9 +1,8 @@
-// src/main/java/com/spacecodee/springbootsecurityopentemplate/exceptions/user/RoleNotFoundException.java
 package com.spacecodee.springbootsecurityopentemplate.exceptions.user;
 
-import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BusinessException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 
-public class RoleNotFoundException extends BusinessException {
+public class RoleNotFoundException extends BaseException {
     public RoleNotFoundException(String messageKey, String locale) {
         super(messageKey, locale);
     }

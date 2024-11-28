@@ -9,5 +9,4 @@ public class SpringbootSecurityOpenTemplateApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringbootSecurityOpenTemplateApplication.class, args);
     }
-
 }
