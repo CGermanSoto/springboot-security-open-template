@@ -1,5 +1,5 @@
 // IUserValidationService.java
-package com.spacecodee.springbootsecurityopentemplate.validations.service;
+package com.spacecodee.springbootsecurityopentemplate.service.validation;
 
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 

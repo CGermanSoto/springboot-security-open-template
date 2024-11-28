@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
@@ -6,9 +6,9 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.TokenNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
-import com.spacecodee.springbootsecurityopentemplate.security.jwt.service.IJwtService;
-import com.spacecodee.springbootsecurityopentemplate.service.IAuthenticationService;
-import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
+import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.user;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperAVO;

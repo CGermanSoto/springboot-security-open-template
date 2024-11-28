@@ -1,5 +1,6 @@
-package com.spacecodee.springbootsecurityopentemplate.security.jwt.service;
+package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.validations.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.validation.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
@@ -7,7 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.validations.service.IUserValidationService;
+import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;

@@ -10,7 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.module.ModuleVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.operation.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.permission.PermissionVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.IEndpointManagementService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IEndpointManagementService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

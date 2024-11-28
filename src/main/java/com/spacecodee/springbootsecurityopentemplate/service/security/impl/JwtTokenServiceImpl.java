@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
@@ -8,7 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortCo
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwtTokenRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

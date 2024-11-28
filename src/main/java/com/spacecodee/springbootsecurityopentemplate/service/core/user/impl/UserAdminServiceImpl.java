@@ -1,14 +1,14 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
-import com.spacecodee.springbootsecurityopentemplate.validations.service.IUserValidationService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.IUserAdminService;
+import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;

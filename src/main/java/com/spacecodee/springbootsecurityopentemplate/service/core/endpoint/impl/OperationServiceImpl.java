@@ -1,9 +1,9 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

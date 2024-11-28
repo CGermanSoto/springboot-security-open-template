@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service;
+package com.spacecodee.springbootsecurityopentemplate.service.core.endpoint;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
 

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service;
+package com.spacecodee.springbootsecurityopentemplate.service.security;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;

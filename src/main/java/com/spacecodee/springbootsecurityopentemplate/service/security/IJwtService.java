@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.security.jwt.service;
+package com.spacecodee.springbootsecurityopentemplate.service.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.lang.NonNull;

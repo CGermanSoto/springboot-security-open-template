@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service;
+package com.spacecodee.springbootsecurityopentemplate.service.auth;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;

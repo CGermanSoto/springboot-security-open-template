@@ -3,7 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.core.authorizatio
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsPermissionDTO;
 import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
-import com.spacecodee.springbootsecurityopentemplate.service.IOperationService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;

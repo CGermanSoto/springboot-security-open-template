@@ -1,5 +1,5 @@
 // EndpointManagementServiceImpl.java
-package com.spacecodee.springbootsecurityopentemplate.service.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.ModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationDTO;
@@ -16,7 +16,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IMod
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IPermissionRepository;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.IEndpointManagementService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IEndpointManagementService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
