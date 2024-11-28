@@ -40,8 +40,8 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     private static final String DEVELOPER_NOT_EXISTS_BY_ID = "developer.not.exists.by.id";
 
     public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-            IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
-            IDeveloperMapper developerMapper) {
+                                    IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
+                                    IDeveloperMapper developerMapper) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
@@ -112,7 +112,15 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
                 .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
                         locale));
 
+        // Check if it's the last developer
+        var developersCount = this.userRepository.countByRoleEntity_Name((RoleEnum.valueOf(this.developerRole)));
+        if (developersCount <= 1) {
+            throw this.exceptionShortComponent.noDeletedException("developer.deleted.failed.last", locale);
+        }
+
         try {
+            // Delete associated tokens first
+            this.jwtTokenService.deleteByUserId(locale, id);
             this.userRepository.delete(developer);
         } catch (Exception e) {
             this.logger.log(Level.SEVERE, "Error deleting developer", e);

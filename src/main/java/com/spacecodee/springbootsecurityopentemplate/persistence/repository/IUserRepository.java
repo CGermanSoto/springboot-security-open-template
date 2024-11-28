@@ -18,4 +18,6 @@ public interface IUserRepository extends JpaRepository<UserEntity, Integer> {
     boolean existsByUsername(String username);
 
     List<UserEntity> findByRoleEntity_Name(RoleEnum name);
+
+    long countByRoleEntity_Name(RoleEnum roleEntityName);
 }

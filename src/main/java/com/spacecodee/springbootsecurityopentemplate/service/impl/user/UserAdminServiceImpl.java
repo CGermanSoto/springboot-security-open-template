@@ -4,7 +4,6 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.NoDeletedException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
@@ -38,8 +37,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final Logger logger = Logger.getLogger(UserAdminServiceImpl.class.getName());
 
     public UserAdminServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-            IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
-            IUserMapper userDTOMapper) {
+                                IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
+                                IUserMapper userDTOMapper) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
@@ -103,14 +102,29 @@ public class UserAdminServiceImpl implements IUserAdminService {
     }
 
     @Override
+    @Transactional
     public void delete(int id, String locale) {
-        this.doNotExistsById(id, locale);
-        this.howManyAdmins(locale);
+        if (id <= 0) {
+            throw this.exceptionShortComponent.invalidParameterException("admin.invalid.id", locale);
+        }
+
+        var admin = this.userRepository.findById(id)
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException("admin.not.exists.by.id", locale));
+
+        // Check if it's the last admin
+        var adminCount = this.userRepository.countByRoleEntity_Name(AppUtils.getRoleEnum(this.adminRole));
+        if (adminCount <= 1) {
+            this.logger.log(Level.WARNING, "Attempted to delete last admin with ID: {0}", id);
+            throw this.exceptionShortComponent.lastAdminException("admin.deleted.failed.last", locale);
+        }
 
         try {
-            this.userRepository.deleteById(id);
-        } catch (NoDeletedException e) {
-            this.logger.log(Level.SEVERE, "UserServiceImpl.delete: error", e);
+            // Delete associated tokens first
+            this.jwtTokenService.deleteByUserId(locale, id);
+            this.userRepository.delete(admin);
+            this.logger.log(Level.INFO, "Successfully deleted admin with ID: {0}", id);
+        } catch (Exception e) {
+            this.logger.log(Level.SEVERE, "Error deleting admin with ID: {0}", id);
             throw this.exceptionShortComponent.noDeletedException("admin.deleted.failed", locale);
         }
     }
@@ -119,34 +133,6 @@ public class UserAdminServiceImpl implements IUserAdminService {
         var alreadyExists = this.userRepository.existsByUsername(username);
         if (alreadyExists) {
             throw this.exceptionShortComponent.alreadyExistsException("admin.exists.by.username", locale);
-        }
-    }
-
-    private void doNotExistsById(int id, String locale) {
-        var doNotExistsById = this.userRepository.existsById(id);
-        if (!doNotExistsById) {
-            this.logger.log(Level.SEVERE, "UserServiceImpl.doNotExistsById: {0}", false);
-            throw this.exceptionShortComponent.doNotExistsByIdException("admin.not.exists.by.id", locale);
-        }
-    }
-
-    /**
-     * Checks the number of admin users in the system and throws an exception if
-     * there is only one admin left.
-     *
-     * @param locale the locale to use for exception messages
-     */
-    private void howManyAdmins(String locale) {
-        // Convert the admin role from String to the appropriate enum type
-        var adminRoleEnum = AppUtils.getRoleEnum(adminRole);
-
-        // Count the number of admin users with the specified role
-        var howManyAdmins = this.userRepository.countAdmins(adminRoleEnum);
-
-        // If there is only one admin left, log the count and throw an exception
-        if (howManyAdmins == 1) {
-            this.logger.log(Level.SEVERE, "UserServiceImpl.howManyAdmins: {0}", howManyAdmins);
-            throw this.exceptionShortComponent.lastAdminException("admin.deleted.failed.last", locale);
         }
     }
 }
