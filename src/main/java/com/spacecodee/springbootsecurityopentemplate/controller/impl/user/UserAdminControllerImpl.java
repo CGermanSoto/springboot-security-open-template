@@ -32,8 +32,15 @@ public class UserAdminControllerImpl implements IUserAdminController {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> update(String locale) {
-        return null;
+    public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> update(String locale, int id,
+            AdminVO adminVO) {
+        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
+        this.userAdminService.update(id, adminVO, locale);
+
+        apiResponse.setMessage(this.messageUtilComponent.getMessage("admin.updated.success", locale));
+        apiResponse.setHttpStatus(HttpStatus.OK);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
     }
 
     @Override

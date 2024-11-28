@@ -78,4 +78,12 @@ public class ExceptionShortComponent {
     public PermissionNotFoundException permissionNotFoundException(String message, String locale) {
         return new PermissionNotFoundException(this.messageUtilComponent.getMessage(message, locale));
     }
+
+    public InvalidParameterException invalidParameterException(String message, String locale) {
+        return new InvalidParameterException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public NoUpdatedException noUpdatedException(String message, String locale) {
+        return new NoUpdatedException(this.messageUtilComponent.getMessage(message, locale));
+    }
 }

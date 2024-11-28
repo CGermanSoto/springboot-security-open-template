@@ -17,6 +17,7 @@ public class AdminVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private int id;
     @NotBlank
     @NotEmpty
     @Size(min = 3)
