@@ -15,4 +15,6 @@ public interface IRoleService {
     Optional<RoleEnum> getRoleEnum(String roleName, String lang);
 
     boolean existsById(int roleId);
+
+    RoleEntity findByName(String developerRole, String locale);
 }

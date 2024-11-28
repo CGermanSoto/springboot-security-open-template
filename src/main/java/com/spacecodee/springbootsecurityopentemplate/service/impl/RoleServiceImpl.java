@@ -57,4 +57,10 @@ public class RoleServiceImpl implements IRoleService {
     public boolean existsById(int roleId) {
         return this.roleRepository.existsById(roleId);
     }
+
+    @Override
+    public RoleEntity findByName(String developerRole, String locale) {
+        return this.roleRepository.findByName(AppUtils.getRoleEnum(developerRole))
+                .orElseThrow(() -> this.exceptionShortComponent.roleNotFoundException("role.not.exists", locale));
+    }
 }

@@ -86,4 +86,12 @@ public class ExceptionShortComponent {
     public NoUpdatedException noUpdatedException(String message, String locale) {
         return new NoUpdatedException(this.messageUtilComponent.getMessage(message, locale));
     }
+
+    public PasswordDoNotMatchException passwordsDoNotMatchException(String message, String locale) {
+        return new PasswordDoNotMatchException(this.messageUtilComponent.getMessage(message, locale));
+    }
+
+    public CannotSaveException cannotSaveException(String message, String locale) {
+        return new CannotSaveException(this.messageUtilComponent.getMessage(message, locale));
+    }
 }

@@ -12,6 +12,8 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
+import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
+
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +40,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final Logger logger = Logger.getLogger(UserAdminServiceImpl.class.getName());
 
     public UserAdminServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-                                IUserRepository userRepository, IRoleService roleService, IUserMapper userDTOMapper) {
+            IUserRepository userRepository, IRoleService roleService, IUserMapper userDTOMapper) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
@@ -53,7 +55,9 @@ public class UserAdminServiceImpl implements IUserAdminService {
             throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
         }
 
-        AppUtils.validatePassword(adminAVO.getPassword(), adminAVO.getRepeatPassword(), locale);
+        if (AppUtils.comparePasswords(adminAVO.getPassword(), adminAVO.getRepeatPassword())) {
+            throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
+        }
         this.alreadyExistByUsername(adminAVO.getUsername(), locale);
 
         var adminRoleEntity = this.roleService.findAdminRole(locale);
@@ -72,52 +76,29 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     @Override
     @Transactional
-    public void update(int id, AdminUVO adminAVO, String locale) {
-        // Validate positive ID
+    public void update(int id, AdminUVO adminVO, String locale) {
         if (id <= 0) {
             throw this.exceptionShortComponent.invalidParameterException("admin.invalid.id", locale);
         }
 
-        // Get existing admin
         var existingAdmin = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException("admin.not.exists.by.id", locale));
+                .orElseThrow(
+                        () -> this.exceptionShortComponent.doNotExistsByIdException("admin.not.exists.by.id", locale));
 
-        // If the username is changing, validate it's not taken
-        if (!existingAdmin.getUsername().equals(adminAVO.getUsername())) {
-            this.alreadyExistByUsername(adminAVO.getUsername(), locale);
+        if (!existingAdmin.getUsername().equals(adminVO.getUsername())) {
+            this.alreadyExistByUsername(adminVO.getUsername(), locale);
         }
 
-        // Check if any changes are needed and Only save if there are changes
-        if (this.checkAndUpdateAdminFields(adminAVO, existingAdmin)) {
+        boolean hasChanges = UserUpdateUtils.checkForChanges(adminVO, existingAdmin);
+
+        if (hasChanges) {
             try {
                 this.userRepository.save(existingAdmin);
-            } catch (NoUpdatedException e) {
-                this.logger.log(Level.SEVERE, "UserServiceImpl.update: error", e);
+            } catch (Exception e) {
+                this.logger.log(Level.SEVERE, "Error updating admin", e);
                 throw this.exceptionShortComponent.noUpdatedException("admin.updated.failed", locale);
             }
-        } else {
-            this.logger.info("No changes detected for admin update");
         }
-    }
-
-    private boolean checkAndUpdateAdminFields(@NotNull AdminUVO adminAVO, @NotNull UserEntity existingAdmin) {
-        var hasChanges = false;
-
-        if (!existingAdmin.getUsername().equals(adminAVO.getUsername())) {
-            existingAdmin.setUsername(adminAVO.getUsername());
-            hasChanges = true;
-        }
-
-        if (!existingAdmin.getFullname().equals(adminAVO.getFullname())) {
-            existingAdmin.setFullname(adminAVO.getFullname());
-            hasChanges = true;
-        }
-
-        if (!existingAdmin.getLastname().equals(adminAVO.getLastname())) {
-            existingAdmin.setLastname(adminAVO.getLastname());
-            hasChanges = true;
-        }
-        return hasChanges;
     }
 
     @Override
