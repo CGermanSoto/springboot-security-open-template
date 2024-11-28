@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.language;
 
+import com.spacecodee.springbootsecurityopentemplate.language.constant.LanguageConstants;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,11 @@ public class MessageConfig {
     @Bean
     public MessageSource messageSource() {
         var messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:locale/message", "classpath:api/api-doc", "classpath:validation");
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasenames(
+                LanguageConstants.getMessageSources().toArray(new String[0]));
+        messageSource.setDefaultEncoding(LanguageConstants.DEFAULT_ENCODING);
+        messageSource.setCacheSeconds(3600); // Cache for 1 hour
+        messageSource.setFallbackToSystemLocale(false);
         return messageSource;
     }
 
