@@ -1,13 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.api.user.technician.impl;
 
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.spacecodee.springbootsecurityopentemplate.controller.api.user.technician.IUserTechnicianController;
+import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
@@ -15,64 +9,59 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.IUserTechnicianService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
 
 @RestController
-@RequestMapping("/user-technician")
-@AllArgsConstructor
-public class UserTechnicianControllerImpl implements IUserTechnicianController {
-
+@RequestMapping("/api/v1/user-technician")
+public class UserTechnicianControllerImpl extends AbstractController implements IUserTechnicianController {
     private final IUserTechnicianService userTechnicianService;
-    private final MessageUtilComponent messageUtilComponent;
+
+    public UserTechnicianControllerImpl(MessageUtilComponent messageUtilComponent,
+                                        IUserTechnicianService userTechnicianService) {
+        super(messageUtilComponent);
+        this.userTechnicianService = userTechnicianService;
+    }
 
     @Override
     public ResponseEntity<ApiResponsePojo> add(TechnicianAVO request, String locale) {
-        var apiResponse = new ApiResponsePojo();
         this.userTechnicianService.add(request, locale);
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("technician.added.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.CREATED);
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(super.createResponse("technician.added.success", locale, HttpStatus.CREATED));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> update(String locale, int id, TechnicianUVO request) {
-        var apiResponse = new ApiResponsePojo();
         this.userTechnicianService.update(id, request, locale);
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("technician.updated.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.OK);
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(super.createResponse("technician.updated.success", locale, HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> delete(String locale, int id) {
-        var apiResponse = new ApiResponsePojo();
         this.userTechnicianService.delete(id, locale);
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("technician.deleted.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.OK);
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(super.createResponse("technician.deleted.success", locale, HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<TechnicianDTO>> findById(String locale, int id) {
-        var apiResponse = new ApiResponseDataPojo<TechnicianDTO>();
-        apiResponse.setData(this.userTechnicianService.findById(id, locale));
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("technician.found.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.OK);
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(super.createDataResponse(
+                this.userTechnicianService.findById(id, locale),
+                "technician.found.success",
+                locale,
+                HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<List<TechnicianDTO>>> findAll(String locale) {
-        var apiResponse = new ApiResponseDataPojo<List<TechnicianDTO>>();
-        apiResponse.setData(this.userTechnicianService.findAll(locale));
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("technician.list.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.OK);
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(super.createDataResponse(
+                this.userTechnicianService.findAll(locale),
+                "technician.list.success",
+                locale,
+                HttpStatus.OK));
     }
 }

@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthenticationControllerImpl extends AbstractController implements IAuthenticationController {
     private final IJwtService jwtService;
     private final IAuthenticationService authenticationService;
 
     public AuthenticationControllerImpl(MessageUtilComponent messageUtilComponent,
-                                        IJwtService jwtService,
-                                        IAuthenticationService authenticationService) {
+            IJwtService jwtService,
+            IAuthenticationService authenticationService) {
         super(messageUtilComponent);
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
@@ -45,48 +45,38 @@ public class AuthenticationControllerImpl extends AbstractController implements 
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
-                                                                                        LoginUserVO request) {
-        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
-        var authenticationResponsePojo = this.authenticationService.login(locale, request);
-        apiResponse.setData(authenticationResponsePojo);
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("login.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.ACCEPTED);
+            LoginUserVO request) {
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(super.createDataResponse(
+                        this.authenticationService.login(locale, request),
+                        "login.success",
+                        locale,
+                        HttpStatus.ACCEPTED));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(String locale) {
-        var udUser = new ApiResponseDataPojo<UserDetailsDTO>();
-        udUser.setData(this.authenticationService.findLoggedInUser(locale));
-        udUser.setMessage(this.messageUtilComponent.getMessage("user.profile", locale));
-        udUser.setHttpStatus(HttpStatus.OK);
-
-        return new ResponseEntity<>(udUser, HttpStatus.valueOf(udUser.getStatus()));
+        return ResponseEntity.ok(super.createDataResponse(
+                this.authenticationService.findLoggedInUser(locale),
+                "user.profile",
+                locale,
+                HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> logout(String locale, HttpServletRequest request) {
-        var apiResponse = new ApiResponsePojo();
-
         this.authenticationService.logout(locale, request);
-
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("logout.success", locale));
-        apiResponse.setHttpStatus(HttpStatus.OK);
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.valueOf(apiResponse.getStatus()));
+        return ResponseEntity.ok(super.createResponse("logout.success", locale, HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> refreshToken(
             String locale, HttpServletRequest request) {
-        var apiResponse = new ApiResponseDataPojo<AuthenticationResponsePojo>();
-        var refreshedToken = this.authenticationService.refreshToken(locale, request);
-
-        apiResponse.setData(refreshedToken);
-        apiResponse.setMessage(this.messageUtilComponent.getMessage("token.refreshed", locale));
-        apiResponse.setHttpStatus(HttpStatus.OK);
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        return ResponseEntity.ok(super.createDataResponse(
+                this.authenticationService.refreshToken(locale, request),
+                "token.refreshed",
+                locale,
+                HttpStatus.OK));
     }
 }
