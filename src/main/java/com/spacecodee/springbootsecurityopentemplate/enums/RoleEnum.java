@@ -17,6 +17,12 @@ public enum RoleEnum {
             RolePermissionEnum.UPDATE_ONE_ADMIN,
             RolePermissionEnum.DELETE_ONE_ADMIN,
 
+            RolePermissionEnum.REGISTER_ONE_DEVELOPER,
+            RolePermissionEnum.DELETE_ONE_DEVELOPER,
+            RolePermissionEnum.UPDATE_ONE_DEVELOPER,
+            RolePermissionEnum.FIND_ONE_DEVELOPER,
+            RolePermissionEnum.FIND_ALL_DEVELOPERS,
+
             RolePermissionEnum.SHOW_PROFILE,
             RolePermissionEnum.VALIDATE_TOKEN,
             RolePermissionEnum.LOGOUT,
@@ -34,6 +40,8 @@ public enum RoleEnum {
             RolePermissionEnum.REGISTER_ONE_ADMIN,
             RolePermissionEnum.UPDATE_ONE_ADMIN,
             RolePermissionEnum.DELETE_ONE_ADMIN,
+
+            RolePermissionEnum.REGISTER_ONE_DEVELOPER,
 
             RolePermissionEnum.SHOW_PROFILE,
             RolePermissionEnum.VALIDATE_TOKEN,
