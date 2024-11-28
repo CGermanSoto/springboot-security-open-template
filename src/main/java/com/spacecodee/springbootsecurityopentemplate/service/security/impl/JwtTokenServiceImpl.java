@@ -11,12 +11,12 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwt
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class JwtTokenServiceImpl implements IJwtTokenService {
@@ -24,8 +24,6 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     private final IJwtTokenRepository jwtTokenRepository;
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
-
-    private final Logger logger = Logger.getLogger(JwtTokenServiceImpl.class.getName());
 
     @Override
     public boolean existsByJwtTokenToken(String lang, String jwt) {
@@ -92,7 +90,7 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
         try {
             this.jwtTokenRepository.deleteByUserEntityId(userId);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error deleting tokens for user", e);
+            log.error("Error deleting tokens for user", e);
             throw this.exceptionShortComponent.tokenNotFoundException("token.not.delete", locale);
         }
     }

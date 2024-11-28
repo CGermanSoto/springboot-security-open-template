@@ -5,25 +5,23 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+@Slf4j
 @Service
 public class UserAdminServiceImpl implements IUserAdminService {
     private static final String ADMIN_PREFIX = "admin";
 
-    private final Logger logger = Logger.getLogger(UserAdminServiceImpl.class.getName());
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
@@ -68,7 +66,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         try {
             this.userRepository.save(userEntity);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error saving admin", e);
+            log.error("Error saving admin", e);
             throw this.exceptionShortComponent.noCreatedException(ADMIN_PREFIX + ".added.failed", locale);
         }
     }
@@ -85,7 +83,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
                 this.jwtTokenService.deleteByUserId(locale, existingAdmin.getId());
                 this.userRepository.save(existingAdmin);
             } catch (Exception e) {
-                this.logger.log(Level.SEVERE, "Error updating admin", e);
+                log.error("Error updating admin", e);
                 throw this.exceptionShortComponent.noUpdatedException(ADMIN_PREFIX + ".updated.failed", locale);
             }
         }
@@ -101,7 +99,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.jwtTokenService.deleteByUserId(locale, id);
             this.userRepository.delete(existingAdmin);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error deleting admin", e);
+            log.error("Error deleting admin", e);
             throw this.exceptionShortComponent.noDeletedException(ADMIN_PREFIX + ".deleted.failed", locale);
         }
     }

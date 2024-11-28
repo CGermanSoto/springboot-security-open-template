@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -16,9 +17,8 @@ import org.springframework.util.StringUtils;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 @Service
 public class JwtServiceImpl implements IJwtService {
 
@@ -26,8 +26,6 @@ public class JwtServiceImpl implements IJwtService {
     private long expirationInMinutes;
     @Value("${security.jwt.secret-key}")
     private String secretKey;
-
-    private final Logger logger = Logger.getLogger(JwtServiceImpl.class.getName());
 
     // Generate a JWT token with the given userDetails details and extra claims
     @Override
@@ -61,7 +59,7 @@ public class JwtServiceImpl implements IJwtService {
         // Check if the Authorization header is null or empty
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")
                 || !StringUtils.hasText(authorizationHeader)) {
-            this.logger.log(Level.WARNING, "Authorization header is missing or does not contain a Bearer token");
+            log.warn("Authorization header is missing or does not contain a Bearer token");
             return null;
         }
 
@@ -82,7 +80,7 @@ public class JwtServiceImpl implements IJwtService {
             var expiration = this.extractExpiration(jwt);
             return expiration.before(new Date());
         } catch (Exception e) {
-            this.logger.log(Level.WARNING, "The token is already expired, this is a warning", e);
+            log.warn("The token is already expired, this is a warning", e);
         }
         return false;
     }
@@ -104,7 +102,7 @@ public class JwtServiceImpl implements IJwtService {
                     .signWith(this.generateKey(), Jwts.SIG.HS256)
                     .compact();
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Error refreshing token", e);
+            log.warn("Error refreshing token", e);
             return null;
         }
     }

@@ -7,27 +7,26 @@ import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.ITechnicianMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.IUserTechnicianService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 @Service
 public class UserTechnicianServiceImpl implements IUserTechnicianService {
 
     private static final String TECHNICIAN_INVALID_ID = "technician.invalid.id";
     private static final String TECHNICIAN_NOT_EXISTS_BY_ID = "technician.not.exists.by.id";
 
-    private final Logger logger = Logger.getLogger(UserTechnicianServiceImpl.class.getName());
     private final PasswordEncoder passwordEncoder;
     private final ExceptionShortComponent exceptionShortComponent;
     private final IUserRepository userRepository;
@@ -71,7 +70,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
         try {
             this.userRepository.save(technicianEntity);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error saving technician", e);
+            log.error("Error saving technician: ", e);
             throw this.exceptionShortComponent.cannotSaveException("technician.added.failed", locale);
         }
     }
@@ -88,7 +87,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
                 this.jwtTokenService.deleteByUserId(locale, existingTechnician.getId());
                 this.userRepository.save(existingTechnician);
             } catch (Exception e) {
-                this.logger.log(Level.SEVERE, "Error updating technician", e);
+                log.error("Error updating technician", e);
                 throw this.exceptionShortComponent.noUpdatedException("technician.updated.failed", locale);
             }
         }
@@ -104,7 +103,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
             this.jwtTokenService.deleteByUserId(locale, id);
             this.userRepository.delete(existingTechnician);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error deleting technician", e);
+            log.error("Error deleting technician", e);
             throw this.exceptionShortComponent.noDeletedException("technician.deleted.failed", locale);
         }
     }

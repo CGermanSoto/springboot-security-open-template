@@ -7,26 +7,25 @@ import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IDeveloperMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.developer.IUserDeveloperService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 @Service
 public class UserDeveloperServiceImpl implements IUserDeveloperService {
     private static final String DEVELOPER_PREFIX = "developer";
 
-    private final Logger logger = Logger.getLogger(UserDeveloperServiceImpl.class.getName());
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
@@ -67,7 +66,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
         try {
             this.userRepository.save(developerEntity);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error saving developer", e);
+            log.error("Error saving developer", e);
             throw this.exceptionShortComponent.cannotSaveException(DEVELOPER_PREFIX + ".added.failed", locale);
         }
     }
@@ -84,7 +83,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
                 this.jwtTokenService.deleteByUserId(locale, existingDeveloper.getId());
                 this.userRepository.save(existingDeveloper);
             } catch (Exception e) {
-                this.logger.log(Level.SEVERE, "Error updating developer", e);
+                log.error("Error updating developer", e);
                 throw this.exceptionShortComponent.noUpdatedException(DEVELOPER_PREFIX + ".updated.failed", locale);
             }
         }
@@ -100,7 +99,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
             this.jwtTokenService.deleteByUserId(locale, id);
             this.userRepository.delete(existingDeveloper);
         } catch (Exception e) {
-            this.logger.log(Level.SEVERE, "Error deleting developer", e);
+            log.error("Error deleting developer", e);
             throw this.exceptionShortComponent.noDeletedException(DEVELOPER_PREFIX + ".deleted.failed", locale);
         }
     }

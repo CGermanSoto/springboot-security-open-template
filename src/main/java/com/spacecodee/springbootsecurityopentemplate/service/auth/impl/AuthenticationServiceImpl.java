@@ -3,8 +3,8 @@ package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
@@ -12,6 +12,7 @@ import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtServic
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
@@ -35,8 +35,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final IJwtTokenService jwtTokenService;
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
-
-    private final Logger logger = Logger.getLogger(AuthenticationServiceImpl.class.getName());
 
     @Override
     public AuthenticationResponsePojo login(String locale, @NotNull LoginUserVO userVO) {
@@ -86,7 +84,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         var jwtToken = this.jwtService.extractJwtFromRequest(request);
 
         if (!StringUtils.hasText(jwtToken)) {
-            this.logger.warning("No token found in request");
+            log.warn("No token found in request");
             return;
         }
 
@@ -100,15 +98,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                     existsToken = this.jwtTokenService.existsByJwtTokenToken(locale, cleanToken);
                     if (existsToken) {
                         this.jwtTokenService.deleteByToken(locale, cleanToken);
-                        this.logger.info("Token invalidated successfully after removing Bearer prefix");
+                        log.info("Token invalidated successfully after removing Bearer prefix");
                     }
                 }
             } else {
                 this.jwtTokenService.deleteByToken(locale, jwtToken);
-                this.logger.info("Token invalidated successfully");
+                log.info("Token invalidated successfully");
             }
         } catch (TokenNotFoundException e) {
-            this.logger.log(Level.SEVERE, "Error during logout: {0}", e.getMessage());
+            log.error("Error during logout: {}", e.getMessage());
             throw this.exceptionShortComponent.tokenNotFoundException("token.not.found", locale);
         }
     }
