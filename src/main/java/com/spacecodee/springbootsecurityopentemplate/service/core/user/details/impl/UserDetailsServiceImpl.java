@@ -24,7 +24,6 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     @Transactional(readOnly = true, noRollbackFor = UsernameNotFoundException.class)
     @Override
     public UserDetailsDTO findByUsername(String locale, String username) {
-        log.info("Finding user by username: {}", username);
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserDetailsDTO)
                 .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.not.exists.by.username", locale));

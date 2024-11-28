@@ -67,6 +67,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.save(userEntity);
         } catch (Exception e) {
             log.error("Error saving admin", e);
+            log.info(ADMIN_PREFIX + ".added.failed");
             throw this.exceptionShortComponent.noCreatedException(ADMIN_PREFIX + ".added.failed", locale);
         }
     }
