@@ -6,13 +6,11 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IDeveloperMapper;
-import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserDeveloperService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
-
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +34,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     private String developerRole;
 
     public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-            IUserRepository userRepository, IRoleService roleService, IDeveloperMapper developerMapper) {
+                                    IUserRepository userRepository, IRoleService roleService, IDeveloperMapper developerMapper) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
