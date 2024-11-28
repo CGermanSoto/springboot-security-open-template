@@ -4,6 +4,8 @@ package com.spacecodee.springbootsecurityopentemplate.utils;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
+import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
+
 import org.jetbrains.annotations.NotNull;
 
 public class UserUpdateUtils {

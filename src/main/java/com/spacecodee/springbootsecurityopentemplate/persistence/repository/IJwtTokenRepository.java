@@ -13,4 +13,6 @@ public interface IJwtTokenRepository extends JpaRepository<JwtTokenEntity, Integ
     boolean existsByToken(String jwt);
 
     void deleteByToken(String token);
+
+    void deleteByUserEntityId(Integer userId);
 }

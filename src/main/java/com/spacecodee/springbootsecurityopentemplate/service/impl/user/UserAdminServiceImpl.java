@@ -5,17 +5,14 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.NoDeletedException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.NoUpdatedException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
-import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
+import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserAdminService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
-
 import jakarta.transaction.Transactional;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     private final IUserRepository userRepository;
     private final IRoleService roleService;
+    private final IJwtTokenService jwtTokenService;
 
     private final IUserMapper userDTOMapper;
 
@@ -40,11 +38,13 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final Logger logger = Logger.getLogger(UserAdminServiceImpl.class.getName());
 
     public UserAdminServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-            IUserRepository userRepository, IRoleService roleService, IUserMapper userDTOMapper) {
+            IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
+            IUserMapper userDTOMapper) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.jwtTokenService = jwtTokenService;
         this.userDTOMapper = userDTOMapper;
     }
 
@@ -93,6 +93,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
         if (hasChanges) {
             try {
+                this.jwtTokenService.deleteByUserId(locale, existingAdmin.getId());
                 this.userRepository.save(existingAdmin);
             } catch (Exception e) {
                 this.logger.log(Level.SEVERE, "Error updating admin", e);

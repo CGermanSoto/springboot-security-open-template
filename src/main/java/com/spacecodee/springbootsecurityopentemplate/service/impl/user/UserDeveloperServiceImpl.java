@@ -7,6 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IDeveloperMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
+import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserDeveloperService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
@@ -26,10 +27,11 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
 
     private final Logger logger = Logger.getLogger(UserDeveloperServiceImpl.class.getName());
     private final PasswordEncoder passwordEncoder;
-    private final ExceptionShortComponent exceptionShortComponent;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
+    private final IJwtTokenService jwtTokenService;
     private final IDeveloperMapper developerMapper;
+    private final ExceptionShortComponent exceptionShortComponent;
 
     @Value("${security.default.developer.role}")
     private String developerRole;
@@ -38,11 +40,13 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     private static final String DEVELOPER_NOT_EXISTS_BY_ID = "developer.not.exists.by.id";
 
     public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-                                    IUserRepository userRepository, IRoleService roleService, IDeveloperMapper developerMapper) {
+            IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
+            IDeveloperMapper developerMapper) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.jwtTokenService = jwtTokenService;
         this.developerMapper = developerMapper;
     }
 
@@ -88,6 +92,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
 
         if (hasChanges) {
             try {
+                this.jwtTokenService.deleteByUserId(locale, existingDeveloper.getId());
                 this.userRepository.save(existingDeveloper);
             } catch (Exception e) {
                 this.logger.log(Level.SEVERE, "Error updating developer", e);

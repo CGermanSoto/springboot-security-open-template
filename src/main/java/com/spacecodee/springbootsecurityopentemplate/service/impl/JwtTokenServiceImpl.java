@@ -9,12 +9,13 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapp
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IJwtTokenRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
-
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @AllArgsConstructor
 @Service
@@ -23,6 +24,8 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
     private final IJwtTokenRepository jwtTokenRepository;
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
+
+    private final Logger logger = Logger.getLogger(JwtTokenServiceImpl.class.getName());
 
     @Override
     public boolean existsByJwtTokenToken(String lang, String jwt) {
@@ -79,6 +82,17 @@ public class JwtTokenServiceImpl implements IJwtTokenService {
 
             this.jwtTokenRepository.delete(jwtToken);
         } catch (Exception e) {
+            throw this.exceptionShortComponent.tokenNotFoundException("token.not.delete", locale);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUserId(String locale, Integer userId) {
+        try {
+            this.jwtTokenRepository.deleteByUserEntityId(userId);
+        } catch (Exception e) {
+            this.logger.log(Level.SEVERE, "Error deleting tokens for user", e);
             throw this.exceptionShortComponent.tokenNotFoundException("token.not.delete", locale);
         }
     }

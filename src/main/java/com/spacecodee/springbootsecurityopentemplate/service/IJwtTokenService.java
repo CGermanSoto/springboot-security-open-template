@@ -24,4 +24,6 @@ public interface IJwtTokenService {
     void save(JwtTokeUVO token);
 
     void deleteByToken(String locale, String token);
+
+    void deleteByUserId(String locale, Integer userId);
 }
