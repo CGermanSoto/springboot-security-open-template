@@ -33,6 +33,9 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Value("${security.default.developer.role}")
     private String developerRole;
 
+    private static final String DEVELOPER_INVALID_ID = "developer.invalid.id";
+    private static final String DEVELOPER_NOT_EXISTS_BY_ID = "developer.not.exists.by.id";
+
     public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
                                     IUserRepository userRepository, IRoleService roleService, IDeveloperMapper developerMapper) {
         this.passwordEncoder = passwordEncoder;
@@ -69,11 +72,11 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Transactional
     public void update(int id, DeveloperUVO developerUVO, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException("developer.invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_INVALID_ID, locale);
         }
 
         var existingDeveloper = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException("developer.not.exists.by.id",
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
                         locale));
 
         if (!existingDeveloper.getUsername().equals(developerUVO.getUsername())) {
@@ -96,11 +99,11 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Transactional
     public void delete(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException("developer.invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_INVALID_ID, locale);
         }
 
         var developer = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException("developer.not.exists.by.id",
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
                         locale));
 
         try {
@@ -114,12 +117,12 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Override
     public DeveloperDTO findById(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException("developer.invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_INVALID_ID, locale);
         }
 
         return this.userRepository.findById(id)
                 .map(this.developerMapper::toDto)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException("developer.not.exists.by.id",
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
                         locale));
     }
 
