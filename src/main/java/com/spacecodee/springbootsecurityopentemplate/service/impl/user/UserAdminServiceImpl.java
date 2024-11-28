@@ -31,7 +31,6 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     private final IUserMapper userDTOMapper;
 
-    // ignore from constructor
     @Value("${security.default.roles}")
     private String adminRole;
 
@@ -87,11 +86,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.alreadyExistByUsername(adminVO.getUsername(), locale);
         }
 
-        // Check if any changes are needed
-        boolean hasChanges = this.checkAndUpdateAdminFields(adminVO, existingAdmin);
-
-        // Only save if there are changes
-        if (hasChanges) {
+        // Check if any changes are needed and Only save if there are changes
+        if (this.checkAndUpdateAdminFields(adminVO, existingAdmin)) {
             try {
                 this.userRepository.save(existingAdmin);
             } catch (NoUpdatedException e) {

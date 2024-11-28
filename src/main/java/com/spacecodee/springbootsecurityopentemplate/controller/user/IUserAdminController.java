@@ -10,11 +10,16 @@ import org.springframework.web.bind.annotation.*;
 public interface IUserAdminController {
 
     @PostMapping()
-    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(@RequestBody @Valid AdminVO request, @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale);
+    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> add(@RequestBody @Valid AdminVO request,
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale);
 
     @PutMapping("/{id}")
-    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> update(@RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale, @PathVariable int id, @RequestBody @Valid AdminVO request);
+    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> update(
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
+            @PathVariable int id, @RequestBody @Valid AdminVO request);
 
     @DeleteMapping("/{id}")
-    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(@RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale, @PathVariable int id);
+    ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> delete(
+            @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
+            @PathVariable int id);
 }
