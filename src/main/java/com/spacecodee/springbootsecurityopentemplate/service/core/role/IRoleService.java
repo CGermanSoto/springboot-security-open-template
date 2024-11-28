@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service;
+package com.spacecodee.springbootsecurityopentemplate.service.core.role;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;

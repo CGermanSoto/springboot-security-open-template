@@ -8,7 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.IUserDeveloperService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.developer.IUserDeveloperService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

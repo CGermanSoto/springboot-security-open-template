@@ -14,7 +14,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.IUserTechnicianService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.IUserTechnicianService;
 
 import lombok.AllArgsConstructor;
 

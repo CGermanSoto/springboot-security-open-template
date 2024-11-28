@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.core.user.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
@@ -6,8 +6,8 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortCo
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
-import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.IUserAdminService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;

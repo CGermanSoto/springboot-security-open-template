@@ -1,10 +1,10 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl.user.details;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.details.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IUserDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -9,7 +9,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapp
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;

@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.TokenNotFoundExc
 import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

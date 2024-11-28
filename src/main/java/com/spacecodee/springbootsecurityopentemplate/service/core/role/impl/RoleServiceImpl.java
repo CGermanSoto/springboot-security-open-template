@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.core.role.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
@@ -6,7 +6,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortCo
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IRoleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

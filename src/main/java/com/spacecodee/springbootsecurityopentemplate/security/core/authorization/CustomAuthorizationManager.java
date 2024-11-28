@@ -4,7 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsPermissionDTO;
 import com.spacecodee.springbootsecurityopentemplate.security.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Contract;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.core.user;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.admin;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;

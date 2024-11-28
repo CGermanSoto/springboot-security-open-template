@@ -1,12 +1,12 @@
-package com.spacecodee.springbootsecurityopentemplate.service.impl.user;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.base.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.CannotSaveException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
-import com.spacecodee.springbootsecurityopentemplate.service.user.IUserService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.base.IUserService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

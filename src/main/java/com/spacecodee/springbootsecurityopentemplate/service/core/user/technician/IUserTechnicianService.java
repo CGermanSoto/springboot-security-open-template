@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.core.user;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.technician;
 
 import java.util.List;
 
