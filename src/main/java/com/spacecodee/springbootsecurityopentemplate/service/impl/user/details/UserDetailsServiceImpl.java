@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @AllArgsConstructor
@@ -25,6 +26,7 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     @Transactional(readOnly = true, noRollbackFor = UsernameNotFoundException.class)
     @Override
     public UserDetailsDTO findByUsername(String locale, String username) {
+        this.logger.log(Level.INFO, "Finding user by username: {0}", username);
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserDetailsDTO)
                 .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.not.exists.by.username", locale));

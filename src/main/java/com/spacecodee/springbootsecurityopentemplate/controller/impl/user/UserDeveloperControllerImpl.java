@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user-developer")
+@RequestMapping("/user-developer")
 @AllArgsConstructor
 public class UserDeveloperControllerImpl implements IUserDeveloperController {
 

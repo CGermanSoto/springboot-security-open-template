@@ -39,11 +39,6 @@ public class GlobalExceptionHandler {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DoNotExistsByIdException.class)
-    public ResponseEntity<ApiErrorPojo> handleDoNotExistsByIdException(DoNotExistsByIdException exception, HttpServletRequest request) {
-        return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(NoDisabledException.class)
     public ResponseEntity<ApiErrorPojo> noDisabledHException(NoDisabledException exception, HttpServletRequest request) {
         return this.getApiErrorPojoResponseEntity(request, exception, HttpStatus.BAD_REQUEST);

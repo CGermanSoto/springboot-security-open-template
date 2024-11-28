@@ -12,6 +12,7 @@ import com.spacecodee.springbootsecurityopentemplate.service.user.IUserDeveloper
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
 
     @Override
     @Transactional
-    public void add(DeveloperAVO developerAVO, String locale) {
+    public void add(@NotNull DeveloperAVO developerAVO, String locale) {
         if (AppUtils.comparePasswords(developerAVO.getPassword(), developerAVO.getRepeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
