@@ -4,8 +4,6 @@ package com.spacecodee.springbootsecurityopentemplate.utils;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
-import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
-
 import org.jetbrains.annotations.NotNull;
 
 public class UserUpdateUtils {
@@ -21,16 +19,19 @@ public class UserUpdateUtils {
         String fullname;
         String lastname;
 
-        if (userVO instanceof AdminUVO adminUVO) {
-            username = adminUVO.getUsername();
-            fullname = adminUVO.getFullname();
-            lastname = adminUVO.getLastname();
-        } else if (userVO instanceof DeveloperUVO developerUVO) {
-            username = developerUVO.getUsername();
-            fullname = developerUVO.getFullname();
-            lastname = developerUVO.getLastname();
-        } else {
-            throw new IllegalArgumentException("Unsupported user type");
+        switch (userVO) {
+            case AdminUVO adminUVO -> {
+                username = adminUVO.getUsername();
+                fullname = adminUVO.getFullname();
+                lastname = adminUVO.getLastname();
+            }
+            case DeveloperUVO developerUVO -> {
+                username = developerUVO.getUsername();
+                fullname = developerUVO.getFullname();
+                lastname = developerUVO.getLastname();
+            }
+            default -> throw new IllegalArgumentException("Unsupported user type");
+
         }
 
         if (!existingUser.getUsername().equals(username)) {

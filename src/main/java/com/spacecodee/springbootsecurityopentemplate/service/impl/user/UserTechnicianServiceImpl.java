@@ -10,6 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserTechnicianService;
+import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
 import jakarta.transaction.Transactional;
@@ -34,17 +35,23 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     private final IRoleService roleService;
     private final IJwtTokenService jwtTokenService;
     private final ITechnicianMapper technicianMapper;
+    private final IUserValidationService userValidationService;
 
     @Value("${security.default.technician.role}")
     private String technicianRole;
 
-    public UserTechnicianServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent, IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService, ITechnicianMapper technicianMapper) {
+    private static final String TECHNICIAN_PREFIX = "technician";
+
+    public UserTechnicianServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
+            IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
+            ITechnicianMapper technicianMapper, IUserValidationService userValidationService) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.jwtTokenService = jwtTokenService;
         this.technicianMapper = technicianMapper;
+        this.userValidationService = userValidationService;
     }
 
     @Override
@@ -73,18 +80,8 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     @Override
     @Transactional
     public void update(int id, TechnicianUVO technicianUVO, String locale) {
-        if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(TECHNICIAN_INVALID_ID, locale);
-        }
-
-        var existingTechnician = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(TECHNICIAN_NOT_EXISTS_BY_ID,
-                        locale));
-
-        if (!existingTechnician.getUsername().equals(technicianUVO.getUsername())) {
-            this.alreadyExistByUsername(technicianUVO.getUsername(), locale);
-        }
-
+        var existingTechnician = this.userValidationService.validateUserUpdate(id, technicianUVO.getUsername(),
+                TECHNICIAN_PREFIX, locale);
         boolean hasChanges = UserUpdateUtils.checkForChanges(technicianUVO, existingTechnician);
 
         if (hasChanges) {
@@ -101,22 +98,12 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     @Override
     @Transactional
     public void delete(int id, String locale) {
-        if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(TECHNICIAN_INVALID_ID, locale);
-        }
-
-        var technician = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(TECHNICIAN_NOT_EXISTS_BY_ID,
-                        locale));
-
-        var technicianCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.technicianRole));
-        if (technicianCount <= 1) {
-            throw this.exceptionShortComponent.noDeletedException("technician.deleted.failed.last", locale);
-        }
+        var existingTechnician = this.userValidationService.validateUserUpdate(id, null, TECHNICIAN_PREFIX, locale);
+        this.userValidationService.validateLastUserByRole(this.technicianRole, TECHNICIAN_PREFIX, locale);
 
         try {
             this.jwtTokenService.deleteByUserId(locale, id);
-            this.userRepository.delete(technician);
+            this.userRepository.delete(existingTechnician);
         } catch (Exception e) {
             this.logger.log(Level.SEVERE, "Error deleting technician", e);
             throw this.exceptionShortComponent.noDeletedException("technician.deleted.failed", locale);

@@ -10,6 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.IJwtTokenService;
 import com.spacecodee.springbootsecurityopentemplate.service.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.IUserDeveloperService;
+import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import com.spacecodee.springbootsecurityopentemplate.utils.UserUpdateUtils;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 
 @Service
 public class UserDeveloperServiceImpl implements IUserDeveloperService {
+    private static final String DEVELOPER_PREFIX = "developer";
 
     private final Logger logger = Logger.getLogger(UserDeveloperServiceImpl.class.getName());
     private final PasswordEncoder passwordEncoder;
@@ -31,23 +33,20 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     private final IRoleService roleService;
     private final IJwtTokenService jwtTokenService;
     private final IDeveloperMapper developerMapper;
+    private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
 
     @Value("${security.default.developer.role}")
     private String developerRole;
 
-    private static final String DEVELOPER_INVALID_ID = "developer.invalid.id";
-    private static final String DEVELOPER_NOT_EXISTS_BY_ID = "developer.not.exists.by.id";
-
-    public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-                                    IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
-                                    IDeveloperMapper developerMapper) {
+    public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService, IDeveloperMapper developerMapper, IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
-        this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.jwtTokenService = jwtTokenService;
         this.developerMapper = developerMapper;
+        this.userValidationService = userValidationService;
+        this.exceptionShortComponent = exceptionShortComponent;
     }
 
     @Override
@@ -57,8 +56,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
 
-        this.alreadyExistByUsername(developerAVO.getUsername(), locale);
-
+        this.userValidationService.validateUsername(developerAVO.getUsername(), DEVELOPER_PREFIX, locale);
         var roleEntity = this.roleService.findByName(this.developerRole, locale);
         var developerEntity = this.developerMapper.voToEntity(developerAVO);
 
@@ -69,25 +67,15 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
             this.userRepository.save(developerEntity);
         } catch (Exception e) {
             this.logger.log(Level.SEVERE, "Error saving developer", e);
-            throw this.exceptionShortComponent.cannotSaveException("developer.added.failed", locale);
+            throw this.exceptionShortComponent.cannotSaveException(DEVELOPER_PREFIX + ".added.failed", locale);
         }
     }
 
     @Override
     @Transactional
-    public void update(int id, DeveloperUVO developerUVO, String locale) {
-        if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_INVALID_ID, locale);
-        }
-
-        var existingDeveloper = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
-                        locale));
-
-        if (!existingDeveloper.getUsername().equals(developerUVO.getUsername())) {
-            this.alreadyExistByUsername(developerUVO.getUsername(), locale);
-        }
-
+    public void update(int id, @NotNull DeveloperUVO developerUVO, String locale) {
+        var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(),
+                DEVELOPER_PREFIX, locale);
         boolean hasChanges = UserUpdateUtils.checkForChanges(developerUVO, existingDeveloper);
 
         if (hasChanges) {
@@ -96,7 +84,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
                 this.userRepository.save(existingDeveloper);
             } catch (Exception e) {
                 this.logger.log(Level.SEVERE, "Error updating developer", e);
-                throw this.exceptionShortComponent.noUpdatedException("developer.updated.failed", locale);
+                throw this.exceptionShortComponent.noUpdatedException(DEVELOPER_PREFIX + ".updated.failed", locale);
             }
         }
     }
@@ -104,39 +92,28 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Override
     @Transactional
     public void delete(int id, String locale) {
-        if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_INVALID_ID, locale);
-        }
-
-        var developer = this.userRepository.findById(id)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
-                        locale));
-
-        // Check if it's the last developer
-        var developersCount = this.userRepository.countByRoleEntity_Name((RoleEnum.valueOf(this.developerRole)));
-        if (developersCount <= 1) {
-            throw this.exceptionShortComponent.noDeletedException("developer.deleted.failed.last", locale);
-        }
+        var existingDeveloper = this.userValidationService.validateUserUpdate(id, null, DEVELOPER_PREFIX, locale);
+        this.userValidationService.validateLastUserByRole(this.developerRole, DEVELOPER_PREFIX, locale);
 
         try {
-            // Delete associated tokens first
             this.jwtTokenService.deleteByUserId(locale, id);
-            this.userRepository.delete(developer);
+            this.userRepository.delete(existingDeveloper);
         } catch (Exception e) {
             this.logger.log(Level.SEVERE, "Error deleting developer", e);
-            throw this.exceptionShortComponent.noDeletedException("developer.deleted.failed", locale);
+            throw this.exceptionShortComponent.noDeletedException(DEVELOPER_PREFIX + ".deleted.failed", locale);
         }
     }
 
     @Override
     public DeveloperDTO findById(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_INVALID_ID, locale);
+            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_PREFIX + ".invalid.id", locale);
         }
 
         return this.userRepository.findById(id)
                 .map(this.developerMapper::toDto)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(DEVELOPER_NOT_EXISTS_BY_ID,
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
+                        DEVELOPER_PREFIX + ".not.exists.by.id",
                         locale));
     }
 
@@ -144,11 +121,5 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     public List<DeveloperDTO> findAll(String locale) {
         var developers = this.userRepository.findByRoleEntity_Name(RoleEnum.valueOf(this.developerRole));
         return this.developerMapper.toDtoList(developers);
-    }
-
-    private void alreadyExistByUsername(String username, String locale) {
-        if (this.userRepository.existsByUsername(username)) {
-            throw this.exceptionShortComponent.alreadyExistsException("developer.exists.by.username", locale);
-        }
     }
 }
