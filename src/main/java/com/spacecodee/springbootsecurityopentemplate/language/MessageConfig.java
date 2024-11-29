@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import java.util.Locale;
+import java.util.Properties;
+
 @Configuration
 public class MessageConfig {
 
@@ -18,6 +21,17 @@ public class MessageConfig {
         messageSource.setDefaultEncoding(LanguageConstants.DEFAULT_ENCODING);
         messageSource.setCacheSeconds(3600); // Cache for 1 hour
         messageSource.setFallbackToSystemLocale(false);
+        messageSource.setAlwaysUseMessageFormat(true);
+
+        // English messages are in message.properties
+        messageSource.setDefaultLocale(Locale.ENGLISH);
+
+        // Add debug properties
+        var commonMessages = new Properties();
+        commonMessages.put("defaultLocale", "en");
+        commonMessages.put("currentBasenames", String.join(", ", LanguageConstants.getMessageSources()));
+        messageSource.setCommonMessages(commonMessages);
+
         return messageSource;
     }
 

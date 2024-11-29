@@ -35,11 +35,9 @@ public class LocaleResolverFilter extends OncePerRequestFilter {
 
         try {
             String locale = extractAndValidateLocale(request);
-            currentLocale.set(locale);
-
             log.debug("Setting locale: {} for request: {}", locale, request.getRequestURI());
+            currentLocale.set(locale);
             filterChain.doFilter(request, response);
-
         } catch (Exception e) {
             log.error("Error processing locale: {}", e.getMessage());
             throw e;
@@ -50,6 +48,7 @@ public class LocaleResolverFilter extends OncePerRequestFilter {
 
     private String extractAndValidateLocale(@NotNull HttpServletRequest request) {
         String locale = request.getHeader(LanguageConstants.ACCEPT_LANGUAGE_HEADER);
+        log.debug("Extracted locale from header: {}", locale);
 
         if (locale == null || locale.isEmpty()) {
             log.debug("No locale found in header, using default: {}", LanguageConstants.DEFAULT_LOCALE);
@@ -65,6 +64,11 @@ public class LocaleResolverFilter extends OncePerRequestFilter {
     }
 
     public static String getCurrentLocale() {
-        return currentLocale.get() != null ? currentLocale.get() : LanguageConstants.DEFAULT_LOCALE;
+        String locale = currentLocale.get();
+        if (locale == null) {
+            log.debug("No locale in ThreadLocal, using default: {}", LanguageConstants.DEFAULT_LOCALE);
+            return LanguageConstants.DEFAULT_LOCALE;
+        }
+        return locale;
     }
 }

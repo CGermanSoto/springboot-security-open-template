@@ -23,7 +23,11 @@ public class MessageUtilComponent {
     private static final Map<String, Locale> localeCache = new ConcurrentHashMap<>();
 
     public String getMessage(String message, String locale) {
-        return getMessageSource().getMessage(message, null, this.getLocaleApp(locale));
+        Locale resolvedLocale = this.getLocaleApp(locale);
+        String resolvedMessage = getMessageSource().getMessage(message, null, resolvedLocale);
+        log.debug("Resolving message: key='{}', locale='{}', resolved='{}'",
+                message, locale, resolvedMessage);
+        return resolvedMessage;
     }
 
     public String getMessage(String message, String locale, Object... args) {
@@ -36,18 +40,22 @@ public class MessageUtilComponent {
 
     private Locale getLocaleApp(String locale) {
         if (locale == null || locale.isEmpty()) {
+            log.debug("Empty locale, using default: {}", LanguageConstants.DEFAULT_LOCALE);
             return Locale.forLanguageTag(LanguageConstants.DEFAULT_LOCALE);
         }
 
         return localeCache.computeIfAbsent(locale.toLowerCase(), key -> {
+            log.debug("Computing locale for key: {}", key);
             try {
                 var loc = Locale.forLanguageTag(key);
                 if (isSupportedLocale(loc)) {
+                    log.debug("Using supported locale: {}", loc);
                     return loc;
                 }
             } catch (Exception e) {
                 log.warn("Invalid locale: {}. Using default locale.", key);
             }
+            log.debug("Falling back to default locale: {}", LanguageConstants.DEFAULT_LOCALE);
             return Locale.forLanguageTag(LanguageConstants.DEFAULT_LOCALE);
         });
     }
