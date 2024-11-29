@@ -67,7 +67,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
             this.userRepository.save(developerEntity);
         } catch (Exception e) {
             log.error("Error saving developer", e);
-            throw this.exceptionShortComponent.cannotSaveException(DEVELOPER_PREFIX + ".added.failed", locale);
+            throw this.exceptionShortComponent.cannotSaveException("developer.added.failed", locale);
         }
     }
 
@@ -84,7 +84,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
                 this.userRepository.save(existingDeveloper);
             } catch (Exception e) {
                 log.error("Error updating developer", e);
-                throw this.exceptionShortComponent.noUpdatedException(DEVELOPER_PREFIX + ".updated.failed", locale);
+                throw this.exceptionShortComponent.noUpdatedException("developer.updated.failed", locale);
             }
         }
     }
@@ -100,20 +100,20 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
             this.userRepository.delete(existingDeveloper);
         } catch (Exception e) {
             log.error("Error deleting developer", e);
-            throw this.exceptionShortComponent.noDeletedException(DEVELOPER_PREFIX + ".deleted.failed", locale);
+            throw this.exceptionShortComponent.noDeletedException("developer.deleted.failed", locale);
         }
     }
 
     @Override
     public DeveloperDTO findById(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(DEVELOPER_PREFIX + ".invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException("developer.invalid.id", locale);
         }
 
         return this.userRepository.findById(id)
                 .map(this.developerMapper::toDto)
                 .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
-                        DEVELOPER_PREFIX + ".not.exists.by.id",
+                        "developer.not.exists.by.id",
                         locale));
     }
 
