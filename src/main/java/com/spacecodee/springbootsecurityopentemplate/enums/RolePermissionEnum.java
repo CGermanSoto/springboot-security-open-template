@@ -6,6 +6,8 @@ public enum RolePermissionEnum {
     REGISTER_ONE_ADMIN,
     UPDATE_ONE_ADMIN,
     DELETE_ONE_ADMIN,
+    FIND_ONE_ADMIN,
+    FIND_ALL_ADMINS,
 
     // Developer
     REGISTER_ONE_DEVELOPER,
