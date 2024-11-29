@@ -2,9 +2,9 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.user.admin.
 
 import com.spacecodee.springbootsecurityopentemplate.controller.api.user.admin.IUserAdminController;
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.vo.permission;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.core;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

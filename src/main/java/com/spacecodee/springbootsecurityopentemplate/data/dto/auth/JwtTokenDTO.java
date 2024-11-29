@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.dto;
+package com.spacecodee.springbootsecurityopentemplate.data.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spacecodee.springbootsecurityopentemplate.data.base.IJwtTokenFields;

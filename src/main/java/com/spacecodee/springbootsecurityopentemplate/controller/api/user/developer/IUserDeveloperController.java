@@ -2,10 +2,10 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.api.user.developer;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service.validation.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;

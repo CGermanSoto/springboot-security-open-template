@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.pojo;
+package com.spacecodee.springbootsecurityopentemplate.data.common.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.developer;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
 
 import java.util.List;
 

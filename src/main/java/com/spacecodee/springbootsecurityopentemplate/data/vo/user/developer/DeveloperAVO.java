@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.vo.user;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,15 +13,22 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DeveloperUVO implements Serializable {
+public class DeveloperAVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int id;
     @NotBlank
     @NotEmpty
     @Size(min = 3)
     private String username;
+    @NotBlank
+    @NotEmpty
+    @Size(min = 6)
+    private String password;
+    @NotBlank
+    @NotEmpty
+    @Size(min = 6)
+    private String repeatPassword;
     @NotBlank
     @NotEmpty
     @Size(min = 1)

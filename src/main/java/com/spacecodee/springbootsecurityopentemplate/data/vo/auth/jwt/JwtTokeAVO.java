@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.vo.jwt;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;

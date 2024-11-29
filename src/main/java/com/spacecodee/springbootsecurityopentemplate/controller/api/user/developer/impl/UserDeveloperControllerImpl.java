@@ -4,10 +4,10 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.user.develo
 import com.spacecodee.springbootsecurityopentemplate.controller.api.user.developer.IUserDeveloperController;
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.developer.IUserDeveloperService;
 import jakarta.validation.Valid;

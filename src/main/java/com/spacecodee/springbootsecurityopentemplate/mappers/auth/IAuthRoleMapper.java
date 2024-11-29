@@ -1,7 +1,7 @@
 // IAuthRoleMapper.java
 package com.spacecodee.springbootsecurityopentemplate.mappers.auth;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.RoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.RoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import org.mapstruct.*;
 

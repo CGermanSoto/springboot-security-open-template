@@ -1,5 +1,5 @@
 // OperationVO.java
-package com.spacecodee.springbootsecurityopentemplate.data.vo.operation;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.core;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -2,8 +2,8 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.pojo;
+package com.spacecodee.springbootsecurityopentemplate.data.common.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

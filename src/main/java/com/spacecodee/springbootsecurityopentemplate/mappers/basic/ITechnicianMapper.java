@@ -11,8 +11,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {

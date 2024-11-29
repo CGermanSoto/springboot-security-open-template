@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.api.user.admin;
 
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

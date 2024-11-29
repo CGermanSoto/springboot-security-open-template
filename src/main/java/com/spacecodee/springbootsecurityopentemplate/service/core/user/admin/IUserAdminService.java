@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.admin;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
 
 public interface IUserAdminService {
 

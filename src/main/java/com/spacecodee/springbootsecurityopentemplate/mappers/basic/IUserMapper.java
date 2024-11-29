@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

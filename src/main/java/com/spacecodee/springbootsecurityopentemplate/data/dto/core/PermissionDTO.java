@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.dto;
+package com.spacecodee.springbootsecurityopentemplate.data.dto.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;

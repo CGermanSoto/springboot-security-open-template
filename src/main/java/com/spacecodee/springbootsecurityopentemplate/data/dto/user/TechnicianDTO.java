@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.data.dto.user;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.RoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.RoleDTO;
 
 public record TechnicianDTO(
         Integer id,

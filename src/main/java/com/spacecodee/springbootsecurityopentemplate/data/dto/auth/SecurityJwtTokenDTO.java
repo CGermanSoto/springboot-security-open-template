@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.dto.security;
+package com.spacecodee.springbootsecurityopentemplate.data.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

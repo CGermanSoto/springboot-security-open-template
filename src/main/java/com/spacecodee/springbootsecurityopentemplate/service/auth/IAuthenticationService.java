@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.auth;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import jakarta.servlet.http.HttpServletRequest;
 

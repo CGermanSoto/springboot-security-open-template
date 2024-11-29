@@ -1,9 +1,9 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 
 import com.spacecodee.springbootsecurityopentemplate.data.base.IJwtTokenFields;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.JwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.JwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokeUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import org.mapstruct.*;
 

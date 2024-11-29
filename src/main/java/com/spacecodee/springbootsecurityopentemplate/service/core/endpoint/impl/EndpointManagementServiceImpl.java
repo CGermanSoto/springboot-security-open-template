@@ -1,12 +1,12 @@
 // EndpointManagementServiceImpl.java
 package com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.ModuleDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.PermissionDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.module.ModuleVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.operation.OperationVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.permission.PermissionVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.ModuleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.PermissionVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IModuleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;

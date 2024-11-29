@@ -1,9 +1,9 @@
 // IOperationDetailsMapper.java
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.operation.OperationVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.OperationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

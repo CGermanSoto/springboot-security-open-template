@@ -2,14 +2,14 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint.imp
 
 import com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint.IEndpointManagementController;
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.ModuleDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.OperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.PermissionDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.module.ModuleVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.operation.OperationVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.permission.PermissionVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.ModuleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.PermissionVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IEndpointManagementService;
 import org.springframework.http.HttpStatus;

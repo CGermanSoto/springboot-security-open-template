@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.pojo;
+package com.spacecodee.springbootsecurityopentemplate.data.common.response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,11 +12,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 @ToString
-public class ApiResponsePojo implements Serializable {
+public class ApiResponseDataPojo<E> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private String message;
+    private transient E data;
     @Setter(AccessLevel.PRIVATE)
     private String status;
     @Setter(AccessLevel.PRIVATE)
@@ -26,6 +27,6 @@ public class ApiResponsePojo implements Serializable {
 
     public void setHttpStatus(@NotNull HttpStatus status) {
         this.statusCode = status.value();
-        this.status = status.getReasonPhrase();
+        this.status = status.name();
     }
 }

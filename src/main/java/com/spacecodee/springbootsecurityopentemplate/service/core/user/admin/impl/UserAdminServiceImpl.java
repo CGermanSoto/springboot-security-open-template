@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;

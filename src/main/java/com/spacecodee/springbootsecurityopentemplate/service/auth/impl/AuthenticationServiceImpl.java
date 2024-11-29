@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;

@@ -2,7 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;

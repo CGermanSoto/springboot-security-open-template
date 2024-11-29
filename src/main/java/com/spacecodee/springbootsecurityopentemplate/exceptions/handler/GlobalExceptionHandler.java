@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions.handler;
 
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;

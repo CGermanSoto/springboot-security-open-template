@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.controller.base;
 
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponseDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
