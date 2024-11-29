@@ -5,11 +5,12 @@ import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.base.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.PermissionNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoContentException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastAdminException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastDeveloperException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
@@ -37,6 +38,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiErrorPojo> handleBusinessException(BaseException ex, HttpServletRequest request) {
+        log.error("Business exception occurred: {}", ex.getMessage());
         var errorResponse = createErrorResponse(ex, request);
         return ResponseEntity.status(determineHttpStatus(ex)).body(errorResponse);
     }
@@ -71,14 +73,28 @@ public class GlobalExceptionHandler {
 
     private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex, @NotNull HttpServletRequest request) {
         var errorResponse = new ApiErrorPojo();
-        errorResponse.setMessage(messageUtilComponent.getMessage(ex.getMessageKey(), ex.getLocale()));
+        String userMessage = messageUtilComponent.getMessage(ex.getMessageKey(), ex.getLocale());
+
+        // Add technical details for backend message
+        String technicalDetails = String.format(
+                "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
+                ex.getClass().getSimpleName(),
+                ex.getMessageKey(),
+                ex.getLocale(),
+                request.getRequestURI(),
+                request.getMethod());
+
+        errorResponse.setBackendMessage(technicalDetails);
+        errorResponse.setMessage(userMessage);
         errorResponse.setTimestamp(LocalDateTime.now());
         errorResponse.setPath(request.getRequestURI());
         errorResponse.setMethod(request.getMethod());
+
         return errorResponse;
     }
 
-    private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex, @NotNull HttpServletRequest request) {
+    private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,
+                                                             @NotNull HttpServletRequest request) {
         var errorResponse = new ApiErrorPojo();
         errorResponse.setBackendMessage(ex.getLocalizedMessage());
         errorResponse.setMessage(messageUtilComponent.getMessage("error.unexpected", "en"));
@@ -91,12 +107,13 @@ public class GlobalExceptionHandler {
     @Contract(pure = true)
     private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
         return switch (ex) {
-            case InvalidCredentialsException ignored -> HttpStatus.UNAUTHORIZED;
+            case LastAdminException _, LastDeveloperException _ -> HttpStatus.CONFLICT;
+            case InvalidCredentialsException _ -> HttpStatus.UNAUTHORIZED;
             case UnauthorizedException _ -> HttpStatus.FORBIDDEN;
-            case ObjectNotFoundException _, PermissionNotFoundException _, OperationNotFoundException _,
-                 ModuleNotFoundException _, UserNotFoundException _ -> HttpStatus.NOT_FOUND;
-            case AlreadyExistsException ignored -> HttpStatus.BAD_REQUEST;
-            case PasswordDoNotMatchException _, InvalidParameterException _ -> HttpStatus.BAD_REQUEST;
+            case UserNotFoundException _, PermissionNotFoundException _, OperationNotFoundException _,
+                 ModuleNotFoundException _ -> HttpStatus.NOT_FOUND;
+            case AlreadyExistsException _, PasswordDoNotMatchException _, InvalidParameterException _ ->
+                    HttpStatus.BAD_REQUEST;
             case NoContentException _ -> HttpStatus.NO_CONTENT;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };

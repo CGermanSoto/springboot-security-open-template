@@ -6,6 +6,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IDeveloperMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.developer.IUserDeveloperService;
@@ -74,18 +75,11 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Override
     @Transactional
     public void update(int id, @NotNull DeveloperUVO developerUVO, String locale) {
-        var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(),
-                DEVELOPER_PREFIX, locale);
-        boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(developerUVO, existingDeveloper);
+        var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(), DEVELOPER_PREFIX, locale);
+        boolean hasChanges = updateDeveloperFields(developerUVO, existingDeveloper);
 
         if (hasChanges) {
-            try {
-                this.jwtTokenService.deleteByUserId(locale, existingDeveloper.getId());
-                this.userRepository.save(existingDeveloper);
-            } catch (Exception e) {
-                log.error("Error updating developer", e);
-                throw this.exceptionShortComponent.noUpdatedException("developer.updated.failed", locale);
-            }
+            saveDeveloperChanges(existingDeveloper, locale);
         }
     }
 
@@ -93,7 +87,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Transactional
     public void delete(int id, String locale) {
         var existingDeveloper = this.userValidationService.validateUserUpdate(id, null, DEVELOPER_PREFIX, locale);
-        this.userValidationService.validateLastUserByRole(this.developerRole, DEVELOPER_PREFIX, locale);
+        validateLastDeveloper(locale);
 
         try {
             this.jwtTokenService.deleteByUserId(locale, id);
@@ -121,5 +115,43 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     public List<DeveloperDTO> findAll(String locale) {
         var developers = this.userRepository.findByRoleEntity_Name(RoleEnum.valueOf(this.developerRole));
         return this.developerMapper.toDtoList(developers);
+    }
+
+    private boolean updateDeveloperFields(@NotNull DeveloperUVO developerUVO, @NotNull UserEntity existingDeveloper) {
+        boolean hasChanges = false;
+
+        if (!existingDeveloper.getUsername().equals(developerUVO.getUsername())) {
+            existingDeveloper.setUsername(developerUVO.getUsername());
+            hasChanges = true;
+        }
+
+        if (!existingDeveloper.getFullname().equals(developerUVO.getFullname())) {
+            existingDeveloper.setFullname(developerUVO.getFullname());
+            hasChanges = true;
+        }
+
+        if (!existingDeveloper.getLastname().equals(developerUVO.getLastname())) {
+            existingDeveloper.setLastname(developerUVO.getLastname());
+            hasChanges = true;
+        }
+
+        return hasChanges;
+    }
+
+    private void saveDeveloperChanges(UserEntity developer, String locale) {
+        try {
+            this.jwtTokenService.deleteByUserId(locale, developer.getId());
+            this.userRepository.save(developer);
+        } catch (Exception e) {
+            log.error("Error updating developer", e);
+            throw this.exceptionShortComponent.noUpdatedException("developer.updated.failed", locale);
+        }
+    }
+
+    private void validateLastDeveloper(String locale) {
+        var developersCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.developerRole));
+        if (developersCount <= 1) {
+            throw this.exceptionShortComponent.lastDeveloperException("developer.deleted.failed.last", locale);
+        }
     }
 }

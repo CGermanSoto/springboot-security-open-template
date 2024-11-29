@@ -8,10 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleN
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.PermissionNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.*;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastAdminException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.RoleNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UsernameNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.*;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.DoNotExistsByIdException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
@@ -42,6 +39,10 @@ public class ExceptionShortComponent {
 
     public LastAdminException lastAdminException(String messageKey, String locale) {
         return new LastAdminException(messageKey, locale);
+    }
+
+    public LastDeveloperException lastDeveloperException(String messageKey, String locale) {
+        return new LastDeveloperException(messageKey, locale);
     }
 
     public DoNotExistsByIdException doNotExistsByIdException(String messageKey, String locale) {
