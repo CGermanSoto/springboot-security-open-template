@@ -37,7 +37,17 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
 
     @Override
     @Transactional
-    public ModuleDTO createModule(String locale, ModuleVO moduleVO) {
+    public ModuleDTO createModule(String locale, @NotNull ModuleVO moduleVO) {
+        // Validate module name
+        if (this.moduleRepository.existsByName(moduleVO.getName())) {
+            throw this.exceptionComponent.alreadyExistsException("module.exists.by.name", locale);
+        }
+
+        // Validate base path
+        if (this.moduleRepository.existsByBasePath(moduleVO.getBasePath())) {
+            throw this.exceptionComponent.alreadyExistsException("module.exists.by.path", locale);
+        }
+
         var moduleEntity = this.moduleMapper.dtoToEntity(moduleVO);
         var savedEntity = this.moduleRepository.save(moduleEntity);
         return this.moduleMapper.toDTO(savedEntity);
@@ -48,6 +58,12 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
     public OperationDTO createOperation(String locale, @NotNull OperationVO operationVO) {
         var moduleEntity = this.moduleRepository.findById(operationVO.getModuleId())
                 .orElseThrow(() -> this.exceptionComponent.moduleNotFoundException("module.not.found", locale));
+
+        // Validate only operation tag
+        if (this.operationRepository.existsByTagAndModuleEntity_Id(
+                operationVO.getTag(), operationVO.getModuleId())) {
+            throw this.exceptionComponent.alreadyExistsException("operation.exists.by.tag", locale);
+        }
 
         var operationEntity = this.operationMapper.voToEntity(operationVO);
         operationEntity.setModuleEntity(moduleEntity);

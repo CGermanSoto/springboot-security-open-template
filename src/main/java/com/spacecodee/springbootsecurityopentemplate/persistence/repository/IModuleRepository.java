@@ -4,4 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.ModuleEn
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IModuleRepository extends JpaRepository<ModuleEntity, Integer> {
+    boolean existsByName(String name);
+
+    boolean existsByBasePath(String basePath);
 }
