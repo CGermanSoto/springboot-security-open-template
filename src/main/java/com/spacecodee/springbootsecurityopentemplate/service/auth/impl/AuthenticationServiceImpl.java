@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
@@ -40,18 +40,18 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Override
     public AuthenticationResponsePojo login(String locale, @NotNull LoginUserVO userVO) {
         // Check for existing token
-        var existingToken = this.jwtTokenService.getTokenByUsername(userVO.getUsername());
+        var existingToken = this.jwtTokenService.getTokenByUsername(userVO.username());
         if (StringUtils.hasText(existingToken)) {
             try {
                 var validationResult = this.jwtService.validateAndRefreshToken(existingToken, locale);
                 return new AuthenticationResponsePojo(validationResult.token());
             } catch (TokenExpiredException e) {
-                log.info("Token expired for user: {}, generating new token", userVO.getUsername());
+                log.info("Token expired for user: {}, generating new token", userVO.username());
             }
         }
 
         // Generate new token
-        var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
+        var authentication = new UsernamePasswordAuthenticationToken(userVO.username(), userVO.password());
         Authentication authResult = this.authenticationManager.authenticate(authentication);
         UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
 

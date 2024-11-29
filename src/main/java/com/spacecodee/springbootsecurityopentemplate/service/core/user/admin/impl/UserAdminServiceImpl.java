@@ -54,11 +54,11 @@ public class UserAdminServiceImpl implements IUserAdminService {
             throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
         }
 
-        if (AppUtils.comparePasswords(adminAVO.getPassword(), adminAVO.getRepeatPassword())) {
+        if (AppUtils.comparePasswords(adminAVO.password(), adminAVO.repeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
 
-        this.userValidationService.validateUsername(adminAVO.getUsername(), ADMIN_PREFIX, locale);
+        this.userValidationService.validateUsername(adminAVO.username(), ADMIN_PREFIX, locale);
         var adminRoleEntity = this.roleService.findAdminRole(locale);
         var userEntity = this.userDTOMapper.toEntity(adminAVO);
 
