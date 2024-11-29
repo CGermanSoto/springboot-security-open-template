@@ -23,7 +23,7 @@ public class MessageUtilComponent {
     private static final Map<String, Locale> localeCache = new ConcurrentHashMap<>();
 
     public String getMessage(String message, String locale) {
-        return getMessageSource().getMessage(message, null, getLocaleApp(locale));
+        return getMessageSource().getMessage(message, null, this.getLocaleApp(locale));
     }
 
     public String getMessage(String message, String locale, Object... args) {
