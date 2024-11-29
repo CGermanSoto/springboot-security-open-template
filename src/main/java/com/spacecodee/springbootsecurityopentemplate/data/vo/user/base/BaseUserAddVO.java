@@ -8,11 +8,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public abstract class BaseUserAddVO extends BaseUserVO {
-    @NotBlank(message = "{validation.field.required}")
-    @Size(min = 6, message = "{validation.field.min.length}")
+    @NotBlank(message = "{validation.user.password.required}")
+    @Size(min = 6, message = "{validation.user.password.size}")
     private String password;
 
-    @NotBlank(message = "{validation.field.required}")
-    @Size(min = 6, message = "{validation.field.min.length}")
+    @NotBlank(message = "{validation.user.repeat.password.required}")
+    @Size(min = 6, message = "{validation.user.repeat.password.size}")
     private String repeatPassword;
 }

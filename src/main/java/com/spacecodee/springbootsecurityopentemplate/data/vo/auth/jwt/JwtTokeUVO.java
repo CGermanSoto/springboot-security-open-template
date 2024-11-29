@@ -22,18 +22,18 @@ public class JwtTokeUVO implements IJwtTokenFields, Serializable {
     @Getter
     private Integer id;
 
-    @NotNull(message = "{validation.field.required}")
+    @NotNull(message = "{validation.jwt.token.required}")
     private String token;
 
     @Getter
-    @NotNull(message = "{validation.field.required}")
+    @NotNull(message = "{validation.jwt.valid.required}")
     private Boolean valid;
 
-    @NotNull(message = "{validation.field.required}")
+    @NotNull(message = "{validation.jwt.expiry.required}")
     private Date expiryDate;
 
     @Getter
-    @NotNull(message = "{validation.field.required}")
+    @NotNull(message = "{validation.jwt.user.required}")
     private UserEntity userEntity;
 
     @Override
