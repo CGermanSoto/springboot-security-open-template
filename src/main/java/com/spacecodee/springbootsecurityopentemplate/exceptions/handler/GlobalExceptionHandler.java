@@ -11,6 +11,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.Permiss
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoContentException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastAdminException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastDeveloperException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastTechnicianException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
@@ -107,7 +108,7 @@ public class GlobalExceptionHandler {
     @Contract(pure = true)
     private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
         return switch (ex) {
-            case LastAdminException _, LastDeveloperException _ -> HttpStatus.CONFLICT;
+            case LastAdminException _, LastDeveloperException _, LastTechnicianException _ -> HttpStatus.CONFLICT;
             case InvalidCredentialsException _ -> HttpStatus.UNAUTHORIZED;
             case UnauthorizedException _ -> HttpStatus.FORBIDDEN;
             case UserNotFoundException _, PermissionNotFoundException _, OperationNotFoundException _,
