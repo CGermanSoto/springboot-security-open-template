@@ -5,13 +5,12 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
+import org.mapstruct.*;
 
 import java.util.List;
 
-import org.mapstruct.*;
-
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
-        IRoleMapper.class })
+        IRoleMapper.class})
 public interface IDeveloperMapper {
 
     @Mapping(target = "id", ignore = true)

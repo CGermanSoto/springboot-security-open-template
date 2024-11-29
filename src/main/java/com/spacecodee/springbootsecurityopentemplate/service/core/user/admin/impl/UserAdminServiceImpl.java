@@ -1,10 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.impl;
 
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.AdminDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
+import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IAdminMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class UserAdminServiceImpl implements IUserAdminService {
@@ -28,7 +31,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final IUserRepository userRepository;
     private final IRoleService roleService;
     private final IJwtTokenService jwtTokenService;
-    private final IUserMapper userDTOMapper;
+    private final IAdminMapper userDTOMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
 
@@ -36,7 +39,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private String adminRole;
 
     public UserAdminServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository,
-                                IRoleService roleService, IJwtTokenService jwtTokenService, IUserMapper userDTOMapper,
+                                IRoleService roleService, IJwtTokenService jwtTokenService, IAdminMapper userDTOMapper,
                                 IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
@@ -77,7 +80,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Override
     @Transactional
     public void update(int id, @NotNull AdminUVO adminVO, String locale) {
-        var existingAdmin = this.userValidationService.validateUserUpdate(id, adminVO.getUsername(), ADMIN_PREFIX, locale);
+        var existingAdmin = this.userValidationService.validateUserUpdate(id, adminVO.getUsername(), ADMIN_PREFIX,
+                locale);
         boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(adminVO, existingAdmin);
 
         if (hasChanges) {
@@ -98,6 +102,25 @@ public class UserAdminServiceImpl implements IUserAdminService {
             log.error("Error deleting admin", e);
             throw this.exceptionShortComponent.noDeletedException(ADMIN_PREFIX + ".deleted.failed", locale);
         }
+    }
+
+    @Override
+    public AdminDTO findById(int id, String locale) {
+        if (id <= 0) {
+            throw this.exceptionShortComponent.invalidParameterException(ADMIN_PREFIX + ".invalid.id", locale);
+        }
+
+        return this.userRepository.findById(id)
+                .map(this.userDTOMapper::toDto)
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
+                        ADMIN_PREFIX + ".not.exists.by.id",
+                        locale));
+    }
+
+    @Override
+    public List<AdminDTO> findAll(String locale) {
+        var admins = this.userRepository.findByRoleEntity_Name(RoleEnum.valueOf(this.adminRole));
+        return this.userDTOMapper.toDtoList(admins);
     }
 
     private void validateLastAdmin(String locale) {
