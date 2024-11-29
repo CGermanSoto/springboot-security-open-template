@@ -1,31 +1,27 @@
 package com.spacecodee.springbootsecurityopentemplate.data.common.response;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Getter;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDate;
+@Getter
+public non-sealed class ApiResponsePojo extends BaseResponsePojo {
+    private final String message;
+    private final HttpStatus httpStatus;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@ToString
-public class ApiResponsePojo implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    protected ApiResponsePojo(String message, HttpStatus httpStatus) {
+        super();
+        this.message = message;
+        this.httpStatus = httpStatus;
+    }
 
-    private String message;
-    @Setter(AccessLevel.PRIVATE)
-    private String status;
-    @Setter(AccessLevel.PRIVATE)
-    private int statusCode;
-    @Setter(AccessLevel.PRIVATE)
-    private LocalDate localDate = LocalDate.now();
+    @Contract("_, _ -> new")
+    public static @NotNull ApiResponsePojo of(String message, HttpStatus status) {
+        return new ApiResponsePojo(message, status);
+    }
 
-    public void setHttpStatus(@NotNull HttpStatus status) {
-        this.statusCode = status.value();
-        this.status = status.getReasonPhrase();
+    public int getStatus() {
+        return httpStatus.value();
     }
 }

@@ -3,8 +3,11 @@ package com.spacecodee.springbootsecurityopentemplate.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,30 +16,32 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ApiErrorPojo apiErrorPojo = new ApiErrorPojo();
+    private final MessageUtilComponent messageUtilComponent;
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     @Override
-    public void handle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull AccessDeniedException accessDeniedException)
-            throws IOException {
-        this.apiErrorPojo.setBackendMessage(accessDeniedException.getLocalizedMessage());
-        this.apiErrorPojo.setMessage("Access denied, you don't have permission to access this resource, please contact the administrator for more information");
-        this.apiErrorPojo.setTimestamp(LocalDateTime.now());
-        this.apiErrorPojo.setPath(request.getRequestURI());
-        this.apiErrorPojo.setMethod(request.getMethod());
+    public void handle(
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull AccessDeniedException accessDeniedException) throws IOException {
+
+        log.warn("Access denied to resource: {}", request.getRequestURI());
+
+        var errorResponse = ApiErrorPojo.of(
+                accessDeniedException.getLocalizedMessage(),
+                messageUtilComponent.getMessage("auth.access.denied", "en"),
+                request.getRequestURI(),
+                request.getMethod());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.FORBIDDEN.value());
-
-        var objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        var apiErrorAsJson = objectMapper.writeValueAsString(this.apiErrorPojo);
-
-        response.getWriter().write(apiErrorAsJson);
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

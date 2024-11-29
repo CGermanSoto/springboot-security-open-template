@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianUVO;
 
 import jakarta.validation.Valid;
 

@@ -2,11 +2,11 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint.imp
 
 import com.spacecodee.springbootsecurityopentemplate.controller.api.enpoint.IEndpointManagementController;
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.ModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
-import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.PermissionVO;

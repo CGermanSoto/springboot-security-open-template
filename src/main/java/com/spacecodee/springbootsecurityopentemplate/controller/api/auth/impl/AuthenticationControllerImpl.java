@@ -2,10 +2,10 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.controller.api.auth.IAuthenticationController;
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
@@ -23,8 +23,8 @@ public class AuthenticationControllerImpl extends AbstractController implements 
     private final IAuthenticationService authenticationService;
 
     public AuthenticationControllerImpl(MessageUtilComponent messageUtilComponent,
-            IJwtService jwtService,
-            IAuthenticationService authenticationService) {
+                                        IJwtService jwtService,
+                                        IAuthenticationService authenticationService) {
         super(messageUtilComponent);
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
@@ -45,7 +45,7 @@ public class AuthenticationControllerImpl extends AbstractController implements 
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
-            LoginUserVO request) {
+                                                                                        LoginUserVO request) {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(super.createDataResponse(

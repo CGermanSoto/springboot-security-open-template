@@ -2,11 +2,11 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.user.techni
 
 import com.spacecodee.springbootsecurityopentemplate.controller.api.user.technician.IUserTechnicianController;
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.IUserTechnicianService;
 import org.springframework.http.HttpStatus;

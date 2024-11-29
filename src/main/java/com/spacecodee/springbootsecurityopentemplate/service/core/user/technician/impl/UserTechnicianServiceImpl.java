@@ -1,8 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.ITechnicianMapper;

@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.vo.user.user;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -3,8 +3,8 @@ package com.spacecodee.springbootsecurityopentemplate.service.core.user.technici
 import java.util.List;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianAVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.user.TechnicianUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianAVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianUVO;
 
 public interface IUserTechnicianService {
     void add(TechnicianAVO technicianAVO, String locale);

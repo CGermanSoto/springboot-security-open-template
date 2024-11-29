@@ -29,7 +29,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -39,10 +38,11 @@ public class GlobalExceptionHandler {
     private final MessageUtilComponent messageUtilComponent;
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiErrorPojo> handleBusinessException(BaseException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorPojo> handleBusinessException(@NotNull BaseException ex, HttpServletRequest request) {
         log.error("Business exception occurred: {}", ex.getMessage());
-        var errorResponse = createErrorResponse(ex, request);
-        return ResponseEntity.status(determineHttpStatus(ex)).body(errorResponse);
+        return ResponseEntity
+                .status(determineHttpStatus(ex))
+                .body(createErrorResponse(ex, request));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,29 +55,26 @@ public class GlobalExceptionHandler {
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .toList();
 
-        var errorResponse = new ApiErrorDataPojo<List<String>>();
-        errorResponse.setBackendMessage(ex.getLocalizedMessage());
-        errorResponse.setMessage(messageUtilComponent.getMessage("validation.error", "en"));
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setPath(request.getRequestURI());
-        errorResponse.setMethod(request.getMethod());
-        errorResponse.setData(errors);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiErrorDataPojo.of(
+                        ex.getLocalizedMessage(),
+                        messageUtilComponent.getMessage("validation.error", "en"),
+                        request.getRequestURI(),
+                        request.getMethod(),
+                        errors));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorPojo> handleGenericException(Exception ex, HttpServletRequest request) {
         log.error("Unexpected error", ex);
-        var errorResponse = createGenericErrorResponse(ex, request);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createGenericErrorResponse(ex, request));
     }
 
     private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex, @NotNull HttpServletRequest request) {
-        var errorResponse = new ApiErrorPojo();
         String userMessage = messageUtilComponent.getMessage(ex.getMessageKey(), ex.getLocale());
-
-        // Add technical details for backend message
         String technicalDetails = String.format(
                 "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
                 ex.getClass().getSimpleName(),
@@ -86,24 +83,20 @@ public class GlobalExceptionHandler {
                 request.getRequestURI(),
                 request.getMethod());
 
-        errorResponse.setBackendMessage(technicalDetails);
-        errorResponse.setMessage(userMessage);
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setPath(request.getRequestURI());
-        errorResponse.setMethod(request.getMethod());
-
-        return errorResponse;
+        return ApiErrorPojo.of(
+                technicalDetails,
+                userMessage,
+                request.getRequestURI(),
+                request.getMethod());
     }
 
     private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,
                                                              @NotNull HttpServletRequest request) {
-        var errorResponse = new ApiErrorPojo();
-        errorResponse.setBackendMessage(ex.getLocalizedMessage());
-        errorResponse.setMessage(messageUtilComponent.getMessage("error.unexpected", "en"));
-        errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setPath(request.getRequestURI());
-        errorResponse.setMethod(request.getMethod());
-        return errorResponse;
+        return ApiErrorPojo.of(
+                ex.getLocalizedMessage(),
+                messageUtilComponent.getMessage("error.unexpected", "en"),
+                request.getRequestURI(),
+                request.getMethod());
     }
 
     @Contract(pure = true)

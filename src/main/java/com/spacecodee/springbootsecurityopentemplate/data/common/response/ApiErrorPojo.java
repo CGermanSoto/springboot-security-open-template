@@ -1,27 +1,28 @@
 package com.spacecodee.springbootsecurityopentemplate.data.common.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+@Getter
+public non-sealed class ApiErrorPojo extends BaseResponsePojo {
+    private final String backendMessage;
+    private final String message;
+    private final String path;
+    private final String method;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@ToString
-public class ApiErrorPojo implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    protected ApiErrorPojo(String backendMessage, String message, String path, String method) {
+        super();
+        this.backendMessage = backendMessage;
+        this.message = message;
+        this.path = path;
+        this.method = method;
+    }
 
-    private String backendMessage;
-    private String message;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp;
-    private String path;
-    private String method;
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull ApiErrorPojo of(String backendMessage, String message, String path, String method) {
+        return new ApiErrorPojo(backendMessage, message, path, method);
+    }
+
+    // Getters
 }
