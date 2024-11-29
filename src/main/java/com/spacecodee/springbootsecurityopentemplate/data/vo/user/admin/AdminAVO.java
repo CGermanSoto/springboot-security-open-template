@@ -1,16 +1,16 @@
 package com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.user.base.BaseUserAddVO;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-public record AdminAVO(
-                @NotBlank(message = "{validation.field.required}") @Size(min = 3, message = "{validation.field.min.length}") String username,
+import java.io.Serial;
 
-                @NotBlank(message = "{validation.field.required}") @Size(min = 6, message = "{validation.field.min.length}") String password,
-
-                @NotBlank(message = "{validation.field.required}") @Size(min = 6, message = "{validation.field.min.length}") String repeatPassword,
-
-                @NotBlank(message = "{validation.field.required}") String fullname,
-
-                @NotBlank(message = "{validation.field.required}") String lastname) {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+public class AdminAVO extends BaseUserAddVO {
+    @Serial
+    private static final long serialVersionUID = 1L;
 }
