@@ -3,7 +3,6 @@ package com.spacecodee.springbootsecurityopentemplate.service.validation.impl;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianUVO;
-import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
@@ -80,14 +79,6 @@ public class UserValidationServiceImpl implements IUserValidationService {
         }
 
         return existingUser;
-    }
-
-    @Override
-    public void validateLastUserByRole(String roleName, String messagePrefix, String locale) {
-        var count = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(roleName));
-        if (count <= 1) {
-            throw this.exceptionComponent.noDeletedException(messagePrefix + ".deleted.failed.last", locale);
-        }
     }
 
     @Override
