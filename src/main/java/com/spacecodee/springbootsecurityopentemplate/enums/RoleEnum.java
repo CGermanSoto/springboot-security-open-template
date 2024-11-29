@@ -62,7 +62,7 @@ public enum RoleEnum {
             RolePermissionEnum.REFRESH_TOKEN
     )),
 
-    USER(List.of(
+    CUSTOMER(List.of(
             RolePermissionEnum.SHOW_PROFILE,
             RolePermissionEnum.VALIDATE_TOKEN,
             RolePermissionEnum.LOGOUT,
