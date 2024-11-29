@@ -74,7 +74,7 @@ public class EndpointManagementServiceImpl implements IEndpointManagementService
 
     @Override
     @Transactional
-    public PermissionDTO assignPermission(String locale, PermissionVO permissionVO) {
+    public PermissionDTO assignPermission(String locale, @NotNull PermissionVO permissionVO) {
         var roleEntity = this.roleRepository.findById(permissionVO.getRoleId())
                 .orElseThrow(() -> this.exceptionComponent.roleNotFoundException("role.not.found", locale));
 
