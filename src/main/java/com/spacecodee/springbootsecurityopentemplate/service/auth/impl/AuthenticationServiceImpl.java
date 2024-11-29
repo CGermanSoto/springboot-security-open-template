@@ -3,6 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
@@ -41,15 +42,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         // Check for existing token
         var existingToken = this.jwtTokenService.getTokenByUsername(userVO.getUsername());
         if (StringUtils.hasText(existingToken)) {
-            var isExpired = this.jwtService.isTokenExpired(existingToken);
-            log.info("Token found for user: {}, is expired: {}", userVO.getUsername(), isExpired);
-            if (!this.jwtService.isTokenExpired(existingToken)) {
-                return new AuthenticationResponsePojo(existingToken);
+            try {
+                var validationResult = this.jwtService.validateAndRefreshToken(existingToken, locale);
+                return new AuthenticationResponsePojo(validationResult.token());
+            } catch (TokenExpiredException e) {
+                log.info("Token expired for user: {}, generating new token", userVO.getUsername());
             }
-            // Token expired, delete it
-            this.jwtTokenService.deleteByToken(locale, existingToken);
         }
 
+        // Generate new token
         var authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
         Authentication authResult = this.authenticationManager.authenticate(authentication);
         UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
