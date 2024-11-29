@@ -1,15 +1,15 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 @AllArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,11 +29,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final IJwtService jwtService;
     private final IUserDetailsService userService;
     private final IJwtTokenService jwtTokenService;
-    private final Logger jwtAuthFilterLogger = Logger.getLogger(JwtAuthenticationFilter.class.getName());
 
     // Check if the JWT token is valid and set the authentication token
     @Override
-    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
+    protected void doFilterInternal(@NotNull HttpServletRequest request,
+                                    @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
         var jwt = this.jwtService.extractJwtFromRequest(request);
         if (!StringUtils.hasText(jwt)) {
@@ -42,19 +41,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get locale early
         var locale = LocaleResolverFilter.getCurrentLocale();
 
         try {
-            var jwtTokenDTO = this.jwtTokenService.findBySecurityToken(locale, jwt);
-            var isValid = this.validateToken(jwtTokenDTO);
+            var validationResult = this.jwtService.validateAndRefreshToken(jwt, locale);
 
-            if (!isValid) {
-                filterChain.doFilter(request, response);
-                return;
+            if (validationResult.wasRefreshed()) {
+                response.setHeader("Authorization", "Bearer " + validationResult.token());
             }
 
-            var username = this.jwtService.extractUsername(jwt);
+            var username = this.jwtService.extractUsername(validationResult.token());
             var userDetailsDTO = this.userService.findByUsername(locale, username);
 
             var authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -64,8 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             authenticationToken.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (TokenNotFoundException e) {
-            this.jwtAuthFilterLogger.log(Level.WARNING, "JWT validation failed: {0}", e.getMessage());
+        } catch (Exception e) {
+            log.warn("JWT validation failed: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

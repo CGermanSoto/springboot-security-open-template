@@ -5,6 +5,8 @@ import org.springframework.lang.NonNull;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -21,4 +23,6 @@ public interface IJwtService {
     boolean isTokenExpired(String jwt);
 
     String refreshToken(String oldToken, UserDetails userDetails);
+
+    TokenValidationResult validateAndRefreshToken(String jwt, String locale);
 }
