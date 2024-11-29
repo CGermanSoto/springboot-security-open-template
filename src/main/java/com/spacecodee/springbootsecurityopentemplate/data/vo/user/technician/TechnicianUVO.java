@@ -4,7 +4,6 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,18 +18,15 @@ public class TechnicianUVO implements Serializable {
 
     private int id;
 
-    @NotBlank
-    @NotEmpty
-    @Size(min = 3)
+    @NotBlank(message = "{validation.field.required}")
+    @Size(min = 3, message = "{validation.field.min.length}")
     private String username;
 
-    @NotBlank
-    @NotEmpty
-    @Size(min = 1)
+    @NotBlank(message = "{validation.field.required}")
+    @Size(min = 1, message = "{validation.field.min.length}")
     private String fullname;
 
-    @NotBlank
-    @NotEmpty
-    @Size(min = 1)
+    @NotBlank(message = "{validation.field.required}")
+    @Size(min = 1, message = "{validation.field.min.length}")
     private String lastname;
 }

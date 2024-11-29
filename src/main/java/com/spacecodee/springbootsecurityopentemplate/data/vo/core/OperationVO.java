@@ -7,18 +7,18 @@ import lombok.Data;
 
 @Data
 public class OperationVO {
-    @NotBlank()
+    @NotBlank(message = "{validation.field.required}")
     private String tag;
 
-    @NotBlank()
+    @NotBlank(message = "{validation.field.required}")
     private String path;
 
-    @NotBlank()
+    @NotBlank(message = "{validation.field.required}")
     private String httpMethod;
 
-    @NotNull()
+    @NotNull(message = "{validation.field.required}")
     private Boolean permitAll;
 
-    @NotNull()
+    @NotNull(message = "{validation.field.required}")
     private Integer moduleId;
 }

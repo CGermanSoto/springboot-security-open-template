@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class ModuleVO {
-    @NotBlank()
+    @NotBlank(message = "{validation.field.required}")
     private String name;
 
-    @NotBlank()
+    @NotBlank(message = "{validation.field.required}")
     private String basePath;
 }

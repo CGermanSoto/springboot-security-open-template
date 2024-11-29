@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class PermissionVO {
-    @NotNull()
+    @NotNull(message = "{validation.field.required}")
     private Integer roleId;
 
-    @NotNull()
+    @NotNull(message = "{validation.field.required}")
     private Integer operationId;
 }

@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.util.Date;
 
-
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,15 +21,19 @@ import java.util.Date;
 public class JwtTokeUVO implements IJwtTokenFields, Serializable {
     @Getter
     private Integer id;
-    @NotNull
+
+    @NotNull(message = "{validation.field.required}")
     private String token;
+
     @Getter
-    @NotNull
+    @NotNull(message = "{validation.field.required}")
     private Boolean valid;
-    @NotNull
+
+    @NotNull(message = "{validation.field.required}")
     private Date expiryDate;
+
     @Getter
-    @NotNull
+    @NotNull(message = "{validation.field.required}")
     private UserEntity userEntity;
 
     @Override
