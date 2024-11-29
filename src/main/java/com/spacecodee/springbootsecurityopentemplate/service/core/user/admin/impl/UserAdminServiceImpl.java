@@ -2,8 +2,10 @@ package com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.im
 
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.AdminUVO;
+import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IUserMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
@@ -75,18 +77,11 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Override
     @Transactional
     public void update(int id, @NotNull AdminUVO adminVO, String locale) {
-        var existingAdmin = this.userValidationService.validateUserUpdate(id, adminVO.getUsername(), ADMIN_PREFIX,
-                locale);
+        var existingAdmin = this.userValidationService.validateUserUpdate(id, adminVO.getUsername(), ADMIN_PREFIX, locale);
         boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(adminVO, existingAdmin);
 
         if (hasChanges) {
-            try {
-                this.jwtTokenService.deleteByUserId(locale, existingAdmin.getId());
-                this.userRepository.save(existingAdmin);
-            } catch (Exception e) {
-                log.error("Error updating admin", e);
-                throw this.exceptionShortComponent.noUpdatedException("admin.updated.failed", locale);
-            }
+            saveAdminChanges(existingAdmin, locale);
         }
     }
 
@@ -94,14 +89,31 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Transactional
     public void delete(int id, String locale) {
         var existingAdmin = this.userValidationService.validateUserUpdate(id, null, ADMIN_PREFIX, locale);
-        this.userValidationService.validateLastUserByRole(this.adminRole, ADMIN_PREFIX, locale);
+        validateLastAdmin(locale);
 
         try {
             this.jwtTokenService.deleteByUserId(locale, id);
             this.userRepository.delete(existingAdmin);
         } catch (Exception e) {
             log.error("Error deleting admin", e);
-            throw this.exceptionShortComponent.noDeletedException("admin.deleted.failed", locale);
+            throw this.exceptionShortComponent.noDeletedException(ADMIN_PREFIX + ".deleted.failed", locale);
+        }
+    }
+
+    private void validateLastAdmin(String locale) {
+        var adminCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.adminRole));
+        if (adminCount <= 1) {
+            throw this.exceptionShortComponent.lastAdminException(ADMIN_PREFIX + ".deleted.failed.last", locale);
+        }
+    }
+
+    private void saveAdminChanges(UserEntity admin, String locale) {
+        try {
+            this.jwtTokenService.deleteByUserId(locale, admin.getId());
+            this.userRepository.save(admin);
+        } catch (Exception e) {
+            log.error("Error updating admin", e);
+            throw this.exceptionShortComponent.noUpdatedException(ADMIN_PREFIX + ".updated.failed", locale);
         }
     }
 }

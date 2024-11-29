@@ -45,6 +45,10 @@ public class ExceptionShortComponent {
         return new LastDeveloperException(messageKey, locale);
     }
 
+    public LastTechnicianException lastTechnicianException(String messageKey, String locale) {
+        return new LastTechnicianException(messageKey, locale);
+    }
+
     public DoNotExistsByIdException doNotExistsByIdException(String messageKey, String locale) {
         return new DoNotExistsByIdException(messageKey, locale);
     }

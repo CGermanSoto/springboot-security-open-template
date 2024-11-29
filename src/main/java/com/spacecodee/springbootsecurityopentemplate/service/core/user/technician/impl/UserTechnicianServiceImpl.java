@@ -6,6 +6,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.user.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.ITechnicianMapper;
+import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.IUserTechnicianService;
@@ -59,18 +60,17 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
 
-        this.alreadyExistByUsername(technicianAVO.getUsername(), locale);
-
+        this.userValidationService.validateUsername(technicianAVO.getUsername(), TECHNICIAN_PREFIX, locale);
         var roleEntity = this.roleService.findByName(this.technicianRole, locale);
-        var technicianEntity = this.technicianMapper.voToEntity(technicianAVO);
 
+        var technicianEntity = this.technicianMapper.voToEntity(technicianAVO);
         technicianEntity.setPassword(this.passwordEncoder.encode(technicianAVO.getPassword()));
         technicianEntity.setRoleEntity(roleEntity);
 
         try {
             this.userRepository.save(technicianEntity);
         } catch (Exception e) {
-            log.error("Error saving technician: ", e);
+            log.error("Error saving technician", e);
             throw this.exceptionShortComponent.cannotSaveException("technician.added.failed", locale);
         }
     }
@@ -78,18 +78,11 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     @Override
     @Transactional
     public void update(int id, TechnicianUVO technicianUVO, String locale) {
-        var existingTechnician = this.userValidationService.validateUserUpdate(id, technicianUVO.getUsername(),
-                TECHNICIAN_PREFIX, locale);
+        var existingTechnician = this.userValidationService.validateUserUpdate(id, technicianUVO.getUsername(), TECHNICIAN_PREFIX, locale);
         boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(technicianUVO, existingTechnician);
 
         if (hasChanges) {
-            try {
-                this.jwtTokenService.deleteByUserId(locale, existingTechnician.getId());
-                this.userRepository.save(existingTechnician);
-            } catch (Exception e) {
-                log.error("Error updating technician", e);
-                throw this.exceptionShortComponent.noUpdatedException("technician.updated.failed", locale);
-            }
+            this.saveTechnicianChanges(existingTechnician, locale);
         }
     }
 
@@ -97,7 +90,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     @Transactional
     public void delete(int id, String locale) {
         var existingTechnician = this.userValidationService.validateUserUpdate(id, null, TECHNICIAN_PREFIX, locale);
-        this.userValidationService.validateLastUserByRole(this.technicianRole, TECHNICIAN_PREFIX, locale);
+        validateLastTechnician(locale);
 
         try {
             this.jwtTokenService.deleteByUserId(locale, id);
@@ -126,9 +119,20 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
         return this.technicianMapper.toDtoList(technicians);
     }
 
-    private void alreadyExistByUsername(String username, String locale) {
-        if (this.userRepository.existsByUsername(username)) {
-            throw this.exceptionShortComponent.alreadyExistsException("technician.exists.by.username", locale);
+    private void saveTechnicianChanges(UserEntity technician, String locale) {
+        try {
+            this.jwtTokenService.deleteByUserId(locale, technician.getId());
+            this.userRepository.save(technician);
+        } catch (Exception e) {
+            log.error("Error updating technician", e);
+            throw this.exceptionShortComponent.noUpdatedException("technician.updated.failed", locale);
+        }
+    }
+
+    private void validateLastTechnician(String locale) {
+        var techniciansCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.technicianRole));
+        if (techniciansCount <= 1) {
+            throw this.exceptionShortComponent.lastTechnicianException("technician.deleted.failed.last", locale);
         }
     }
 }

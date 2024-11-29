@@ -76,7 +76,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Transactional
     public void update(int id, @NotNull DeveloperUVO developerUVO, String locale) {
         var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(), DEVELOPER_PREFIX, locale);
-        boolean hasChanges = updateDeveloperFields(developerUVO, existingDeveloper);
+        boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(developerUVO, existingDeveloper);
 
         if (hasChanges) {
             saveDeveloperChanges(existingDeveloper, locale);
@@ -115,27 +115,6 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     public List<DeveloperDTO> findAll(String locale) {
         var developers = this.userRepository.findByRoleEntity_Name(RoleEnum.valueOf(this.developerRole));
         return this.developerMapper.toDtoList(developers);
-    }
-
-    private boolean updateDeveloperFields(@NotNull DeveloperUVO developerUVO, @NotNull UserEntity existingDeveloper) {
-        boolean hasChanges = false;
-
-        if (!existingDeveloper.getUsername().equals(developerUVO.getUsername())) {
-            existingDeveloper.setUsername(developerUVO.getUsername());
-            hasChanges = true;
-        }
-
-        if (!existingDeveloper.getFullname().equals(developerUVO.getFullname())) {
-            existingDeveloper.setFullname(developerUVO.getFullname());
-            hasChanges = true;
-        }
-
-        if (!existingDeveloper.getLastname().equals(developerUVO.getLastname())) {
-            existingDeveloper.setLastname(developerUVO.getLastname());
-            hasChanges = true;
-        }
-
-        return hasChanges;
     }
 
     private void saveDeveloperChanges(UserEntity developer, String locale) {
