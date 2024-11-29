@@ -1,40 +1,17 @@
 package com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
+// AdminAVO.java
+public record AdminAVO(
+        @NotBlank(message = "{validation.field.required}") @Size(min = 3, message = "{validation.field.min.length}") String username,
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class AdminAVO implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+        @NotBlank(message = "{validation.field.required}") @Size(min = 6, message = "{validation.field.min.length}") String password,
 
-    @NotBlank
-    @NotEmpty
-    @Size(min = 3)
-    private String username;
-    @NotBlank
-    @NotEmpty
-    @Size(min = 6)
-    private String password;
-    @NotBlank
-    @NotEmpty
-    @Size(min = 6)
-    private String repeatPassword;
-    @NotBlank
-    @NotEmpty
-    @Size(min = 1)
-    private String fullname;
-    @NotBlank
-    @NotEmpty
-    @Size(min = 1)
-    private String lastname;
+        @NotBlank(message = "{validation.field.required}") @Size(min = 6, message = "{validation.field.min.length}") String repeatPassword,
+
+        @NotBlank(message = "{validation.field.required}") String fullname,
+
+        @NotBlank(message = "{validation.field.required}") String lastname) {
 }

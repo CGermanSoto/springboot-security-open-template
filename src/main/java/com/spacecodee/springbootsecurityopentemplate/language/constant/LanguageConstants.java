@@ -13,8 +13,8 @@ public final class LanguageConstants {
 
     private static final List<String> MESSAGE_SOURCES = List.of(
             "classpath:locale/message",
-            "classpath:api/api-doc",
-            "classpath:validation");
+            "classpath:validation/validation",
+            "classpath:api/api-doc");
 
     public static List<String> getMessageSources() {
         return MESSAGE_SOURCES;
