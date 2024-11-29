@@ -3,6 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.handler;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.pojo.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
@@ -109,7 +110,7 @@ public class GlobalExceptionHandler {
     private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
         return switch (ex) {
             case LastAdminException _, LastDeveloperException _, LastTechnicianException _ -> HttpStatus.CONFLICT;
-            case InvalidCredentialsException _ -> HttpStatus.UNAUTHORIZED;
+            case InvalidCredentialsException _, TokenExpiredException _ -> HttpStatus.UNAUTHORIZED;
             case UnauthorizedException _ -> HttpStatus.FORBIDDEN;
             case UserNotFoundException _, PermissionNotFoundException _, OperationNotFoundException _,
                  ModuleNotFoundException _ -> HttpStatus.NOT_FOUND;

@@ -1,4 +1,3 @@
-// PermissionVO.java
 package com.spacecodee.springbootsecurityopentemplate.data.vo.permission;
 
 import jakarta.validation.constraints.NotNull;

@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.util;
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
@@ -20,6 +21,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class ExceptionShortComponent {
+
+    public TokenExpiredException tokenExpiredException(String messageKey, String locale) {
+        return new TokenExpiredException(messageKey, locale);
+    }
 
     public UserNotFoundException userNotFoundException(String messageKey, String locale) {
         return new UserNotFoundException(messageKey, locale);

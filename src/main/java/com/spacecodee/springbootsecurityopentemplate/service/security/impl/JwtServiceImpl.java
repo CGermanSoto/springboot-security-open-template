@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -78,11 +79,12 @@ public class JwtServiceImpl implements IJwtService {
     public boolean isTokenExpired(String jwt) {
         try {
             var expiration = this.extractExpiration(jwt);
+            log.warn("Expiration date: {}", expiration);
             return expiration.before(new Date());
-        } catch (Exception e) {
+        } catch (TokenExpiredException e) {
             log.warn("The token is already expired, this is a warning", e);
+            return true;
         }
-        return false;
     }
 
     // JwtServiceImpl.java - Implement refresh method
