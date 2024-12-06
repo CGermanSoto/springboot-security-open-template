@@ -26,6 +26,7 @@ import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.HashMap;
 
 @Slf4j
 @Service
@@ -121,8 +122,6 @@ public class JwtServiceImpl implements IJwtService {
             return new TokenValidationResult(jwt, false);
         } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             log.info("JWT validation failed, deleting token: {}", e.getMessage());
-            //this.jwtTokenService.deleteByToken(locale, jwt);
-
             var expiredClaims = this.extractClaimsWithoutValidation(jwt);
             return this.handleExpiredToken(jwt, expiredClaims, locale);
         } catch (Exception e) {
@@ -163,15 +162,20 @@ public class JwtServiceImpl implements IJwtService {
                 .header()
                 .type("JWT")
                 .and()
-                .issuedAt(issuedAt)
-                .expiration(expiration);
+                .issuedAt(issuedAt) // Set new issuedAt
+                .expiration(expiration); // Set new expiration
 
         if (tokenClaims.subject() != null) {
             builder.subject(tokenClaims.subject());
         }
 
         if (tokenClaims.claims() != null) {
-            builder.claims(tokenClaims.claims());
+            // Remove date-related claims from old token
+            Map<String, Object> cleanedClaims = new HashMap<>(tokenClaims.claims());
+            cleanedClaims.remove("exp");
+            cleanedClaims.remove("iat");
+
+            builder.claims(cleanedClaims);
         }
 
         return builder.signWith(this.generateKey(), Jwts.SIG.HS256).compact();
