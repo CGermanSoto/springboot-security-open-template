@@ -43,7 +43,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         var existingToken = this.jwtTokenService.getTokenByUsername(userVO.username());
         if (StringUtils.hasText(existingToken)) {
             try {
-                this.jwtService.validateToken(existingToken, locale);
+                this.jwtService.deleteExpiredToken(existingToken, locale);
                 log.info("Token is still valid for user: {}", userVO.username());
                 return new AuthenticationResponsePojo(existingToken);
             } catch (TokenExpiredException e) {

@@ -1,5 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenClaims;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -99,6 +102,18 @@ public class JwtServiceImpl implements IJwtService {
         }
     }
 
+    public void deleteExpiredToken(String jwt, String locale) {
+        try {
+            this.extractAllClaims(jwt);
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            log.info("JDeleting token: {}", e.getMessage());
+            this.jwtTokenService.deleteByToken(locale, jwt);
+        } catch (Exception e) {
+            log.error("Ups! Unexpected error deleting token: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
+        }
+    }
+
     @Override
     public TokenValidationResult validateToken(String jwt, String locale) {
         try {
@@ -106,8 +121,10 @@ public class JwtServiceImpl implements IJwtService {
             return new TokenValidationResult(jwt, false);
         } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             log.info("JWT validation failed, deleting token: {}", e.getMessage());
-            this.jwtTokenService.deleteByToken(locale, jwt);
-            throw this.exceptionShortComponent.tokenExpiredException("token.expired", locale);
+            //this.jwtTokenService.deleteByToken(locale, jwt);
+
+            var expiredClaims = this.extractClaimsWithoutValidation(jwt);
+            return this.handleExpiredToken(jwt, expiredClaims, locale);
         } catch (Exception e) {
             log.error("Unexpected error validating token: {}", e.getMessage());
             throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
@@ -119,6 +136,7 @@ public class JwtServiceImpl implements IJwtService {
         try {
             // Delete expired token
             this.jwtTokenService.deleteByToken(locale, jwt);
+            log.info("Token deleted successfully");
 
             // Generate a new token with existing claims using buildToken
             String newToken = buildToken(new TokenClaims(null, claims));
@@ -157,6 +175,29 @@ public class JwtServiceImpl implements IJwtService {
         }
 
         return builder.signWith(this.generateKey(), Jwts.SIG.HS256).compact();
+    }
+
+    private Claims extractClaimsWithoutValidation(String jwt) {
+        try {
+            String[] parts = jwt.split("\\.");
+            if (parts.length != 3) {
+                throw new IllegalArgumentException("Invalid JWT format");
+            }
+
+            String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> claimsMap = mapper.readValue(payload, new TypeReference<>() {
+            });
+
+            return Jwts.claims()
+                    .add(claimsMap)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error extracting claims from JWT: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenExpiredException("token.expired", "en");
+        }
     }
 
     // Extract all claims from the JWT

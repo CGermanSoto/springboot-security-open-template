@@ -24,5 +24,7 @@ public interface IJwtService {
 
     String refreshToken(String oldToken, UserDetails userDetails);
 
+    void deleteExpiredToken(String jwt, String locale);
+
     TokenValidationResult validateToken(String jwt, String locale);
 }
