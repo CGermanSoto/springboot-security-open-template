@@ -105,11 +105,11 @@ public class JwtServiceImpl implements IJwtService {
 
             if (isExpired) {
                 log.info("Token expired, attempting refresh");
-                return handleExpiredToken(jwt, claims, locale);
+                return this.handleExpiredToken(jwt, claims, locale);
             }
 
             return new TokenValidationResult(jwt, false);
-        } catch (Exception e) {
+        } catch (TokenExpiredException e) {
             log.error("Error validating token", e);
             throw new TokenExpiredException("token.expired", locale);
         }
