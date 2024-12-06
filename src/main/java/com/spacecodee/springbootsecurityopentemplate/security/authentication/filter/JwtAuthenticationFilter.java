@@ -1,9 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Date;
 
 @Slf4j
 @AllArgsConstructor
@@ -28,7 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IJwtService jwtService;
     private final IUserDetailsService userService;
-    private final IJwtTokenService jwtTokenService;
 
     // Check if the JWT token is valid and set the authentication token
     @Override
@@ -44,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var locale = LocaleResolverFilter.getCurrentLocale();
 
         try {
-            var validationResult = this.jwtService.validateAndRefreshToken(jwt, locale);
+            var validationResult = this.jwtService.validateToken(jwt, locale);
 
             if (validationResult.wasRefreshed()) {
                 response.setHeader("Authorization", "Bearer " + validationResult.token());
@@ -60,30 +57,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             authenticationToken.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (Exception e) {
+        } catch (TokenExpiredException e) {
             log.warn("JWT validation failed: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean validateToken(SecurityJwtTokenDTO jwtTokenDTO) {
-        if (jwtTokenDTO == null) {
-            return false;
-        }
-
-        var now = new Date(System.currentTimeMillis());
-        var isValid = jwtTokenDTO.isValid() && jwtTokenDTO.getExpiryDate().after(now);
-
-        if (!isValid) {
-            this.updateTokenStatus(jwtTokenDTO);
-        }
-
-        return isValid;
-    }
-
-    private void updateTokenStatus(@NotNull SecurityJwtTokenDTO token) {
-        token.setValid(false);
-        this.jwtTokenService.save(token);
     }
 }

@@ -88,7 +88,7 @@ public class JwtServiceImpl implements IJwtService {
     @Override
     public String refreshToken(String oldToken, UserDetails userDetails) {
         try {
-            Claims claims = extractAllClaims(oldToken);
+            Claims claims = this.extractAllClaims(oldToken);
             return buildToken(new TokenClaims(userDetails.getUsername(), claims));
         } catch (Exception e) {
             log.warn("Error refreshing token", e);
@@ -97,20 +97,20 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public TokenValidationResult validateAndRefreshToken(String jwt, String locale) {
+    public TokenValidationResult validateToken(String jwt, String locale) {
         try {
-            var claims = extractAllClaims(jwt);
-            var expiration = claims.getExpiration();
-            var isExpired = expiration.before(new Date());
+            Claims claims = extractAllClaims(jwt);
+            boolean isExpired = claims.getExpiration().before(new Date());
 
             if (isExpired) {
-                log.info("Token expired, attempting refresh");
-                return this.handleExpiredToken(jwt, claims, locale);
+                log.info("Token is expired");
+                throw new TokenExpiredException("token.expired", locale);
             }
 
             return new TokenValidationResult(jwt, false);
         } catch (TokenExpiredException e) {
-            log.error("Error validating token", e);
+            log.info("Token validation failed, deleting token");
+            this.jwtTokenService.deleteByToken(locale, jwt);
             throw new TokenExpiredException("token.expired", locale);
         }
     }
@@ -121,7 +121,7 @@ public class JwtServiceImpl implements IJwtService {
             // Delete expired token
             this.jwtTokenService.deleteByToken(locale, jwt);
 
-            // Generate new token with existing claims using buildToken
+            // Generate a new token with existing claims using buildToken
             String newToken = buildToken(new TokenClaims(null, claims));
 
             return new TokenValidationResult(newToken, true);
