@@ -3,12 +3,13 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenClaims;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
@@ -28,14 +29,16 @@ import java.util.Map;
 public class JwtServiceImpl implements IJwtService {
 
     private final IJwtTokenService jwtTokenService;
+    private final ExceptionShortComponent exceptionShortComponent;
 
     @Value("${security.jwt.expiration-in-minutes}")
     private long expirationInMinutes;
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    public JwtServiceImpl(IJwtTokenService jwtTokenService) {
+    public JwtServiceImpl(IJwtTokenService jwtTokenService, ExceptionShortComponent exceptionShortComponent) {
         this.jwtTokenService = jwtTokenService;
+        this.exceptionShortComponent = exceptionShortComponent;
     }
 
     // Generate a JWT token with the given userDetails details and extra claims
@@ -104,14 +107,18 @@ public class JwtServiceImpl implements IJwtService {
 
             if (isExpired) {
                 log.info("Token is expired");
+                this.jwtTokenService.deleteByToken(locale, jwt); // Delete here too
                 throw new TokenExpiredException("token.expired", locale);
             }
 
             return new TokenValidationResult(jwt, false);
-        } catch (TokenExpiredException e) {
-            log.info("Token validation failed, deleting token");
+        } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            log.info("JWT validation failed, deleting token: {}", e.getMessage());
             this.jwtTokenService.deleteByToken(locale, jwt);
-            throw new TokenExpiredException("token.expired", locale);
+            throw this.exceptionShortComponent.tokenExpiredException("token.expired", locale);
+        } catch (Exception e) {
+            log.error("Unexpected error validating token: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
         }
     }
 
