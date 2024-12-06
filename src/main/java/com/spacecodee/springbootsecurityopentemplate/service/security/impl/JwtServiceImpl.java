@@ -102,15 +102,7 @@ public class JwtServiceImpl implements IJwtService {
     @Override
     public TokenValidationResult validateToken(String jwt, String locale) {
         try {
-            Claims claims = extractAllClaims(jwt);
-            boolean isExpired = claims.getExpiration().before(new Date());
-
-            if (isExpired) {
-                log.info("Token is expired");
-                this.jwtTokenService.deleteByToken(locale, jwt); // Delete here too
-                throw new TokenExpiredException("token.expired", locale);
-            }
-
+            this.extractAllClaims(jwt);
             return new TokenValidationResult(jwt, false);
         } catch (ExpiredJwtException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             log.info("JWT validation failed, deleting token: {}", e.getMessage());
