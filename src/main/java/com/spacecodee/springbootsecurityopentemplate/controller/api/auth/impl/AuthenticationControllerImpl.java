@@ -25,8 +25,8 @@ public class AuthenticationControllerImpl extends AbstractController implements 
     private final IAuthenticationService authenticationService;
 
     public AuthenticationControllerImpl(MessageUtilComponent messageUtilComponent,
-            IJwtService jwtService,
-            IAuthenticationService authenticationService) {
+                                        IJwtService jwtService,
+                                        IAuthenticationService authenticationService) {
         super(messageUtilComponent);
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
@@ -47,7 +47,7 @@ public class AuthenticationControllerImpl extends AbstractController implements 
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
-            LoginUserVO request) {
+                                                                                        LoginUserVO request) {
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(super.createDataResponse(
