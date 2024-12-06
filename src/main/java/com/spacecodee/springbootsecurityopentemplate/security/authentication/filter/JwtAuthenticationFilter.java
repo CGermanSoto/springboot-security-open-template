@@ -1,6 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenUnexpectedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import jakarta.servlet.FilterChain;
@@ -26,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final IJwtService jwtService;
     private final IUserDetailsService userService;
+    private final ExceptionShortComponent exceptionShortComponent;
 
     // Check if the JWT token is valid and set the authentication token
     @Override
@@ -57,8 +59,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             authenticationToken.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (TokenExpiredException e) {
-            log.warn("JWT validation failed: {}", e.getMessage());
+        } catch (TokenUnexpectedException e) {
+            log.warn("There was an unexpected error when we were trying to refresh the token, please log in again: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenUnexpectedException("token.unexpected", locale);
         }
 
         filterChain.doFilter(request, response);

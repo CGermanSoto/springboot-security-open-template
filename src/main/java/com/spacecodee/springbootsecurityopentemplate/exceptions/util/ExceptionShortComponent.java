@@ -31,6 +31,10 @@ public class ExceptionShortComponent {
         return new TokenExpiredException(messageKey, locale);
     }
 
+    public TokenUnexpectedException tokenUnexpectedException(String messageKey, String locale) {
+        return new TokenUnexpectedException(messageKey, locale);
+    }
+
     public UserNotFoundException userNotFoundException(String messageKey, String locale) {
         return new UserNotFoundException(messageKey, locale);
     }
