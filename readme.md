@@ -22,6 +22,9 @@ security.default.role=#user role
 security.default.developer.role=#developer role
 security.default.technician.role=#technician role
 security.default.customer.role=#customer role
+security.cors.allowed-origins=https://example.com,https://www.example.com
+security.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+security.cors.allowed-headers=Authorization,Content-Type,Accept-Language
 ```
 
 📚 Documentation
