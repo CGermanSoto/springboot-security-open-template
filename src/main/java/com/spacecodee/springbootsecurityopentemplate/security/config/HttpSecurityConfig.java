@@ -37,7 +37,16 @@ public class HttpSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().access(authorizationManager))
+                .authorizeHttpRequests(auth -> {
+                    // Swagger UI endpoints
+                    auth.requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/webjars/**").permitAll();
+                    // All other requests go through CustomAuthorizationManager
+                    auth.anyRequest().access(authorizationManager);
+                })
                 .addFilterBefore(localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex

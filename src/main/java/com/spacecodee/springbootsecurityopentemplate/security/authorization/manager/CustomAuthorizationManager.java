@@ -78,7 +78,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
                 .anyMatch(operation -> matches(operation, url, httpMethod));
     }
 
-    private boolean matches(UserDetailsOperationDTO operation, String url, String httpMethod) {
+    private boolean matches(@NotNull UserDetailsOperationDTO operation, String url, String httpMethod) {
         var pattern = Pattern.compile(operation.getModuleDTO().getBasePath() + operation.getPath());
         return pattern.matcher(url).matches() &&
                 operation.getHttpMethod().equalsIgnoreCase(httpMethod);
@@ -89,6 +89,25 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         var url = request.getRequestURI();
         url = url.replaceFirst(contextPath, "");
 
+        String contextPathNew = "/api/v1";
+
+        // Remove API context path if present
+        if (url.startsWith(contextPathNew)) {
+            url = url.substring(contextPathNew.length());
+        }
+
+        // Return immediately for Swagger UI paths
+        if (isSwaggerUIPath(url)) {
+            return url;
+        }
+
         return url;
+    }
+
+    private boolean isSwaggerUIPath(String url) {
+        return url.startsWith("/v3/api-docs") ||
+                url.startsWith("/swagger-ui/") ||
+                url.equals("/swagger-ui.html") ||
+                url.startsWith("/webjars/");
     }
 }
