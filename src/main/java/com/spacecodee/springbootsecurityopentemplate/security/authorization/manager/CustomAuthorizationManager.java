@@ -31,7 +31,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
-                                       @NotNull RequestAuthorizationContext object) {
+            @NotNull RequestAuthorizationContext object) {
 
         HttpServletRequest request = object.getRequest();
         var url = this.extractUrl(request);

@@ -20,10 +20,18 @@ security.jwt.secret-key=#your secret key
 security.default.roles=#admin role
 security.default.role=#user role
 security.default.developer.role=#developer role
+security.default.technician.role=#technician role
+security.default.customer.role=#customer role
 ```
 
-Security Features
------------------
+📚 Documentation
+----------------
+
+- 📖 Swagger UI available at:`/api/v1/swagger-ui/index.html`
+- 🔍 OpenAPI docs at:`/api/v1/v3/api-docs`
+
+🛡️ Security Features
+---------------------
 
 **User Management**
 
@@ -31,33 +39,53 @@ Security Features
 - ✅ Role-based access control
 - ✅ Secure password handling
 - ✅ Token invalidation on user updates
+- ✅ Locale-based responses (en/es)
 
 **Developer Protection**
 
-- ❌ Cannot delete last remaining developer
+- ✅ Cannot delete last remaining developer
 - ✅ Automatic token invalidation before deletion
 - ✅ Username uniqueness validation
 - ✅ Safe update operations
 
 **Admin Protection**
 
-- ❌ Cannot delete last remaining admin
+- ✅ Cannot delete last remaining admin
 - ✅ Automatic token invalidation before deletion
+- ✅ Username uniqueness validation
+- ✅ Safe update operations
+
+**Customer Management**
+
+- ✅ Full CRUD operations
+- ✅ Role-based access control
 - ✅ Username uniqueness validation
 - ✅ Safe update operations
 
 **Business Rules**
 
-**Developer Management:**
+*User Management:*
 
-- System must maintain at least one active developer
-- Check and invalidate JWT tokens before developer deletion
-- Validate unique usernames across all user types
+- System maintains at least one active user per role
+- Validates unique usernames across all user types
 - Auto-logout (token invalidation) on profile updates
+- Internationalization support (i18n)
 
-**Token Security:**
+*Token Security:*
 
 - Automatic invalidation on sensitive data changes
 - Proper cleanup during user deletion
 - Expiration handling
 - Refresh token support
+- JWT validation and cleanup
+
+*API Documentation:*
+
+- Swagger UI integration
+- OpenAPI 3.0 specification
+- Interactive API testing
+- Endpoint authorization information
+
+*Useful links:*
+
+- To convert any text into Markdown format: [Markdown Converter](https://euangoddard.github.io/clipboard2markdown/)
