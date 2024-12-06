@@ -147,6 +147,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     private @NotNull @UnmodifiableView Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {
         return Map.of(
+                "userId", userDetailsDTO.getId(),
                 "name", userDetailsDTO.getName(),
                 "role", userDetailsDTO.getUserDetailsRoleDTO().getName(),
                 "authorities", userDetailsDTO.getAuthorities());

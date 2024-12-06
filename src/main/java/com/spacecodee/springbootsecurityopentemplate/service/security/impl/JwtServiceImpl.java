@@ -6,6 +6,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.record.TokenClaims;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
 import io.jsonwebtoken.*;
@@ -25,14 +26,15 @@ import org.springframework.util.StringUtils;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
 public class JwtServiceImpl implements IJwtService {
 
     private final IJwtTokenService jwtTokenService;
+    private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
 
     @Value("${security.jwt.expiration-in-minutes}")
@@ -40,8 +42,9 @@ public class JwtServiceImpl implements IJwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    public JwtServiceImpl(IJwtTokenService jwtTokenService, ExceptionShortComponent exceptionShortComponent) {
+    public JwtServiceImpl(IJwtTokenService jwtTokenService, IJwtTokenMapper jwtTokenMapper, ExceptionShortComponent exceptionShortComponent) {
         this.jwtTokenService = jwtTokenService;
+        this.jwtTokenMapper = jwtTokenMapper;
         this.exceptionShortComponent = exceptionShortComponent;
     }
 
@@ -91,7 +94,6 @@ public class JwtServiceImpl implements IJwtService {
         }
     }
 
-    // JwtServiceImpl.java - Implement refresh method
     @Override
     public String refreshToken(String oldToken, UserDetails userDetails) {
         try {
@@ -135,14 +137,21 @@ public class JwtServiceImpl implements IJwtService {
         try {
             // Delete expired token
             this.jwtTokenService.deleteByToken(locale, jwt);
-            log.info("Token deleted successfully");
+            log.info("Expired token deleted successfully");
 
-            // Generate a new token with existing claims using buildToken
+            // Generate new token with existing claims
             String newToken = buildToken(new TokenClaims(null, claims));
 
+            // Get user ID from claims and save a new token
+            var userId = ((Number) claims.get("userId")).intValue();
+            var expiration = extractExpiration(newToken);
+
+            this.jwtTokenService.save(this.jwtTokenMapper.toUVO(jwt, expiration, userId));
+
+            log.info("New token generated and saved for user ID: {}", userId);
             return new TokenValidationResult(newToken, true);
         } catch (Exception e) {
-            log.error("Error refreshing token", e);
+            log.error("Error handling expired token: {}", e.getMessage());
             throw new TokenExpiredException("token.refresh.failed", locale);
         }
     }
