@@ -2,6 +2,9 @@ package com.spacecodee.springbootsecurityopentemplate.enums;
 
 public enum RolePermissionEnum {
 
+    // General
+    SYSTEM_CRUD_OPERATIONS, //TODO: Add this to all roles that can perform CRUD operations
+
     // Admin
     REGISTER_ONE_ADMIN,
     UPDATE_ONE_ADMIN,
@@ -15,6 +18,20 @@ public enum RolePermissionEnum {
     UPDATE_ONE_DEVELOPER,
     FIND_ONE_DEVELOPER,
     FIND_ALL_DEVELOPERS,
+
+    // Technician
+    REGISTER_ONE_TECHNICIAN,
+    DELETE_ONE_TECHNICIAN,
+    UPDATE_ONE_TECHNICIAN,
+    FIND_ONE_TECHNICIAN,
+    FIND_ALL_TECHNICIANS,
+
+    // Customer
+    REGISTER_ONE_CUSTOMER,
+    DELETE_ONE_CUSTOMER,
+    UPDATE_ONE_CUSTOMER,
+    FIND_ONE_CUSTOMER,
+    FIND_ALL_CUSTOMERS,
 
     // System
     SHOW_PROFILE,

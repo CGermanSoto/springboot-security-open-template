@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user-client")
+@RequestMapping("/user-customer")
 public class UserCustomerControllerImpl extends AbstractController implements IUserCustomerController {
 
     private final IUserCustomerService userClientService;
