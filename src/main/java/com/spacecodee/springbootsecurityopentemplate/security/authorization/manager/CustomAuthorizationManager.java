@@ -6,8 +6,8 @@ import com.spacecodee.springbootsecurityopentemplate.security.authentication.fil
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -20,14 +20,24 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-@AllArgsConstructor
 @Component
 public class CustomAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
+
+    @Value("${app.api.context-path}")
+    private String contextPath;
+
+    @Value("#{'${swagger.paths}'.split(',')}")
+    private List<String> swaggerPaths;
 
     private final IOperationService operationService;
     private final IUserDetailsService userService;
 
     private final Logger logger = Logger.getLogger(CustomAuthorizationManager.class.getName());
+
+    public CustomAuthorizationManager(IOperationService operationService, IUserDetailsService userService) {
+        this.operationService = operationService;
+        this.userService = userService;
+    }
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
@@ -42,7 +52,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             return new AuthorizationDecision(true);
         }
 
-        // If not public, verify user has required permissions
+        // If not public, verify the user has required permissions
         var auth = authentication.get();
         if (auth == null || !auth.isAuthenticated()) {
             return new AuthorizationDecision(false);
@@ -85,29 +95,21 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     }
 
     private @NotNull String extractUrl(@NotNull HttpServletRequest request) {
-        var contextPath = request.getContextPath();
-        var url = request.getRequestURI();
-        url = url.replaceFirst(contextPath, "");
+        String url = request.getRequestURI();
 
-        String contextPathNew = "/api/v1";
-
-        // Remove API context path if present
-        if (url.startsWith(contextPathNew)) {
-            url = url.substring(contextPathNew.length());
-        }
-
-        // Return immediately for Swagger UI paths
+        // Skip context path processing for Swagger paths
         if (isSwaggerUIPath(url)) {
             return url;
+        }
+
+        if (url.startsWith(this.contextPath)) {
+            url = url.substring(this.contextPath.length());
         }
 
         return url;
     }
 
     private boolean isSwaggerUIPath(String url) {
-        return url.startsWith("/v3/api-docs") ||
-                url.startsWith("/swagger-ui/") ||
-                url.equals("/swagger-ui.html") ||
-                url.startsWith("/webjars/");
+        return swaggerPaths.stream().anyMatch(url::startsWith);
     }
 }
