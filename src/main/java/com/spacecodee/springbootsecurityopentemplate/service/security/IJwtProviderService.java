@@ -1,18 +1,15 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.lang.NonNull;
-
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
 
 import java.util.Date;
 import java.util.Map;
 
-public interface IJwtService {
+public interface IJwtProviderService {
 
-    String generateToken(@NonNull UserDetails user, Map<String, Object> extraClaims);
+    String generateToken(UserDetails user, Map<String, Object> extraClaims);
 
     String extractUsername(String jwt);
 
@@ -20,11 +17,7 @@ public interface IJwtService {
 
     Date extractExpiration(String jwt);
 
-    boolean isTokenExpired(String jwt);
+    Claims extractClaims(String jwt);
 
-    String refreshToken(String oldToken, UserDetails userDetails);
-
-    void deleteExpiredToken(String jwt, String locale);
-
-    TokenValidationResult validateToken(String jwt, String locale);
+    boolean isTokenValid(String jwt);
 }

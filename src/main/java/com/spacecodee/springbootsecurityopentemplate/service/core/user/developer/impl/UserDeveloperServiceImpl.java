@@ -10,7 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEnti
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.developer.IUserDeveloperService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -30,7 +30,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
-    private final IJwtTokenService jwtTokenService;
+    private final ITokenServiceFacade tokenServiceFacade;
     private final IDeveloperMapper developerMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
@@ -38,13 +38,17 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Value("${security.default.developer.role}")
     private String developerRole;
 
-    public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository,
-                                    IRoleService roleService, IJwtTokenService jwtTokenService, IDeveloperMapper developerMapper,
-                                    IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
+    public UserDeveloperServiceImpl(PasswordEncoder passwordEncoder,
+            IUserRepository userRepository,
+            IRoleService roleService,
+            ITokenServiceFacade tokenServiceFacade,
+            IDeveloperMapper developerMapper,
+            IUserValidationService userValidationService,
+            ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
-        this.jwtTokenService = jwtTokenService;
+        this.tokenServiceFacade = tokenServiceFacade;
         this.developerMapper = developerMapper;
         this.userValidationService = userValidationService;
         this.exceptionShortComponent = exceptionShortComponent;
@@ -75,7 +79,8 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
     @Override
     @Transactional
     public void update(int id, @NotNull DeveloperUVO developerUVO, String locale) {
-        var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(), DEVELOPER_PREFIX, locale);
+        var existingDeveloper = this.userValidationService.validateUserUpdate(id, developerUVO.getUsername(),
+                DEVELOPER_PREFIX, locale);
         boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(developerUVO, existingDeveloper);
 
         if (hasChanges) {
@@ -90,7 +95,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
         validateLastDeveloper(locale);
 
         try {
-            this.jwtTokenService.deleteByUserId(locale, id);
+            this.tokenServiceFacade.logout(String.valueOf(id), locale);
             this.userRepository.delete(existingDeveloper);
         } catch (Exception e) {
             log.error("Error deleting developer", e);
@@ -119,7 +124,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
 
     private void saveDeveloperChanges(UserEntity developer, String locale) {
         try {
-            this.jwtTokenService.deleteByUserId(locale, developer.getId());
+            this.tokenServiceFacade.logout(String.valueOf(developer.getId()), locale);
             this.userRepository.save(developer);
         } catch (Exception e) {
             log.error("Error updating developer", e);

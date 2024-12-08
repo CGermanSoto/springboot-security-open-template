@@ -10,7 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEnti
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.technician.IUserTechnicianService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -25,31 +25,33 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserTechnicianServiceImpl implements IUserTechnicianService {
-
     private static final String TECHNICIAN_INVALID_ID = "technician.invalid.id";
     private static final String TECHNICIAN_NOT_EXISTS_BY_ID = "technician.not.exists.by.id";
+    private static final String TECHNICIAN_PREFIX = "technician";
 
     private final PasswordEncoder passwordEncoder;
     private final ExceptionShortComponent exceptionShortComponent;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
-    private final IJwtTokenService jwtTokenService;
+    private final ITokenServiceFacade tokenServiceFacade;
     private final ITechnicianMapper technicianMapper;
     private final IUserValidationService userValidationService;
 
     @Value("${security.default.technician.role}")
     private String technicianRole;
 
-    private static final String TECHNICIAN_PREFIX = "technician";
-
-    public UserTechnicianServiceImpl(PasswordEncoder passwordEncoder, ExceptionShortComponent exceptionShortComponent,
-                                     IUserRepository userRepository, IRoleService roleService, IJwtTokenService jwtTokenService,
-                                     ITechnicianMapper technicianMapper, IUserValidationService userValidationService) {
+    public UserTechnicianServiceImpl(PasswordEncoder passwordEncoder,
+            ExceptionShortComponent exceptionShortComponent,
+            IUserRepository userRepository,
+            IRoleService roleService,
+            ITokenServiceFacade tokenServiceFacade,
+            ITechnicianMapper technicianMapper,
+            IUserValidationService userValidationService) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;
         this.userRepository = userRepository;
         this.roleService = roleService;
-        this.jwtTokenService = jwtTokenService;
+        this.tokenServiceFacade = tokenServiceFacade;
         this.technicianMapper = technicianMapper;
         this.userValidationService = userValidationService;
     }
@@ -79,7 +81,8 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     @Override
     @Transactional
     public void update(int id, @NotNull TechnicianUVO technicianUVO, String locale) {
-        var existingTechnician = this.userValidationService.validateUserUpdate(id, technicianUVO.getUsername(), TECHNICIAN_PREFIX, locale);
+        var existingTechnician = this.userValidationService.validateUserUpdate(id, technicianUVO.getUsername(),
+                TECHNICIAN_PREFIX, locale);
         boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(technicianUVO, existingTechnician);
 
         if (hasChanges) {
@@ -94,7 +97,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
         validateLastTechnician(locale);
 
         try {
-            this.jwtTokenService.deleteByUserId(locale, id);
+            this.tokenServiceFacade.logout(String.valueOf(id), locale);
             this.userRepository.delete(existingTechnician);
         } catch (Exception e) {
             log.error("Error deleting technician", e);
@@ -110,8 +113,8 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
 
         return this.userRepository.findById(id)
                 .map(this.technicianMapper::toDto)
-                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(TECHNICIAN_NOT_EXISTS_BY_ID,
-                        locale));
+                .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
+                        TECHNICIAN_NOT_EXISTS_BY_ID, locale));
     }
 
     @Override
@@ -122,7 +125,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
 
     private void saveTechnicianChanges(UserEntity technician, String locale) {
         try {
-            this.jwtTokenService.deleteByUserId(locale, technician.getId());
+            this.tokenServiceFacade.logout(String.valueOf(technician.getId()), locale);
             this.userRepository.save(technician);
         } catch (Exception e) {
             log.error("Error updating technician", e);

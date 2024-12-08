@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.core.user.client.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.customer.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.CustomerDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.customer.CustomerAVO;
@@ -9,8 +9,8 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IClientMapper
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.client.IUserCustomerService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenManagementService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.customer.IUserCustomerService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -30,7 +30,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
-    private final IJwtTokenManagementService jwtTokenService;
+    private final ITokenServiceFacade tokenServiceFacade;
     private final IClientMapper clientMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
@@ -41,14 +41,14 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     public UserCustomerServiceImpl(PasswordEncoder passwordEncoder,
                                    IUserRepository userRepository,
                                    IRoleService roleService,
-                                   IJwtTokenManagementService jwtTokenService,
+                                   ITokenServiceFacade tokenServiceFacade,
                                    IClientMapper clientMapper,
                                    IUserValidationService userValidationService,
                                    ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
-        this.jwtTokenService = jwtTokenService;
+        this.tokenServiceFacade = tokenServiceFacade;
         this.clientMapper = clientMapper;
         this.userValidationService = userValidationService;
         this.exceptionShortComponent = exceptionShortComponent;
@@ -95,7 +95,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
         validateLastClient(locale);
 
         try {
-            this.jwtTokenService.deleteByUserId(locale, id);
+            this.tokenServiceFacade.logout(String.valueOf(id), locale);
             this.userRepository.delete(existingClient);
         } catch (Exception e) {
             log.error("Error deleting client", e);
@@ -124,7 +124,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
 
     private void saveClientChanges(UserEntity client, String locale) {
         try {
-            this.jwtTokenService.deleteByUserId(locale, client.getId());
+            this.tokenServiceFacade.logout(String.valueOf(client.getId()), locale); // TODO: Fix we need to send the token to logout not the id
             this.userRepository.save(client);
         } catch (Exception e) {
             log.error("Error updating client", e);

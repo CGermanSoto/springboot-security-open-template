@@ -8,7 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.CustomerDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.customer.CustomerAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.customer.CustomerUVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.client.IUserCustomerService;
+import com.spacecodee.springbootsecurityopentemplate.service.core.user.customer.IUserCustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

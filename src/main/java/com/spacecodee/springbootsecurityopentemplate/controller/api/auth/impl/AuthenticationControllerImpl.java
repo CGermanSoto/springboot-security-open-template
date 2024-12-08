@@ -9,7 +9,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserD
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationControllerImpl extends AbstractController implements IAuthenticationController {
-    private final IJwtService jwtService;
+    private final IJwtProviderService jwtService;
     private final IAuthenticationService authenticationService;
 
     public AuthenticationControllerImpl(MessageUtilComponent messageUtilComponent,
-                                        IJwtService jwtService,
+                                        IJwtProviderService jwtService,
                                         IAuthenticationService authenticationService) {
         super(messageUtilComponent);
         this.jwtService = jwtService;

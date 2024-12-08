@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.core.user.client;
+package com.spacecodee.springbootsecurityopentemplate.service.core.user.customer;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.CustomerDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.customer.CustomerAVO;

@@ -10,7 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEnti
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -30,7 +30,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
-    private final IJwtTokenService jwtTokenService;
+    private final ITokenServiceFacade tokenServiceFacade;
     private final IAdminMapper userDTOMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
@@ -38,13 +38,17 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Value("${security.default.roles}")
     private String adminRole;
 
-    public UserAdminServiceImpl(PasswordEncoder passwordEncoder, IUserRepository userRepository,
-                                IRoleService roleService, IJwtTokenService jwtTokenService, IAdminMapper userDTOMapper,
-                                IUserValidationService userValidationService, ExceptionShortComponent exceptionShortComponent) {
+    public UserAdminServiceImpl(PasswordEncoder passwordEncoder,
+                                IUserRepository userRepository,
+                                IRoleService roleService,
+                                ITokenServiceFacade tokenServiceFacade,
+                                IAdminMapper userDTOMapper,
+                                IUserValidationService userValidationService,
+                                ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
-        this.jwtTokenService = jwtTokenService;
+        this.tokenServiceFacade = tokenServiceFacade;
         this.userDTOMapper = userDTOMapper;
         this.userValidationService = userValidationService;
         this.exceptionShortComponent = exceptionShortComponent;
@@ -54,7 +58,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Transactional
     public void add(AdminAVO adminAVO, String locale) {
         if (adminAVO == null) {
-            throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
+            throw this.exceptionShortComponent.noContentException(ADMIN_PREFIX + ".added.failed", locale);
         }
 
         if (AppUtils.comparePasswords(adminAVO.getPassword(), adminAVO.getRepeatPassword())) {
@@ -72,8 +76,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.save(userEntity);
         } catch (Exception e) {
             log.error("Error saving admin", e);
-            log.info(ADMIN_PREFIX + ".added.failed");
-            throw this.exceptionShortComponent.noCreatedException("admin.added.failed", locale);
+            throw this.exceptionShortComponent.noCreatedException(ADMIN_PREFIX + ".added.failed", locale);
         }
     }
 
@@ -96,7 +99,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
         validateLastAdmin(locale);
 
         try {
-            this.jwtTokenService.deleteByUserId(locale, id);
+            // Use facade instead of direct JWT service
+            this.tokenServiceFacade.logout(String.valueOf(id), locale);
             this.userRepository.delete(existingAdmin);
         } catch (Exception e) {
             log.error("Error deleting admin", e);
@@ -132,7 +136,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     private void saveAdminChanges(UserEntity admin, String locale) {
         try {
-            this.jwtTokenService.deleteByUserId(locale, admin.getId());
+            // Use facade for token invalidation
+            this.tokenServiceFacade.logout(String.valueOf(admin.getId()), locale);
             this.userRepository.save(admin);
         } catch (Exception e) {
             log.error("Error updating admin", e);
