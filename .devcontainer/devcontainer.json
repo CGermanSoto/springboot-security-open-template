@@ -1,0 +1,26 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java-postgres
+{
+  "name": "Spring Security API Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // Add environment file through docker compose env_file
+  "remoteEnv": {
+    "COMPOSE_ENVFILE": "${localWorkspaceFolder}/.env"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "pivotal.vscode-spring-boot",
+        "redhat.java",
+        "gabrielbb.vscode-lombok"
+      ]
+    }
+  },
+
+  "forwardPorts": [8080, 5432]
+}

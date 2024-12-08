@@ -102,14 +102,20 @@ public class GlobalExceptionHandler {
     @Contract(pure = true)
     private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
         return switch (ex) {
-            case LastAdminException _, LastDeveloperException _, LastTechnicianException _ -> HttpStatus.CONFLICT;
-            case InvalidCredentialsException _, TokenExpiredException _ -> HttpStatus.UNAUTHORIZED;
-            case UnauthorizedException _ -> HttpStatus.FORBIDDEN;
-            case UserNotFoundException _, PermissionNotFoundException _, OperationNotFoundException _,
-                 ModuleNotFoundException _ -> HttpStatus.NOT_FOUND;
-            case AlreadyExistsException _, PasswordDoNotMatchException _, InvalidParameterException _ ->
-                    HttpStatus.BAD_REQUEST;
-            case NoContentException _ -> HttpStatus.NO_CONTENT;
+            case LastAdminException ignored -> HttpStatus.CONFLICT;
+            case LastTechnicianException ignored -> HttpStatus.CONFLICT;
+            case LastDeveloperException ignored -> HttpStatus.CONFLICT;
+            case InvalidCredentialsException ignored -> HttpStatus.UNAUTHORIZED;
+            case TokenExpiredException ignored -> HttpStatus.UNAUTHORIZED;
+            case UnauthorizedException ignored -> HttpStatus.FORBIDDEN;
+            case UserNotFoundException ignored -> HttpStatus.NOT_FOUND;
+            case ModuleNotFoundException ignored -> HttpStatus.NOT_FOUND;
+            case OperationNotFoundException ignored -> HttpStatus.NOT_FOUND;
+            case PermissionNotFoundException ignored -> HttpStatus.NOT_FOUND;
+            case AlreadyExistsException ignored -> HttpStatus.BAD_REQUEST;
+            case InvalidParameterException ignored -> HttpStatus.BAD_REQUEST;
+            case PasswordDoNotMatchException ignored -> HttpStatus.BAD_REQUEST;
+            case NoContentException ignored -> HttpStatus.NO_CONTENT;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }
