@@ -60,15 +60,14 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
                 return new TokenValidationResult(token, false);
             }
 
-            Claims claims = jwtProviderService.extractClaims(token);
-            String newToken = jwtProviderService.generateToken(null, claims);
-            var expiry = jwtProviderService.extractExpiration(newToken);
+            Claims claims = this.jwtProviderService.extractClaims(token);
+            String newToken = this.jwtProviderService.generateToken(null, claims);
+            var expiry = this.jwtProviderService.extractExpiration(newToken);
             int userId = ((Number) claims.get("userId")).intValue();
 
             // Clean old token and save a new one
-            tokenManagementService.invalidateToken(locale, token);
-            tokenManagementService.saveToken(
-                    jwtTokenMapper.toUVO(newToken, expiry, userId));
+            this.tokenManagementService.invalidateToken(locale, token);
+            this.tokenManagementService.saveToken(jwtTokenMapper.toUVO(newToken, expiry, userId));
 
             return new TokenValidationResult(newToken, true);
         } catch (Exception e) {
