@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidation
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface ITokenServiceFacade {
-    AuthenticationResponsePojo authenticateUser(UserDetails user);
+    AuthenticationResponsePojo authenticateUser(UserDetails user, String locale);
 
     void logout(String token, String locale);
 

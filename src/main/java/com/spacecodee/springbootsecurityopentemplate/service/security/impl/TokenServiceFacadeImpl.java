@@ -2,19 +2,26 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.record.TokenClaims;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenManagementService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -25,11 +32,28 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
     private final IJwtProviderService jwtProviderService;
     private final IJwtTokenManagementService tokenManagementService;
     private final IJwtTokenMapper jwtTokenMapper;
+    private final ExceptionShortComponent exceptionShortComponent;
 
     @Override
-    public AuthenticationResponsePojo authenticateUser(UserDetails user) {
-        UserDetailsDTO userDetailsDTO = (UserDetailsDTO) user;
-        String token = jwtProviderService.generateToken(user, generateExtraClaims(userDetailsDTO));
+    public AuthenticationResponsePojo authenticateUser(UserDetails userDetails, String locale) {
+        if (userDetails == null) {
+            log.error("Attempt to authenticate null user");
+            throw this.exceptionShortComponent.invalidParameterException("auth.user.null", locale);
+        }
+
+        var existingToken = this.tokenManagementService.findActiveTokenByUsername(userDetails.getUsername());
+        if (StringUtils.hasText(existingToken)) {
+            try {
+                this.deleteExpiredToken(existingToken, locale);
+                log.info("Token is still valid for user: {}", userDetails.getUsername());
+                return new AuthenticationResponsePojo(existingToken);
+            } catch (TokenExpiredException e) {
+                log.info("Token expired for user: {}, generating new token", userDetails.getUsername());
+            }
+        }
+
+        UserDetailsDTO userDetailsDTO = (UserDetailsDTO) userDetails;
+        String token = jwtProviderService.generateToken(userDetails, this.generateExtraClaims(userDetailsDTO));
         var expiry = jwtProviderService.extractExpiration(token);
 
         tokenManagementService.saveToken(
@@ -53,6 +77,19 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
         }
     }
 
+    private void deleteExpiredToken(String token, String locale) {
+        try {
+            jwtProviderService.isTokenValid(token);
+            throw new TokenExpiredException("token.expired", locale);
+        } catch (TokenExpiredException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            log.info("Deleting token: {}", e.getMessage());
+            this.tokenManagementService.invalidateToken(locale, token);
+        } catch (Exception e) {
+            log.error("Ups! Unexpected error deleting token: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
+        }
+    }
+
     @Override
     public TokenValidationResult validateAndRefreshToken(String token, String locale) {
         try {
@@ -61,21 +98,13 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             }
 
             throw new TokenExpiredException("token.expired", locale);
-        } catch (TokenExpiredException e) {
-            log.error("Error validating/refreshing token: {}", e.getMessage());
-
-            var claims = this.jwtProviderService.extractClaimsWithoutValidation(token);
-            var tokenWithoutValidation = this.jwtProviderService.generateToken(null, claims);
-            var expiry = this.jwtProviderService.extractExpiration(tokenWithoutValidation);
-            int userId = ((Number) claims.get("userId")).intValue();
-
-            this.tokenManagementService.invalidateToken(locale, token);
-            this.tokenManagementService.saveToken(jwtTokenMapper.toUVO(tokenWithoutValidation, expiry, userId));
-
-            return new TokenValidationResult(tokenWithoutValidation, true);
+        } catch (TokenExpiredException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            log.info("JWT validation failed, deleting token: {}", e.getMessage());
+            var expiredClaims = this.jwtProviderService.extractClaimsWithoutValidation(token);
+            return this.handleExpiredToken(token, expiredClaims, locale);
         } catch (Exception e) {
-            log.error("Ups! there was an error around there: {}", e.getMessage());
-            throw new TokenExpiredException("token.expired", locale);
+            log.error("Unexpected error validating token: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
         }
     }
 
@@ -100,6 +129,25 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
     @Override
     public String extractUsername(String token) {
         return this.jwtProviderService.extractUsername(token);
+    }
+
+    @Contract("_, _, _ -> new")
+    private @NotNull TokenValidationResult handleExpiredToken(String jwt, Claims claims, String locale) {
+        try {
+            // Delete expired token
+            this.tokenManagementService.invalidateToken(locale, jwt);
+            log.info("Token deleted successfully");
+            // Generate a new token with existing claims using buildToken
+            String newToken = jwtProviderService.buildToken(new TokenClaims(null, claims));
+            var expiry = jwtProviderService.extractExpiration(newToken);
+
+            var saveVO = jwtTokenMapper.toUVO(newToken, expiry, (int) claims.get("userId"));
+            this.tokenManagementService.saveToken(saveVO);
+            return new TokenValidationResult(newToken, true);
+        } catch (Exception e) {
+            log.error("Error refreshing token", e);
+            throw new TokenExpiredException("token.refresh.failed", locale);
+        }
     }
 
     private @NotNull @UnmodifiableView Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {

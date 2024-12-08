@@ -3,6 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.controller.base;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
@@ -16,8 +17,8 @@ public abstract class AbstractController {
                 status);
     }
 
-    protected <T> ApiResponseDataPojo<T> createDataResponse(T data, String messageKey, String locale,
-            HttpStatus status) {
+    protected <T> ApiResponseDataPojo<T> createDataResponse(@Valid T data, String messageKey, String locale,
+                                                            HttpStatus status) {
         return ApiResponseDataPojo.of(
                 this.messageUtilComponent.getMessage(messageKey, locale),
                 status,

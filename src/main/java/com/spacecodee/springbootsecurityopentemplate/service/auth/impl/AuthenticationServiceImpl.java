@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,13 +32,23 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public AuthenticationResponsePojo login(String locale, @NotNull LoginUserVO userVO) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userVO.username(), userVO.password());
+        Authentication authResult;
         // Authenticate user
-        var authentication = new UsernamePasswordAuthenticationToken(userVO.username(), userVO.password());
-        Authentication authResult = this.authenticationManager.authenticate(authentication);
+        try {
+            authResult = this.authenticationManager.authenticate(authentication);
+        } catch (InternalAuthenticationServiceException e) {
+            log.error("Error authenticating user: {}", e.getMessage());
+            throw this.exceptionShortComponent.invalidCredentialsException("auth.invalid.credentials", locale);
+        } catch (Exception e) {
+            log.error("Server error: {}", e.getMessage());
+            throw this.exceptionShortComponent.invalidParameterException("error.server", locale);
+        }
+
         UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
 
         // Use facade to handle token operations
-        return this.tokenServiceFacade.authenticateUser(userDetailsDTO);
+        return this.tokenServiceFacade.authenticateUser(userDetailsDTO, locale);
     }
 
     @Override

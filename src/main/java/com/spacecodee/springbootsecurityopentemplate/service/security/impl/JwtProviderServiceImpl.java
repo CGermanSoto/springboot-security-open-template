@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spacecodee.springbootsecurityopentemplate.data.record.TokenClaims;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
 import io.jsonwebtoken.Claims;
@@ -38,26 +39,40 @@ public class JwtProviderServiceImpl implements IJwtProviderService {
     }
 
     @Override
-    public String generateToken(UserDetails user, Map<String, Object> extraClaims) {
-        if (user == null) {
+    public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
+        if (userDetails == null) {
             log.error("Attempt to generate token for null user");
             throw this.exceptionShortComponent.invalidParameterException("auth.user.null", "en");
         }
 
-        var claims = extraClaims != null ? extraClaims : new HashMap<String, Object>();
+        return buildToken(new TokenClaims(userDetails.getUsername(), extraClaims));
+    }
+
+    public String buildToken(@NotNull TokenClaims tokenClaims) {
         var issuedAt = new Date(System.currentTimeMillis());
         var expiration = new Date(System.currentTimeMillis() + (this.expirationInMinutes * 60 * 1000));
 
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .header()
                 .type("JWT")
                 .and()
-                .subject(user.getUsername())
-                .issuedAt(issuedAt)
-                .expiration(expiration)
-                .claims(claims)
-                .signWith(generateKey(), Jwts.SIG.HS256)
-                .compact();
+                .issuedAt(issuedAt) // Set new issuedAt
+                .expiration(expiration); // Set new expiration
+
+        if (tokenClaims.subject() != null) {
+            builder.subject(tokenClaims.subject());
+        }
+
+        if (tokenClaims.claims() != null) {
+            // Remove date-related claims from old token
+            Map<String, Object> cleanedClaims = new HashMap<>(tokenClaims.claims());
+            cleanedClaims.remove("exp");
+            cleanedClaims.remove("iat");
+
+            builder.claims(cleanedClaims);
+        }
+
+        return builder.signWith(this.generateKey(), Jwts.SIG.HS256).compact();
     }
 
     @Override
