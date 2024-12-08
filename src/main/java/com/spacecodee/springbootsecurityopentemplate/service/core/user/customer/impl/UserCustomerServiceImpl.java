@@ -10,7 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEnti
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.client.IUserCustomerService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenManagementService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -30,7 +30,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
     private final IRoleService roleService;
-    private final IJwtTokenService jwtTokenService;
+    private final IJwtTokenManagementService jwtTokenService;
     private final IClientMapper clientMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
@@ -41,7 +41,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     public UserCustomerServiceImpl(PasswordEncoder passwordEncoder,
                                    IUserRepository userRepository,
                                    IRoleService roleService,
-                                   IJwtTokenService jwtTokenService,
+                                   IJwtTokenManagementService jwtTokenService,
                                    IClientMapper clientMapper,
                                    IUserValidationService userValidationService,
                                    ExceptionShortComponent exceptionShortComponent) {
