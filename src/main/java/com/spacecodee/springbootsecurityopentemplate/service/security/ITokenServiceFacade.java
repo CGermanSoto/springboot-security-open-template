@@ -9,6 +9,8 @@ public interface ITokenServiceFacade {
 
     void logout(String token, String locale);
 
+    void logoutByUserId(Integer userId, String locale);
+
     TokenValidationResult validateAndRefreshToken(String token, String locale);
 
     String refreshToken(String oldToken, UserDetails userDetails, String locale);

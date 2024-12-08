@@ -39,12 +39,12 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     private String customerRole;
 
     public UserCustomerServiceImpl(PasswordEncoder passwordEncoder,
-                                   IUserRepository userRepository,
-                                   IRoleService roleService,
-                                   ITokenServiceFacade tokenServiceFacade,
-                                   IClientMapper clientMapper,
-                                   IUserValidationService userValidationService,
-                                   ExceptionShortComponent exceptionShortComponent) {
+            IUserRepository userRepository,
+            IRoleService roleService,
+            ITokenServiceFacade tokenServiceFacade,
+            IClientMapper clientMapper,
+            IUserValidationService userValidationService,
+            ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -95,7 +95,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
         validateLastClient(locale);
 
         try {
-            this.tokenServiceFacade.logout(String.valueOf(id), locale);
+            this.tokenServiceFacade.logoutByUserId(id, locale);
             this.userRepository.delete(existingClient);
         } catch (Exception e) {
             log.error("Error deleting client", e);
@@ -124,7 +124,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
 
     private void saveClientChanges(UserEntity client, String locale) {
         try {
-            this.tokenServiceFacade.logout(String.valueOf(client.getId()), locale); // TODO: Fix we need to send the token to logout not the id
+            this.tokenServiceFacade.logoutByUserId(client.getId(), locale);
             this.userRepository.save(client);
         } catch (Exception e) {
             log.error("Error updating client", e);

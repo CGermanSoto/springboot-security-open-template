@@ -97,7 +97,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
         validateLastTechnician(locale);
 
         try {
-            this.tokenServiceFacade.logout(String.valueOf(id), locale);
+            this.tokenServiceFacade.logoutByUserId(id, locale);
             this.userRepository.delete(existingTechnician);
         } catch (Exception e) {
             log.error("Error deleting technician", e);
@@ -125,7 +125,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
 
     private void saveTechnicianChanges(UserEntity technician, String locale) {
         try {
-            this.tokenServiceFacade.logout(String.valueOf(technician.getId()), locale);
+            this.tokenServiceFacade.logoutByUserId(technician.getId(), locale);
             this.userRepository.save(technician);
         } catch (Exception e) {
             log.error("Error updating technician", e);

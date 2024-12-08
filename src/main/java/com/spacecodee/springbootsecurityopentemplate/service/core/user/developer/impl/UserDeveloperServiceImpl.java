@@ -95,7 +95,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
         validateLastDeveloper(locale);
 
         try {
-            this.tokenServiceFacade.logout(String.valueOf(id), locale);
+            this.tokenServiceFacade.logoutByUserId(id, locale);
             this.userRepository.delete(existingDeveloper);
         } catch (Exception e) {
             log.error("Error deleting developer", e);
@@ -124,7 +124,7 @@ public class UserDeveloperServiceImpl implements IUserDeveloperService {
 
     private void saveDeveloperChanges(UserEntity developer, String locale) {
         try {
-            this.tokenServiceFacade.logout(String.valueOf(developer.getId()), locale);
+            this.tokenServiceFacade.logoutByUserId(developer.getId(), locale);
             this.userRepository.save(developer);
         } catch (Exception e) {
             log.error("Error updating developer", e);

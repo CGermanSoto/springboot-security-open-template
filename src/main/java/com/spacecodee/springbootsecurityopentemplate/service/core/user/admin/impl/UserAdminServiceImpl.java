@@ -39,12 +39,12 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private String adminRole;
 
     public UserAdminServiceImpl(PasswordEncoder passwordEncoder,
-                                IUserRepository userRepository,
-                                IRoleService roleService,
-                                ITokenServiceFacade tokenServiceFacade,
-                                IAdminMapper userDTOMapper,
-                                IUserValidationService userValidationService,
-                                ExceptionShortComponent exceptionShortComponent) {
+            IUserRepository userRepository,
+            IRoleService roleService,
+            ITokenServiceFacade tokenServiceFacade,
+            IAdminMapper userDTOMapper,
+            IUserValidationService userValidationService,
+            ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -99,8 +99,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         validateLastAdmin(locale);
 
         try {
-            // Use facade instead of direct JWT service
-            this.tokenServiceFacade.logout(String.valueOf(id), locale);
+            this.tokenServiceFacade.logoutByUserId(id, locale);
             this.userRepository.delete(existingAdmin);
         } catch (Exception e) {
             log.error("Error deleting admin", e);
@@ -136,8 +135,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
     private void saveAdminChanges(UserEntity admin, String locale) {
         try {
-            // Use facade for token invalidation
-            this.tokenServiceFacade.logout(String.valueOf(admin.getId()), locale);
+            this.tokenServiceFacade.logoutByUserId(admin.getId(), locale);
             this.userRepository.save(admin);
         } catch (Exception e) {
             log.error("Error updating admin", e);

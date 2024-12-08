@@ -44,6 +44,16 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
     }
 
     @Override
+    public void logoutByUserId(Integer userId, String locale) {
+        try {
+            this.tokenManagementService.invalidateUserTokens(locale, userId);
+        } catch (Exception e) {
+            log.error("Error invalidating tokens for user {}: {}", userId, e.getMessage());
+            throw new TokenExpiredException("token.invalidation.failed", locale);
+        }
+    }
+
+    @Override
     public TokenValidationResult validateAndRefreshToken(String token, String locale) {
         try {
             if (jwtProviderService.isTokenValid(token)) {
