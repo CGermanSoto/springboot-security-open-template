@@ -60,19 +60,21 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
                 return new TokenValidationResult(token, false);
             }
 
-            Claims claims = this.jwtProviderService.extractClaims(token);
-            String newToken = this.jwtProviderService.generateToken(null, claims);
-            var expiry = this.jwtProviderService.extractExpiration(newToken);
+            throw new TokenExpiredException("token.expired", locale);
+        } catch (TokenExpiredException e) {
+            log.error("Error validating/refreshing token: {}", e.getMessage());
+
+            var claims = this.jwtProviderService.extractClaimsWithoutValidation(token);
+            var tokenWithoutValidation = this.jwtProviderService.generateToken(null, claims);
+            var expiry = this.jwtProviderService.extractExpiration(tokenWithoutValidation);
             int userId = ((Number) claims.get("userId")).intValue();
 
-            // Clean old token and save a new one
             this.tokenManagementService.invalidateToken(locale, token);
-            this.tokenManagementService.saveToken(jwtTokenMapper.toUVO(newToken, expiry, userId));
+            this.tokenManagementService.saveToken(jwtTokenMapper.toUVO(tokenWithoutValidation, expiry, userId));
 
-            return new TokenValidationResult(newToken, true);
+            return new TokenValidationResult(tokenWithoutValidation, true);
         } catch (Exception e) {
-            log.error("Error validating/refreshing token: {}", e.getMessage());
-            this.tokenManagementService.invalidateToken(locale, token);
+            log.error("Ups! there was an error around there: {}", e.getMessage());
             throw new TokenExpiredException("token.expired", locale);
         }
     }

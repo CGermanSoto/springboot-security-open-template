@@ -1,5 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
 import io.jsonwebtoken.Claims;
@@ -89,6 +91,29 @@ public class JwtProviderServiceImpl implements IJwtProviderService {
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload();
+    }
+
+    public Claims extractClaimsWithoutValidation(String jwt) {
+        try {
+            String[] parts = jwt.split("\\.");
+            if (parts.length != 3) {
+                throw new IllegalArgumentException("Invalid JWT format");
+            }
+
+            String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> claimsMap = mapper.readValue(payload, new TypeReference<>() {
+            });
+
+            return Jwts.claims()
+                    .add(claimsMap)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error extracting claims from JWT: {}", e.getMessage());
+            throw this.exceptionShortComponent.tokenExpiredException("token.expired", "en");
+        }
     }
 
     @Override

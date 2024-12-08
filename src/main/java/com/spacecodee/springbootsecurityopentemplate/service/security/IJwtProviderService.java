@@ -19,5 +19,7 @@ public interface IJwtProviderService {
 
     Claims extractClaims(String jwt);
 
+    Claims extractClaimsWithoutValidation(String jwt);
+
     boolean isTokenValid(String jwt);
 }
