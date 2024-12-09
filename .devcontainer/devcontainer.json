@@ -1,26 +1,43 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/java-postgres
 {
-  "name": "Spring Security API Dev Container",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-
-  // Add environment file through docker compose env_file
-  "remoteEnv": {
-    "COMPOSE_ENVFILE": "${localWorkspaceFolder}/.env"
-  },
-
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "vscjava.vscode-java-pack",
-        "pivotal.vscode-spring-boot",
-        "redhat.java",
-        "gabrielbb.vscode-lombok"
-      ]
+    "name": "Spring Boot Dev Environment",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace", // Changed from /workspaces/
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vscjava.vscode-java-pack",
+                "vmware.vscode-spring-boot",
+                "vscjava.vscode-gradle",
+                "redhat.vscode-yaml",
+                "gabrielbb.vscode-lombok",
+                "pverest.java-ide-pack"
+            ]
+        },
+        "jetbrains": {
+            "backend": "IntelliJ"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "21",
+            "installGradle": true,
+            "gradleVersion": "8.10.2"
+        }
+    },
+    "forwardPorts": [
+        8080
+    ],
+    "postCreateCommand": "gradle wrapper && ./gradlew build -x test",
+    "remoteUser": "vscode",
+    // IntelliJ specific settings
+    "remoteEnv": {
+        "JAVA_HOME": "/usr/local/sdkman/candidates/java/current"
+    },
+    "hostRequirements": {
+        "memory": "8gb"
+    },
+    "otherPortsAttributes": {
+        "onAutoForward": "ignore"
     }
-  },
-
-  "forwardPorts": [8080]
 }
