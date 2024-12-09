@@ -27,7 +27,7 @@ security.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
 security.cors.allowed-headers=Authorization,Content-Type,Accept-Language
 ```
 
-Create `.env` file in the root of the application
+Create `.env` file in the .devcontainer folder of the application
 
 ```.env
 POSTGRES_USER=#your-database-user
