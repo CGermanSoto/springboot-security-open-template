@@ -1,5 +1,5 @@
 .DS_Store
-.env
+.devcontainer/.env
 /src/main/resources/application-local.properties
 
 HELP.md
