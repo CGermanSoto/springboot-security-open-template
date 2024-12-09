@@ -27,6 +27,17 @@ security.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
 security.cors.allowed-headers=Authorization,Content-Type,Accept-Language
 ```
 
+Create `.env` file in the root of the application
+
+```.env
+POSTGRES_USER=#your-database-user
+POSTGRES_PASSWORD=#your-database-password
+POSTGRES_DB=#your-database-name
+SPRING_PROFILES_ACTIVE=#your-spring-profile-local,dev,ect
+JAVA_VERSION=21
+GRADLE_VERSION=8.5
+```
+
 📚 Documentation
 ----------------
 

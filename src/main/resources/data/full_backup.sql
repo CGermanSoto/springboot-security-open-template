@@ -5,7 +5,6 @@
 -- Dumped from database version 16.2 (Debian 16.2-1.pgdg120+2)
 -- Dumped by pg_dump version 16.2 (Debian 16.2-1.pgdg120+2)
 
--- Add this line at the top of your SQL file
 DO
 $$
     BEGIN
@@ -19,31 +18,20 @@ $$
     END
 $$;
 
-SET
-    statement_timeout = 0;
-SET
-    lock_timeout = 0;
-SET
-    idle_in_transaction_session_timeout = 0;
-SET
-    client_encoding = 'UTF8';
-SET
-    standard_conforming_strings = on;
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
-SET
-    check_function_bodies = false;
-SET
-    xmloption = content;
-SET
-    client_min_messages = warning;
-SET
-    row_security = off;
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
-SET
-    default_tablespace = '';
+SET default_tablespace = '';
 
-SET
-    default_table_access_method = heap;
+SET default_table_access_method = heap;
 
 --
 -- Name: jwt_token; Type: TABLE; Schema: public; Owner: spacecodee
@@ -70,7 +58,8 @@ CREATE SEQUENCE public.jwt_token_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE CACHE 1;
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE public.jwt_token_id_seq OWNER TO spacecodee;
@@ -106,7 +95,8 @@ CREATE SEQUENCE public.module_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE CACHE 1;
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE public.module_id_seq OWNER TO spacecodee;
@@ -145,7 +135,8 @@ CREATE SEQUENCE public.operation_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE CACHE 1;
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE public.operation_id_seq OWNER TO spacecodee;
@@ -181,7 +172,8 @@ CREATE SEQUENCE public.permission_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE CACHE 1;
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE public.permission_id_seq OWNER TO spacecodee;
@@ -216,7 +208,8 @@ CREATE SEQUENCE public.role_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE CACHE 1;
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE public.role_id_seq OWNER TO spacecodee;
@@ -255,7 +248,8 @@ CREATE SEQUENCE public.user_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE CACHE 1;
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE public.user_id_seq OWNER TO spacecodee;
@@ -272,8 +266,7 @@ ALTER SEQUENCE public.user_id_seq OWNED BY public."user".id;
 --
 
 ALTER TABLE ONLY public.jwt_token
-    ALTER
-        COLUMN id SET DEFAULT nextval('public.jwt_token_id_seq'::regclass);
+    ALTER COLUMN id SET DEFAULT nextval('public.jwt_token_id_seq'::regclass);
 
 
 --
@@ -281,8 +274,7 @@ ALTER TABLE ONLY public.jwt_token
 --
 
 ALTER TABLE ONLY public.module
-    ALTER
-        COLUMN id SET DEFAULT nextval('public.module_id_seq'::regclass);
+    ALTER COLUMN id SET DEFAULT nextval('public.module_id_seq'::regclass);
 
 
 --
@@ -290,8 +282,7 @@ ALTER TABLE ONLY public.module
 --
 
 ALTER TABLE ONLY public.operation
-    ALTER
-        COLUMN id SET DEFAULT nextval('public.operation_id_seq'::regclass);
+    ALTER COLUMN id SET DEFAULT nextval('public.operation_id_seq'::regclass);
 
 
 --
@@ -299,8 +290,7 @@ ALTER TABLE ONLY public.operation
 --
 
 ALTER TABLE ONLY public.permission
-    ALTER
-        COLUMN id SET DEFAULT nextval('public.permission_id_seq'::regclass);
+    ALTER COLUMN id SET DEFAULT nextval('public.permission_id_seq'::regclass);
 
 
 --
@@ -308,8 +298,7 @@ ALTER TABLE ONLY public.permission
 --
 
 ALTER TABLE ONLY public.role
-    ALTER
-        COLUMN id SET DEFAULT nextval('public.role_id_seq'::regclass);
+    ALTER COLUMN id SET DEFAULT nextval('public.role_id_seq'::regclass);
 
 
 --
@@ -317,166 +306,246 @@ ALTER TABLE ONLY public.role
 --
 
 ALTER TABLE ONLY public."user"
-    ALTER
-        COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
+    ALTER COLUMN id SET DEFAULT nextval('public.user_id_seq'::regclass);
 
 
 --
 -- Data for Name: jwt_token; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-COPY public.jwt_token (id, token, is_valid, expiry_date, user_id) FROM stdin;
-\
-.
-
 
 --
 -- Data for Name: module; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-COPY public.module (id, name, base_path) FROM stdin;
-1	USER_ADMIN	/user-admin
-2	AUTH	/auth
-3	ENDPOINT_MANAGEMENT	/endpoint-management
-4	USER_DEVELOPER	/user-developer
-5	USER_TECHNICIAN	/user-technician
-6	USER_CUSTOMER	/user-customer
-\.
+INSERT INTO public.module
+VALUES (1, 'USER_ADMIN', '/user-admin');
+INSERT INTO public.module
+VALUES (2, 'AUTH', '/auth');
+INSERT INTO public.module
+VALUES (3, 'ENDPOINT_MANAGEMENT', '/endpoint-management');
+INSERT INTO public.module
+VALUES (4, 'USER_DEVELOPER', '/user-developer');
+INSERT INTO public.module
+VALUES (5, 'USER_TECHNICIAN', '/user-technician');
+INSERT INTO public.module
+VALUES (6, 'USER_CUSTOMER', '/user-customer');
 
 
 --
 -- Data for Name: operation; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-COPY public.operation (id, tag, path, http_method, permit_all, module_id) FROM stdin;
-2	AUTHENTICATE	/authenticate	POST	t	2
-3	SHOW_PROFILE	/profile	GET	f	2
-5	LOGOUT	/logout	POST	f	2
-6	REFRESH_TOKEN	/refresh-token	PUT	f	2
-7	MODULE	/module	POST	f	3
-8	OPERATION	/operation	POST	f	3
-9	PERMISSION	/permission	POST	f	3
-4	VALIDATE_TOKEN	/validate-token	GET	f	2
-1	REGISTER_ONE_ADMIN		POST	f	1
-12	MODULE_DELETE	/module/[0-9]*	DELETE
-f	3
-11	OPERATION_DELETE	/operation/[0-9]*	DELETE
-f	3
-10	PERMISSION_DELETE	/permission/[0-9]*	DELETE
-f	3
-14	DELETE_ONE_ADMIN	/[0-9]*	DELETE
-f	1
-13	UPDATE_ONE_ADMIN	/[0-9]*	PUT	f	1
-16	DELETE_ONE_DEVELOPER	/[0-9]*	DELETE
-f	4
-17	UPDATE_ONE_DEVELOPER	/[0-9]*	PUT	f	4
-15	REGISTER_ONE_DEVELOPER		POST	f	4
-18	FIND_ONE_DEVELOPER	/[0-9]*	GET	f	4
-19	FIND_ALL_DEVELOPERS		GET	f	4
-20	FIND_ONE_ADMIN	/[0-9]*	GET	f	1
-21	FIND_ALL_ADMINS		GET	f	1
-23	FIND_ONE_TECHNICIAN	/[0-9]*	GET	f	5
-25	DELETE_ONE_TECHNICIAN	/[0-9]*	DELETE
-f	5
-26	UPDATE_ONE_TECHNICIAN	/[0-9]*	PUT	f	5
-22	REGISTER_ONE_TECHNICIAN		POST	f	5
-24	FIND_ALL_TECHNICIAN		GET	f	5
-27	REGISTER_ONE_CUSTOMER	 	POST	f	6
-28	FIND_ONE_CUSTOMER	/[0-9]*	GET	f	6
-29	FIND_ALL_CUSTOMER	 	GET	f	6
-30	DELETE_ONE_CUSTOMER	/[0-9]*	DELETE
-f	6
-31	UPDATE_ONE_CUSTOMER	/[0-9]*	PUT	f	6
-\.
+INSERT INTO public.operation
+VALUES (2, 'AUTHENTICATE', '/authenticate', 'POST', true, 2);
+INSERT INTO public.operation
+VALUES (3, 'SHOW_PROFILE', '/profile', 'GET', false, 2);
+INSERT INTO public.operation
+VALUES (5, 'LOGOUT', '/logout', 'POST', false, 2);
+INSERT INTO public.operation
+VALUES (6, 'REFRESH_TOKEN', '/refresh-token', 'PUT', false, 2);
+INSERT INTO public.operation
+VALUES (7, 'MODULE', '/module', 'POST', false, 3);
+INSERT INTO public.operation
+VALUES (8, 'OPERATION', '/operation', 'POST', false, 3);
+INSERT INTO public.operation
+VALUES (9, 'PERMISSION', '/permission', 'POST', false, 3);
+INSERT INTO public.operation
+VALUES (4, 'VALIDATE_TOKEN', '/validate-token', 'GET', false, 2);
+INSERT INTO public.operation
+VALUES (1, 'REGISTER_ONE_ADMIN', '', 'POST', false, 1);
+INSERT INTO public.operation
+VALUES (12, 'MODULE_DELETE', '/module/[0-9]*', 'DELETE', false, 3);
+INSERT INTO public.operation
+VALUES (11, 'OPERATION_DELETE', '/operation/[0-9]*', 'DELETE', false, 3);
+INSERT INTO public.operation
+VALUES (10, 'PERMISSION_DELETE', '/permission/[0-9]*', 'DELETE', false, 3);
+INSERT INTO public.operation
+VALUES (14, 'DELETE_ONE_ADMIN', '/[0-9]*', 'DELETE', false, 1);
+INSERT INTO public.operation
+VALUES (13, 'UPDATE_ONE_ADMIN', '/[0-9]*', 'PUT', false, 1);
+INSERT INTO public.operation
+VALUES (16, 'DELETE_ONE_DEVELOPER', '/[0-9]*', 'DELETE', false, 4);
+INSERT INTO public.operation
+VALUES (17, 'UPDATE_ONE_DEVELOPER', '/[0-9]*', 'PUT', false, 4);
+INSERT INTO public.operation
+VALUES (15, 'REGISTER_ONE_DEVELOPER', '', 'POST', false, 4);
+INSERT INTO public.operation
+VALUES (18, 'FIND_ONE_DEVELOPER', '/[0-9]*', 'GET', false, 4);
+INSERT INTO public.operation
+VALUES (19, 'FIND_ALL_DEVELOPERS', '', 'GET', false, 4);
+INSERT INTO public.operation
+VALUES (20, 'FIND_ONE_ADMIN', '/[0-9]*', 'GET', false, 1);
+INSERT INTO public.operation
+VALUES (21, 'FIND_ALL_ADMINS', '', 'GET', false, 1);
+INSERT INTO public.operation
+VALUES (23, 'FIND_ONE_TECHNICIAN', '/[0-9]*', 'GET', false, 5);
+INSERT INTO public.operation
+VALUES (25, 'DELETE_ONE_TECHNICIAN', '/[0-9]*', 'DELETE', false, 5);
+INSERT INTO public.operation
+VALUES (26, 'UPDATE_ONE_TECHNICIAN', '/[0-9]*', 'PUT', false, 5);
+INSERT INTO public.operation
+VALUES (22, 'REGISTER_ONE_TECHNICIAN', '', 'POST', false, 5);
+INSERT INTO public.operation
+VALUES (24, 'FIND_ALL_TECHNICIAN', '', 'GET', false, 5);
+INSERT INTO public.operation
+VALUES (27, 'REGISTER_ONE_CUSTOMER', ' ', 'POST', false, 6);
+INSERT INTO public.operation
+VALUES (28, 'FIND_ONE_CUSTOMER', '/[0-9]*', 'GET', false, 6);
+INSERT INTO public.operation
+VALUES (29, 'FIND_ALL_CUSTOMER', ' ', 'GET', false, 6);
+INSERT INTO public.operation
+VALUES (30, 'DELETE_ONE_CUSTOMER', '/[0-9]*', 'DELETE', false, 6);
+INSERT INTO public.operation
+VALUES (31, 'UPDATE_ONE_CUSTOMER', '/[0-9]*', 'PUT', false, 6);
 
 
 --
 -- Data for Name: permission; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-COPY public.permission (id, role_id, operation_id) FROM stdin;
-1	1	3
-2	2	3
-3	3	3
-4	4	3
-5	1	4
-6	2	4
-7	3	4
-8	4	4
-9	1	5
-10	2	5
-11	3	5
-12	4	5
-13	1	6
-14	2	6
-15	3	6
-16	4	6
-17	4	7
-18	4	8
-19	4	9
-20	4	10
-21	4	11
-22	4	12
-23	1	13
-24	1	14
-25	4	13
-26	4	14
-27	1	1
-28	4	1
-29	1	15
-30	4	15
-31	4	16
-32	4	17
-33	4	18
-34	4	19
-35	1	20
-36	1	21
-37	4	20
-38	4	21
-39	1	22
-40	1	23
-41	1	24
-42	1	25
-43	1	26
-44	1	27
-45	1	28
-46	1	29
-47	1	30
-48	1	31
-49	4	22
-50	4	23
-51	4	24
-52	4	25
-53	4	26
-54	4	27
-55	4	28
-56	4	29
-57	4	30
-58	4	31
-\.
+INSERT INTO public.permission
+VALUES (1, 1, 3);
+INSERT INTO public.permission
+VALUES (2, 2, 3);
+INSERT INTO public.permission
+VALUES (3, 3, 3);
+INSERT INTO public.permission
+VALUES (4, 4, 3);
+INSERT INTO public.permission
+VALUES (5, 1, 4);
+INSERT INTO public.permission
+VALUES (6, 2, 4);
+INSERT INTO public.permission
+VALUES (7, 3, 4);
+INSERT INTO public.permission
+VALUES (8, 4, 4);
+INSERT INTO public.permission
+VALUES (9, 1, 5);
+INSERT INTO public.permission
+VALUES (10, 2, 5);
+INSERT INTO public.permission
+VALUES (11, 3, 5);
+INSERT INTO public.permission
+VALUES (12, 4, 5);
+INSERT INTO public.permission
+VALUES (13, 1, 6);
+INSERT INTO public.permission
+VALUES (14, 2, 6);
+INSERT INTO public.permission
+VALUES (15, 3, 6);
+INSERT INTO public.permission
+VALUES (16, 4, 6);
+INSERT INTO public.permission
+VALUES (17, 4, 7);
+INSERT INTO public.permission
+VALUES (18, 4, 8);
+INSERT INTO public.permission
+VALUES (19, 4, 9);
+INSERT INTO public.permission
+VALUES (20, 4, 10);
+INSERT INTO public.permission
+VALUES (21, 4, 11);
+INSERT INTO public.permission
+VALUES (22, 4, 12);
+INSERT INTO public.permission
+VALUES (23, 1, 13);
+INSERT INTO public.permission
+VALUES (24, 1, 14);
+INSERT INTO public.permission
+VALUES (25, 4, 13);
+INSERT INTO public.permission
+VALUES (26, 4, 14);
+INSERT INTO public.permission
+VALUES (27, 1, 1);
+INSERT INTO public.permission
+VALUES (28, 4, 1);
+INSERT INTO public.permission
+VALUES (29, 1, 15);
+INSERT INTO public.permission
+VALUES (30, 4, 15);
+INSERT INTO public.permission
+VALUES (31, 4, 16);
+INSERT INTO public.permission
+VALUES (32, 4, 17);
+INSERT INTO public.permission
+VALUES (33, 4, 18);
+INSERT INTO public.permission
+VALUES (34, 4, 19);
+INSERT INTO public.permission
+VALUES (35, 1, 20);
+INSERT INTO public.permission
+VALUES (36, 1, 21);
+INSERT INTO public.permission
+VALUES (37, 4, 20);
+INSERT INTO public.permission
+VALUES (38, 4, 21);
+INSERT INTO public.permission
+VALUES (39, 1, 22);
+INSERT INTO public.permission
+VALUES (40, 1, 23);
+INSERT INTO public.permission
+VALUES (41, 1, 24);
+INSERT INTO public.permission
+VALUES (42, 1, 25);
+INSERT INTO public.permission
+VALUES (43, 1, 26);
+INSERT INTO public.permission
+VALUES (44, 1, 27);
+INSERT INTO public.permission
+VALUES (45, 1, 28);
+INSERT INTO public.permission
+VALUES (46, 1, 29);
+INSERT INTO public.permission
+VALUES (47, 1, 30);
+INSERT INTO public.permission
+VALUES (48, 1, 31);
+INSERT INTO public.permission
+VALUES (49, 4, 22);
+INSERT INTO public.permission
+VALUES (50, 4, 23);
+INSERT INTO public.permission
+VALUES (51, 4, 24);
+INSERT INTO public.permission
+VALUES (52, 4, 25);
+INSERT INTO public.permission
+VALUES (53, 4, 26);
+INSERT INTO public.permission
+VALUES (54, 4, 27);
+INSERT INTO public.permission
+VALUES (55, 4, 28);
+INSERT INTO public.permission
+VALUES (56, 4, 29);
+INSERT INTO public.permission
+VALUES (57, 4, 30);
+INSERT INTO public.permission
+VALUES (58, 4, 31);
 
 
 --
 -- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-COPY public.role (id, name) FROM stdin;
-1	OTI_ADMIN
-2	TECHNICIAN
-4	DEVELOPER
-3	CUSTOMER
-\.
+INSERT INTO public.role
+VALUES (1, 'OTI_ADMIN');
+INSERT INTO public.role
+VALUES (2, 'TECHNICIAN');
+INSERT INTO public.role
+VALUES (4, 'DEVELOPER');
+INSERT INTO public.role
+VALUES (3, 'CUSTOMER');
 
 
 --
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-COPY public."user" (id, username, password, fullname, lastname, rol_id) FROM stdin;
-1	admin123	$2a$10$qU.kwfZGqmdT/LZENM7zPe5HUps5L1pVQHMNUIRsr/ive7RSxkCPC	Admin	Admin	1
-2	spacecodee	$2a$10$4KDJk1Y5cSrwSEqN7bTxX.Lzm7p9w9nB35GuZ57QWq4Ulzh6v7rxC	spacecodee	spacecodee	4
-3	admin456	$2a$10$kURqR.wFaAWKa3lW8MVlDeLl0benKJVYYSheiAYii7Go54fRUbo/O	Admin2	Admin2	1
-\.
+INSERT INTO public."user"
+VALUES (1, 'admin123', '$2a$10$qU.kwfZGqmdT/LZENM7zPe5HUps5L1pVQHMNUIRsr/ive7RSxkCPC', 'Admin', 'Admin', 1);
+INSERT INTO public."user"
+VALUES (2, 'spacecodee', '$2a$10$4KDJk1Y5cSrwSEqN7bTxX.Lzm7p9w9nB35GuZ57QWq4Ulzh6v7rxC', 'spacecodee', 'spacecodee', 4);
+INSERT INTO public."user"
+VALUES (3, 'admin456', '$2a$10$kURqR.wFaAWKa3lW8MVlDeLl0benKJVYYSheiAYii7Go54fRUbo/O', 'Admin2', 'Admin2', 1);
 
 
 --
