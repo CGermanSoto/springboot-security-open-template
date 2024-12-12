@@ -10,6 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenM
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class JwtTokenManagementServiceImpl implements IJwtTokenManagementService {
 
     private final IJwtTokenRepository jwtTokenRepository;
+    @Qualifier("IJwtTokenMapper")
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionComponent;
 

@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,7 @@ import java.util.Map;
 public class TokenServiceFacadeImpl implements ITokenServiceFacade {
     private final IJwtProviderService jwtProviderService;
     private final IJwtTokenManagementService tokenManagementService;
+    @Qualifier("IJwtTokenMapper")
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
 

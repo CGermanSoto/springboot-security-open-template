@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -115,7 +116,7 @@ public class JwtProviderServiceImpl implements IJwtProviderService {
                 throw new IllegalArgumentException("Invalid JWT format");
             }
 
-            String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
+            String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
 
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> claimsMap = mapper.readValue(payload, new TypeReference<>() {

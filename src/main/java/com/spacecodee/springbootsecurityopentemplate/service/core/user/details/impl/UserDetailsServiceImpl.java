@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDetailsServiceImpl implements IUserDetailsService {
     private final IUserRepository userRepository;
     @Qualifier("IUserDetailsMapper")
-    private final IUserDetailsMapper userDetailsMapper; // Change to new mapper
+    private final IUserDetailsMapper userDetailsMapper;
     private final ExceptionShortComponent exceptionShortComponent;
 
     @Transactional(readOnly = true, noRollbackFor = UsernameNotFoundException.class)
