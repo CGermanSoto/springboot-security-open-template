@@ -32,12 +32,14 @@ public class HttpSecurityConfig {
     private final LocaleResolverFilter localeResolverFilter;
     private final CustomAuthorizationManager authorizationManager;
     private final RateLimitFilter rateLimitFilter;
+    private final CustomSecurityHeadersConfigurer securityHeadersConfigurer;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .with(securityHeadersConfigurer, Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     // Swagger UI endpoints
@@ -61,7 +63,7 @@ public class HttpSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
