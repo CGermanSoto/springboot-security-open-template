@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
@@ -67,9 +68,12 @@ public class JwtTokenManagementServiceImpl implements IJwtTokenManagementService
     public boolean existsToken(String locale, String token) {
         try {
             return this.jwtTokenRepository.existsByToken(token);
-        } catch (Exception e) {
+        } catch (TokenExpiredException e) {
             log.error("Error checking token existence: {}", e.getMessage());
             throw this.exceptionComponent.tokenNotFoundException("token.not.exists", locale);
+        } catch (Exception e) {
+            log.error("Ups! something unexpected happened: {}", e.getMessage());
+            throw this.exceptionComponent.tokenUnexpectedException("token.unexpected.error", locale);
         }
     }
 

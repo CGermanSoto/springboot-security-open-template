@@ -75,7 +75,7 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             this.tokenManagementService.invalidateUserTokens(locale, userId);
         } catch (Exception e) {
             log.error("Error invalidating tokens for user {}: {}", userId, e.getMessage());
-            throw new TokenExpiredException("token.invalidation.failed", locale);
+            throw this.exceptionShortComponent.tokenExpiredException("token.invalidation.failed", locale);
         }
     }
 
@@ -103,6 +103,13 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
 
     @Override
     public TokenValidationResult validateAndRefreshToken(String token, String locale) {
+        var tokenExists = this.tokenManagementService.existsToken(locale, token);
+
+        if (!tokenExists) {
+            log.info("Token does not exist in database, we can't let you continue");
+            throw this.exceptionShortComponent.tokenNotFoundException("auth.unauthorized", locale);
+        }
+
         try {
             if (jwtProviderService.isTokenValid(token)) {
                 return new TokenValidationResult(token, false);
@@ -158,7 +165,7 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             return new TokenValidationResult(newToken, true);
         } catch (Exception e) {
             log.error("Error refreshing token", e);
-            throw new TokenExpiredException("token.refresh.failed", locale);
+            throw this.exceptionShortComponent.tokenExpiredException("token.refresh.failed", locale);
         }
     }
 
