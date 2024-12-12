@@ -79,7 +79,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             throw this.exceptionShortComponent.tokenNotFoundException("token.not.found", locale);
         }
 
-        var username = extractTokenUsername(token);
+        var username = extractTokenUsername(locale, token);
         var userDetails = this.userDetailsService.findByUsername(locale, username);
 
         var newToken = this.tokenServiceFacade.refreshToken(token, userDetails, locale);
@@ -94,12 +94,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         return null;
     }
 
-    private String extractTokenUsername(String token) {
+    private String extractTokenUsername(String locale, String token) {
         try {
             return this.tokenServiceFacade.extractUsername(token);
         } catch (Exception e) {
             log.error("Error extracting username from token: {}", e.getMessage());
-            throw new TokenExpiredException("token.expired", "en");
+            throw this.exceptionShortComponent.tokenExpiredException("token.expired", locale);
         }
     }
 }

@@ -5,7 +5,6 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionSh
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IUserDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,13 +14,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@AllArgsConstructor
 @Service
 public class UserDetailsServiceImpl implements IUserDetailsService {
     private final IUserRepository userRepository;
-    @Qualifier("IUserDetailsMapper")
     private final IUserDetailsMapper userDetailsMapper;
     private final ExceptionShortComponent exceptionShortComponent;
+
+    public UserDetailsServiceImpl(IUserRepository userRepository, @Qualifier("IUserDetailsMapper") IUserDetailsMapper userDetailsMapper, ExceptionShortComponent exceptionShortComponent) {
+        this.userRepository = userRepository;
+        this.userDetailsMapper = userDetailsMapper;
+        this.exceptionShortComponent = exceptionShortComponent;
+    }
 
     @Transactional(readOnly = true, noRollbackFor = UsernameNotFoundException.class)
     @Override
