@@ -8,6 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.I
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailsServiceImpl implements IUserDetailsService {
     private final IUserRepository userRepository;
+    @Qualifier("IUserDetailsMapper")
     private final IUserDetailsMapper userDetailsMapper; // Change to new mapper
     private final ExceptionShortComponent exceptionShortComponent;
 

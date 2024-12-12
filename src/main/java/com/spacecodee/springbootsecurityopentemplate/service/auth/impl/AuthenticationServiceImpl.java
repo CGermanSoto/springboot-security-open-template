@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,7 +38,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         // Authenticate user
         try {
             authResult = this.authenticationManager.authenticate(authentication);
-        } catch (InternalAuthenticationServiceException e) {
+        } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
             log.error("Error authenticating user: {}", e.getMessage());
             throw this.exceptionShortComponent.invalidCredentialsException("auth.invalid.credentials", locale);
         } catch (Exception e) {

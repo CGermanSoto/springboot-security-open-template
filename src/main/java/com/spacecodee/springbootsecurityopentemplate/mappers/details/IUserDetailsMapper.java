@@ -1,4 +1,3 @@
-// UserDetailsMapper.java
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
