@@ -50,13 +50,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isLoginRequest(HttpServletRequest request) {
+    private boolean isLoginRequest(@NotNull HttpServletRequest request) {
         final var pathMatcher = new AntPathMatcher();
         log.info("Request URI: {}", request.getRequestURI());
 
-        return request != null &&
-                request.getMethod().equals("POST") &&
-                pathMatcher.match("/api/v1/auth/login", request.getRequestURI());
+        return request.getMethod().equals("POST") && pathMatcher.match("/api/v1/auth/login", request.getRequestURI());
     }
 
     private boolean isMaximumLoginAttemptsExceeded(HttpServletResponse response, String clientIp) {
