@@ -33,26 +33,26 @@ public class UserCustomerControllerImpl extends AbstractController implements IU
         this.userClientService.add(request, locale);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(createResponse("client.added.success", locale, HttpStatus.CREATED));
+                .body(createResponse("customer.added.success", locale, HttpStatus.CREATED));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> update(String locale, int id, CustomerUVO request) {
         this.userClientService.update(id, request, locale);
-        return ResponseEntity.ok(createResponse("client.updated.success", locale, HttpStatus.OK));
+        return ResponseEntity.ok(createResponse("customer.updated.success", locale, HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> delete(String locale, int id) {
         this.userClientService.delete(id, locale);
-        return ResponseEntity.ok(createResponse("client.deleted.success", locale, HttpStatus.OK));
+        return ResponseEntity.ok(createResponse("customer.deleted.success", locale, HttpStatus.OK));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<CustomerDTO>> findById(String locale, int id) {
         return ResponseEntity.ok(createDataResponse(
                 this.userClientService.findById(id, locale),
-                "client.found.success",
+                "customer.found.success",
                 locale,
                 HttpStatus.OK));
     }
@@ -61,7 +61,7 @@ public class UserCustomerControllerImpl extends AbstractController implements IU
     public ResponseEntity<ApiResponseDataPojo<List<CustomerDTO>>> findAll(String locale) {
         return ResponseEntity.ok(createDataResponse(
                 this.userClientService.findAll(locale),
-                "client.list.success",
+                "customer.list.success",
                 locale,
                 HttpStatus.OK));
     }

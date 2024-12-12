@@ -16,6 +16,7 @@ import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
             IUserRepository userRepository,
             IRoleService roleService,
             ITokenServiceFacade tokenServiceFacade,
-            ITechnicianMapper technicianMapper,
+                                     @Qualifier("ITechnicianMapper") ITechnicianMapper technicianMapper,
             IUserValidationService userValidationService) {
         this.passwordEncoder = passwordEncoder;
         this.exceptionShortComponent = exceptionShortComponent;

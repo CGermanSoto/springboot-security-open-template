@@ -16,6 +16,7 @@ import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserCustomerServiceImpl implements IUserCustomerService {
-    private static final String CLIENT_PREFIX = "client";
+    private static final String CLIENT_PREFIX = "customer";
 
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
@@ -42,7 +43,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
             IUserRepository userRepository,
             IRoleService roleService,
             ITokenServiceFacade tokenServiceFacade,
-            IClientMapper clientMapper,
+                                   @Qualifier("IClientMapper") IClientMapper clientMapper,
             IUserValidationService userValidationService,
             ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
@@ -72,7 +73,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
             this.userRepository.save(clientEntity);
         } catch (Exception e) {
             log.error("Error saving client", e);
-            throw this.exceptionShortComponent.cannotSaveException("client.added.failed", locale);
+            throw this.exceptionShortComponent.cannotSaveException("customer.added.failed", locale);
         }
     }
 
@@ -99,20 +100,20 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
             this.userRepository.delete(existingClient);
         } catch (Exception e) {
             log.error("Error deleting client", e);
-            throw this.exceptionShortComponent.noDeletedException("client.deleted.failed", locale);
+            throw this.exceptionShortComponent.noDeletedException("customer.deleted.failed", locale);
         }
     }
 
     @Override
     public CustomerDTO findById(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException("client.invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException("customer.invalid.id", locale);
         }
 
         return this.userRepository.findById(id)
                 .map(this.clientMapper::toDto)
                 .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
-                        "client.not.exists.by.id",
+                        "customer.not.exists.by.id",
                         locale));
     }
 
@@ -128,14 +129,14 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
             this.userRepository.save(client);
         } catch (Exception e) {
             log.error("Error updating client", e);
-            throw this.exceptionShortComponent.noUpdatedException("client.updated.failed", locale);
+            throw this.exceptionShortComponent.noUpdatedException("customer.updated.failed", locale);
         }
     }
 
     private void validateLastClient(String locale) {
         var clientsCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.customerRole));
         if (clientsCount <= 1) {
-            throw this.exceptionShortComponent.lastClientException("client.deleted.failed.last", locale);
+            throw this.exceptionShortComponent.lastClientException("customer.deleted.failed.last", locale);
         }
     }
 }

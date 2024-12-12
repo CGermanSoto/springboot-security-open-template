@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,7 @@ import java.util.Map;
 public class TokenServiceFacadeImpl implements ITokenServiceFacade {
     private final IJwtProviderService jwtProviderService;
     private final IJwtTokenManagementService tokenManagementService;
+    @Qualifier("IJwtTokenMapper")
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
 
@@ -73,25 +75,41 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             this.tokenManagementService.invalidateUserTokens(locale, userId);
         } catch (Exception e) {
             log.error("Error invalidating tokens for user {}: {}", userId, e.getMessage());
-            throw new TokenExpiredException("token.invalidation.failed", locale);
+            throw this.exceptionShortComponent.tokenExpiredException("token.invalidation.failed", locale);
         }
     }
 
     private void deleteExpiredToken(String token, String locale) {
         try {
-            jwtProviderService.isTokenValid(token);
-            throw new TokenExpiredException("token.expired", locale);
-        } catch (TokenExpiredException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
-            log.info("Deleting token: {}", e.getMessage());
+            if (!jwtProviderService.isTokenValid(token)) {
+                // Token is invalid/expired, so delete it
+                log.info("Token is expired, deleting it");
+                this.tokenManagementService.invalidateToken(locale, token);
+                throw new TokenExpiredException("token.expired", locale);
+            }
+            // Token is valid, continue normal flow
+            log.debug("Token is still valid");
+        } catch (TokenExpiredException e) {
+            throw e; // Propagate the exception
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            log.info("Invalid token structure: {}", e.getMessage());
             this.tokenManagementService.invalidateToken(locale, token);
+            throw new TokenExpiredException("token.invalid", locale);
         } catch (Exception e) {
-            log.error("Ups! Unexpected error deleting token: {}", e.getMessage());
+            log.error("Ups!, Unexpected error validating token: {}", e.getMessage());
             throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
         }
     }
 
     @Override
     public TokenValidationResult validateAndRefreshToken(String token, String locale) {
+        var tokenExists = this.tokenManagementService.existsToken(locale, token);
+
+        if (!tokenExists) {
+            log.info("Token does not exist in database, we can't let you continue");
+            throw this.exceptionShortComponent.tokenNotFoundException("auth.unauthorized", locale);
+        }
+
         try {
             if (jwtProviderService.isTokenValid(token)) {
                 return new TokenValidationResult(token, false);
@@ -115,7 +133,8 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
         var expiry = jwtProviderService.extractExpiration(newToken);
 
         tokenManagementService.invalidateToken(locale, oldToken);
-        tokenManagementService.saveToken(jwtTokenMapper.toUVO(newToken, expiry, (int) ((UserDetailsDTO) userDetails).getId()));
+        tokenManagementService
+                .saveToken(jwtTokenMapper.toUVO(newToken, expiry, (int) ((UserDetailsDTO) userDetails).getId()));
 
         return newToken;
     }
@@ -146,7 +165,7 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             return new TokenValidationResult(newToken, true);
         } catch (Exception e) {
             log.error("Error refreshing token", e);
-            throw new TokenExpiredException("token.refresh.failed", locale);
+            throw this.exceptionShortComponent.tokenExpiredException("token.refresh.failed", locale);
         }
     }
 

@@ -8,6 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEnti
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class RoleServiceImpl implements IRoleService {
     private String adminRole;
     private final ExceptionShortComponent exceptionShortComponent;
 
-    public RoleServiceImpl(IRoleRepository roleRepository, IRoleDetailsMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
+    public RoleServiceImpl(IRoleRepository roleRepository, @Qualifier("IRoleDetailsMapper") IRoleDetailsMapper roleDTOMapper, ExceptionShortComponent exceptionShortComponent) {
         this.roleRepository = roleRepository;
         this.roleDTOMapper = roleDTOMapper;
         this.exceptionShortComponent = exceptionShortComponent;

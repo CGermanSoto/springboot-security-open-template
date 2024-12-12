@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,7 +38,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         // Authenticate user
         try {
             authResult = this.authenticationManager.authenticate(authentication);
-        } catch (InternalAuthenticationServiceException e) {
+        } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
             log.error("Error authenticating user: {}", e.getMessage());
             throw this.exceptionShortComponent.invalidCredentialsException("auth.invalid.credentials", locale);
         } catch (Exception e) {
@@ -78,7 +79,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             throw this.exceptionShortComponent.tokenNotFoundException("token.not.found", locale);
         }
 
-        var username = extractTokenUsername(token);
+        var username = extractTokenUsername(locale, token);
         var userDetails = this.userDetailsService.findByUsername(locale, username);
 
         var newToken = this.tokenServiceFacade.refreshToken(token, userDetails, locale);
@@ -93,12 +94,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         return null;
     }
 
-    private String extractTokenUsername(String token) {
+    private String extractTokenUsername(String locale, String token) {
         try {
             return this.tokenServiceFacade.extractUsername(token);
         } catch (Exception e) {
             log.error("Error extracting username from token: {}", e.getMessage());
-            throw new TokenExpiredException("token.expired", "en");
+            throw this.exceptionShortComponent.tokenExpiredException("token.expired", locale);
         }
     }
 }

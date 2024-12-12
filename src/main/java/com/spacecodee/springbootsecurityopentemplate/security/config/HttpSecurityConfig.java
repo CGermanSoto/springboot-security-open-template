@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.config;
 
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.JwtAuthenticationFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
+import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.RateLimitFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.authorization.manager.CustomAuthorizationManager;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAccessDeniedHandler;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAuthenticationEntryPoint;
@@ -30,12 +31,15 @@ public class HttpSecurityConfig {
     private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private final LocaleResolverFilter localeResolverFilter;
     private final CustomAuthorizationManager authorizationManager;
+    private final RateLimitFilter rateLimitFilter;
+    private final CustomSecurityHeadersConfigurer securityHeadersConfigurer;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .with(securityHeadersConfigurer, Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     // Swagger UI endpoints
@@ -47,18 +51,19 @@ public class HttpSecurityConfig {
                     // All other requests go through CustomAuthorizationManager
                     auth.anyRequest().access(authorizationManager);
                 })
-                .addFilterBefore(localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(this.rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(this.localeResolverFilter, RateLimitFilter.class)
+                .addFilterAfter(this.jwtAuthenticationFilter, LocaleResolverFilter.class)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler))
+                        .authenticationEntryPoint(this.authenticationEntryPoint)
+                        .accessDeniedHandler(this.accessDeniedHandler))
                 .formLogin(form -> form
-                        .successHandler(authenticationSuccessHandler))
+                        .successHandler(this.authenticationSuccessHandler))
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
