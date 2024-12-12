@@ -49,9 +49,9 @@ public class HttpSecurityConfig {
                     // All other requests go through CustomAuthorizationManager
                     auth.anyRequest().access(authorizationManager);
                 })
-                .addFilterBefore(this.localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(this.rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(this.rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(this.localeResolverFilter, RateLimitFilter.class)
+                .addFilterAfter(this.jwtAuthenticationFilter, LocaleResolverFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(this.authenticationEntryPoint)
                         .accessDeniedHandler(this.accessDeniedHandler))

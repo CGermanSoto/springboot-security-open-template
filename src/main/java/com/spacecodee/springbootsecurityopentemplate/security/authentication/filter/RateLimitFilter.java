@@ -27,7 +27,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private static final int MAX_ATTEMPTS = 5;
 
     public RateLimitFilter(LoadingCache<String, Integer> requestCountsCache,
-                           ExceptionShortComponent exceptionShortComponent) {
+            ExceptionShortComponent exceptionShortComponent) {
         this.requestCountsCache = requestCountsCache;
         this.exceptionShortComponent = exceptionShortComponent;
     }
@@ -38,7 +38,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        log.debug("RateLimitFilter executing for URI: {}", request.getRequestURI());
+
         if (this.isLoginRequest(request)) {
+            log.debug("Login request detected");
+
             String clientIp = this.getClientIP(request);
             if (this.isMaximumLoginAttemptsExceeded(response, clientIp)) {
                 throw this.exceptionShortComponent.rateLimitExceededException(
@@ -52,9 +56,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private boolean isLoginRequest(@NotNull HttpServletRequest request) {
         final var pathMatcher = new AntPathMatcher();
-        log.info("Request URI: {}", request.getRequestURI());
 
-        return request.getMethod().equals("POST") && pathMatcher.match("/api/v1/auth/login", request.getRequestURI());
+        return request.getMethod().equals("POST") && pathMatcher.match("/api/v1/auth/authenticate", request.getRequestURI());
     }
 
     private boolean isMaximumLoginAttemptsExceeded(HttpServletResponse response, String clientIp) {
