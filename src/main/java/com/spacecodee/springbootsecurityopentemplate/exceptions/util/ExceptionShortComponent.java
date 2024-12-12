@@ -23,6 +23,10 @@ public class ExceptionShortComponent {
         return new Exception(messageWithoutKey);
     }
 
+    public RateLimitExceededException rateLimitExceededException(String messageKey, String locale) {
+        return new RateLimitExceededException(messageKey, locale);
+    }
+
     public TokenInvalidException tokenInvalidException(String messageKey, String locale) {
         return new TokenInvalidException(messageKey, locale);
     }

@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.config;
 
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.JwtAuthenticationFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
+import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.RateLimitFilter;
 import com.spacecodee.springbootsecurityopentemplate.security.authorization.manager.CustomAuthorizationManager;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAccessDeniedHandler;
 import com.spacecodee.springbootsecurityopentemplate.security.handler.CustomAuthenticationEntryPoint;
@@ -30,6 +31,7 @@ public class HttpSecurityConfig {
     private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private final LocaleResolverFilter localeResolverFilter;
     private final CustomAuthorizationManager authorizationManager;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,13 +49,14 @@ public class HttpSecurityConfig {
                     // All other requests go through CustomAuthorizationManager
                     auth.anyRequest().access(authorizationManager);
                 })
-                .addFilterBefore(localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(this.localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(this.rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler))
+                        .authenticationEntryPoint(this.authenticationEntryPoint)
+                        .accessDeniedHandler(this.accessDeniedHandler))
                 .formLogin(form -> form
-                        .successHandler(authenticationSuccessHandler))
+                        .successHandler(this.authenticationSuccessHandler))
                 .build();
     }
 
