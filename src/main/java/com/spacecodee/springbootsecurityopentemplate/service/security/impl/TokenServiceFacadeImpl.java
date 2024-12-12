@@ -81,13 +81,22 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
 
     private void deleteExpiredToken(String token, String locale) {
         try {
-            jwtProviderService.isTokenValid(token);
-            throw new TokenExpiredException("token.expired", locale);
-        } catch (TokenExpiredException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
-            log.info("Deleting token: {}", e.getMessage());
+            if (!jwtProviderService.isTokenValid(token)) {
+                // Token is invalid/expired, so delete it
+                log.info("Token is expired, deleting it");
+                this.tokenManagementService.invalidateToken(locale, token);
+                throw new TokenExpiredException("token.expired", locale);
+            }
+            // Token is valid, continue normal flow
+            log.debug("Token is still valid");
+        } catch (TokenExpiredException e) {
+            throw e; // Propagate the exception
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            log.info("Invalid token structure: {}", e.getMessage());
             this.tokenManagementService.invalidateToken(locale, token);
+            throw new TokenExpiredException("token.invalid", locale);
         } catch (Exception e) {
-            log.error("Ups! Unexpected error deleting token: {}", e.getMessage());
+            log.error("Ups!, Unexpected error validating token: {}", e.getMessage());
             throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
         }
     }
@@ -117,7 +126,8 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
         var expiry = jwtProviderService.extractExpiration(newToken);
 
         tokenManagementService.invalidateToken(locale, oldToken);
-        tokenManagementService.saveToken(jwtTokenMapper.toUVO(newToken, expiry, (int) ((UserDetailsDTO) userDetails).getId()));
+        tokenManagementService
+                .saveToken(jwtTokenMapper.toUVO(newToken, expiry, (int) ((UserDetailsDTO) userDetails).getId()));
 
         return newToken;
     }

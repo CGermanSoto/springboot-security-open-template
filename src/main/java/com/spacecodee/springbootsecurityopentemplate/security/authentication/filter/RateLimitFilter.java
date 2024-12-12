@@ -52,6 +52,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private boolean isLoginRequest(HttpServletRequest request) {
         final var pathMatcher = new AntPathMatcher();
+        log.info("Request URI: {}", request.getRequestURI());
 
         return request != null &&
                 request.getMethod().equals("POST") &&
