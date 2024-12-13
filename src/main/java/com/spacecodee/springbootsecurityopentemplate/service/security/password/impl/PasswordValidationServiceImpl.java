@@ -1,5 +1,12 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.password.impl;
 
+import com.spacecodee.springbootsecurityopentemplate.enums.PasswordValidationRule;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.service.security.password.IPasswordValidationService;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,17 +14,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
-
-import com.spacecodee.springbootsecurityopentemplate.enums.PasswordValidationRule;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.security.password.IPasswordValidationService;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PasswordValidationServiceImpl implements IPasswordValidationService {
@@ -37,43 +33,31 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
         Map<String, Boolean> validations = this.validatePasswordRules(password);
         List<String> failures = new ArrayList<>();
 
-        log.debug("Password validation results: {}", validations);
-
         if (!validations.get("length")) {
             failures.add(String.format("validation.password.length,%d,%d",
                     PasswordValidationRule.MIN_LENGTH.getValue(),
                     PasswordValidationRule.MAX_LENGTH.getValue()));
         }
 
-        log.debug("Validation failures: {}", failures);
-
         if (!validations.get("uppercase")) {
             failures.add(String.format("validation.password.uppercase,%d",
                     PasswordValidationRule.MIN_UPPERCASE.getValue()));
         }
-
-        log.debug("Validation failures: {}", failures);
 
         if (!validations.get("lowercase")) {
             failures.add(String.format("validation.password.lowercase,%d",
                     PasswordValidationRule.MIN_LOWERCASE.getValue()));
         }
 
-        log.debug("Validation failures: {}", failures);
-
         if (!validations.get("digit")) {
             failures.add(String.format("validation.password.digit,%d",
                     PasswordValidationRule.MIN_DIGITS.getValue()));
         }
 
-        log.debug("Validation failures: {}", failures);
-
         if (!validations.get("special")) {
             failures.add(String.format("validation.password.special,%d",
                     PasswordValidationRule.MIN_SPECIAL_CHARS.getValue()));
         }
-
-        log.debug("Validation failures: {}", failures);
 
         if (!failures.isEmpty()) {
             throw this.exceptionShortComponent.invalidPasswordComplexityException(failures, locale);
