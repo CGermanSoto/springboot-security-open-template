@@ -3,6 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.handler;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordComplexityException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
@@ -35,88 +36,127 @@ import java.util.List;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private final MessageUtilComponent messageUtilComponent;
+        private final MessageUtilComponent messageUtilComponent;
 
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiErrorPojo> handleBusinessException(@NotNull BaseException ex, HttpServletRequest request) {
-        log.error("Business exception occurred: {}", ex.getMessage());
-        return ResponseEntity
-                .status(determineHttpStatus(ex))
-                .body(createErrorResponse(ex, request));
-    }
+        @ExceptionHandler(BaseException.class)
+        public ResponseEntity<ApiErrorPojo> handleBusinessException(@NotNull BaseException ex,
+                        HttpServletRequest request) {
+                log.error("Business exception occurred: {}", ex.getMessage());
+                return ResponseEntity
+                                .status(determineHttpStatus(ex))
+                                .body(createErrorResponse(ex, request));
+        }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorDataPojo<List<String>>> handleValidationException(
-            @NotNull MethodArgumentNotValidException ex,
-            @NotNull HttpServletRequest request) {
-        var errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .toList();
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ApiErrorDataPojo<List<String>>> handleValidationException(
+                        @NotNull MethodArgumentNotValidException ex,
+                        @NotNull HttpServletRequest request) {
+                var errors = ex.getBindingResult()
+                                .getFieldErrors()
+                                .stream()
+                                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                                .toList();
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ApiErrorDataPojo.of(
-                        ex.getLocalizedMessage(),
-                        messageUtilComponent.getMessage("validation.error", "en"),
-                        request.getRequestURI(),
-                        request.getMethod(),
-                        errors));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(ApiErrorDataPojo.of(
+                                                ex.getLocalizedMessage(),
+                                                messageUtilComponent.getMessage("validation.error", "en"),
+                                                request.getRequestURI(),
+                                                request.getMethod(),
+                                                errors));
+        }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorPojo> handleGenericException(Exception ex, HttpServletRequest request) {
-        log.error("Unexpected error", ex);
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createGenericErrorResponse(ex, request));
-    }
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ApiErrorPojo> handleGenericException(Exception ex, HttpServletRequest request) {
+                log.error("Unexpected error", ex);
+                return ResponseEntity
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(createGenericErrorResponse(ex, request));
+        }
 
-    private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex, @NotNull HttpServletRequest request) {
-        String userMessage = messageUtilComponent.getMessage(ex.getMessageKey(), ex.getLocale());
-        String technicalDetails = String.format(
-                "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
-                ex.getClass().getSimpleName(),
-                ex.getMessageKey(),
-                ex.getLocale(),
-                request.getRequestURI(),
-                request.getMethod());
+        @ExceptionHandler(InvalidPasswordComplexityException.class)
+        public ResponseEntity<ApiErrorPojo> handlePasswordComplexityException(
+                        @NotNull InvalidPasswordComplexityException ex,
+                        @NotNull HttpServletRequest request) {
+                String locale = request.getLocale().toString();
+                StringBuilder messageBuilder = new StringBuilder();
 
-        return ApiErrorPojo.of(
-                technicalDetails,
-                userMessage,
-                request.getRequestURI(),
-                request.getMethod());
-    }
+                // Add requirements header
+                messageBuilder.append(this.messageUtilComponent.getMessage(
+                                "validation.password.requirements",
+                                locale));
 
-    private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,
-                                                             @NotNull HttpServletRequest request) {
-        return ApiErrorPojo.of(
-                ex.getLocalizedMessage(),
-                messageUtilComponent.getMessage("error.unexpected", "en"),
-                request.getRequestURI(),
-                request.getMethod());
-    }
+                if (ex.getMessage() != null) {
+                        String[] messageKeys = ex.getMessage().split("\\|");
 
-    @Contract(pure = true)
-    private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
-        return switch (ex) {
-            case LastAdminException ignored -> HttpStatus.CONFLICT;
-            case LastTechnicianException ignored -> HttpStatus.CONFLICT;
-            case LastDeveloperException ignored -> HttpStatus.CONFLICT;
-            case InvalidCredentialsException ignored -> HttpStatus.UNAUTHORIZED;
-            case TokenExpiredException ignored -> HttpStatus.UNAUTHORIZED;
-            case UnauthorizedException ignored -> HttpStatus.FORBIDDEN;
-            case UserNotFoundException ignored -> HttpStatus.NOT_FOUND;
-            case ModuleNotFoundException ignored -> HttpStatus.NOT_FOUND;
-            case OperationNotFoundException ignored -> HttpStatus.NOT_FOUND;
-            case PermissionNotFoundException ignored -> HttpStatus.NOT_FOUND;
-            case AlreadyExistsException ignored -> HttpStatus.BAD_REQUEST;
-            case InvalidParameterException ignored -> HttpStatus.BAD_REQUEST;
-            case PasswordDoNotMatchException ignored -> HttpStatus.BAD_REQUEST;
-            case NoContentException ignored -> HttpStatus.NO_CONTENT;
-            default -> HttpStatus.INTERNAL_SERVER_ERROR;
-        };
-    }
+                        for (String messageKey : messageKeys) {
+                                String[] parts = messageKey.split(",");
+                                if (parts.length > 1) {
+                                        Object[] params = new Object[parts.length - 1];
+                                        for (int i = 1; i < parts.length; i++) {
+                                                params[i - 1] = Integer.parseInt(parts[i]);
+                                        }
+                                        String message = this.messageUtilComponent.getMessage(parts[0], locale, params);
+                                        messageBuilder.append("\n").append(message);
+                                }
+                        }
+                }
+
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(ApiErrorPojo.of(
+                                                ex.getClass().getSimpleName(),
+                                                messageBuilder.toString(),
+                                                request.getRequestURI(),
+                                                request.getMethod()));
+        }
+
+        private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex,
+                        @NotNull HttpServletRequest request) {
+                String userMessage = messageUtilComponent.getMessage(ex.getMessage(), ex.getLocale());
+                String technicalDetails = String.format(
+                                "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
+                                ex.getClass().getSimpleName(),
+                                ex.getMessage(),
+                                ex.getLocale(),
+                                request.getRequestURI(),
+                                request.getMethod());
+
+                return ApiErrorPojo.of(
+                                technicalDetails,
+                                userMessage,
+                                request.getRequestURI(),
+                                request.getMethod());
+        }
+
+        private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,
+                        @NotNull HttpServletRequest request) {
+                return ApiErrorPojo.of(
+                                ex.getLocalizedMessage(),
+                                messageUtilComponent.getMessage("error.unexpected", "en"),
+                                request.getRequestURI(),
+                                request.getMethod());
+        }
+
+        @Contract(pure = true)
+        private HttpStatus determineHttpStatus(@NotNull BaseException ex) {
+                return switch (ex) {
+                        case LastAdminException ignored -> HttpStatus.CONFLICT;
+                        case LastTechnicianException ignored -> HttpStatus.CONFLICT;
+                        case LastDeveloperException ignored -> HttpStatus.CONFLICT;
+                        case InvalidCredentialsException ignored -> HttpStatus.UNAUTHORIZED;
+                        case TokenExpiredException ignored -> HttpStatus.UNAUTHORIZED;
+                        case UnauthorizedException ignored -> HttpStatus.FORBIDDEN;
+                        case UserNotFoundException ignored -> HttpStatus.NOT_FOUND;
+                        case ModuleNotFoundException ignored -> HttpStatus.NOT_FOUND;
+                        case OperationNotFoundException ignored -> HttpStatus.NOT_FOUND;
+                        case PermissionNotFoundException ignored -> HttpStatus.NOT_FOUND;
+                        case AlreadyExistsException ignored -> HttpStatus.BAD_REQUEST;
+                        case InvalidParameterException ignored -> HttpStatus.BAD_REQUEST;
+                        case PasswordDoNotMatchException ignored -> HttpStatus.BAD_REQUEST;
+                        case NoContentException ignored -> HttpStatus.NO_CONTENT;
+                        default -> HttpStatus.INTERNAL_SERVER_ERROR;
+                };
+        }
 }

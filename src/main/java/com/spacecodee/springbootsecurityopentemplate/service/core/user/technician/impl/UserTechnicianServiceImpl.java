@@ -59,7 +59,7 @@ public class UserTechnicianServiceImpl implements IUserTechnicianService {
     @Override
     @Transactional
     public void add(@NotNull TechnicianAVO technicianAVO, String locale) {
-        if (!AppUtils.comparePasswords(technicianAVO.getPassword(), technicianAVO.getRepeatPassword())) {
+        if (AppUtils.comparePasswords(technicianAVO.getPassword(), technicianAVO.getRepeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
 

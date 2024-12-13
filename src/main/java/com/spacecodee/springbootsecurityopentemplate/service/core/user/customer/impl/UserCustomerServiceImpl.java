@@ -57,7 +57,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     @Override
     @Transactional
     public void add(@NotNull CustomerAVO customerAVO, String locale) {
-        if (!AppUtils.comparePasswords(customerAVO.getPassword(), customerAVO.getRepeatPassword())) {
+        if (AppUtils.comparePasswords(customerAVO.getPassword(), customerAVO.getRepeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
 

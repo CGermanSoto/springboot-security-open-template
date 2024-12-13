@@ -1,22 +1,44 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions.util;
 
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.*;
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordComplexityException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.RateLimitExceededException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenInvalidException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenUnexpectedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.PermissionNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.*;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.*;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.CannotSaveException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoContentException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoCreatedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoDeletedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoDisabledException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoUpdatedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastAdminException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastClientException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastDeveloperException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastTechnicianException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.RoleNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UsernameNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.DoNotExistsByIdException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.PasswordDoNotMatchException;
+
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class ExceptionShortComponent {
@@ -146,10 +168,14 @@ public class ExceptionShortComponent {
     }
 
     public InvalidPasswordComplexityException invalidPasswordComplexityException(String messageKey, String locale) {
+        log.debug("Creating password exception with message: {}", messageKey);
         return new InvalidPasswordComplexityException(messageKey, locale);
     }
 
     public InvalidPasswordComplexityException invalidPasswordComplexityException(List<String> messages, String locale) {
+        log.debug("Creating password exception with messages: {}", messages);
+        String joinedMessages = String.join("|", messages);
+        log.debug("Joined messages: {}", joinedMessages);
         return new InvalidPasswordComplexityException(messages, locale);
     }
 }
