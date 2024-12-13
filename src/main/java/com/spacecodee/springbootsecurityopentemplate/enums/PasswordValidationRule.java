@@ -1,5 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum PasswordValidationRule {
     MIN_LENGTH(8),
     MAX_LENGTH(32),
@@ -14,7 +17,4 @@ public enum PasswordValidationRule {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
 }
