@@ -23,6 +23,4 @@ public non-sealed class ApiErrorPojo extends BaseResponsePojo {
     public static @NotNull ApiErrorPojo of(String backendMessage, String message, String path, String method) {
         return new ApiErrorPojo(backendMessage, message, path, method);
     }
-
-    // Getters
 }

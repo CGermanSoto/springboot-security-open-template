@@ -5,6 +5,5 @@
 
 2. **Password Security**
 
-- ❌ Add password complexity requirements
-- ❌ Implement password expiration policy
-- ❌ Add failed login attempt tracking
+- ✅ Add password complexity requirements
+- ✅ Add failed login attempt tracking
