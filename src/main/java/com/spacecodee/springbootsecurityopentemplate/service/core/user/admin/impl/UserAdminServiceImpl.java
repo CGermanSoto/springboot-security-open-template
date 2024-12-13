@@ -11,6 +11,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
+import com.spacecodee.springbootsecurityopentemplate.service.security.password.IPasswordValidationService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -34,6 +35,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final IAdminMapper userDTOMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
+    private final IPasswordValidationService passwordValidationService;
 
     @Value("${security.default.roles}")
     private String adminRole;
@@ -44,7 +46,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
             ITokenServiceFacade tokenServiceFacade,
             IAdminMapper userDTOMapper,
             IUserValidationService userValidationService,
-            ExceptionShortComponent exceptionShortComponent) {
+            ExceptionShortComponent exceptionShortComponent,
+            IPasswordValidationService passwordValidationService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -52,6 +55,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
         this.userDTOMapper = userDTOMapper;
         this.userValidationService = userValidationService;
         this.exceptionShortComponent = exceptionShortComponent;
+        this.passwordValidationService = passwordValidationService;
     }
 
     @Override
@@ -64,6 +68,9 @@ public class UserAdminServiceImpl implements IUserAdminService {
         if (AppUtils.comparePasswords(adminAVO.getPassword(), adminAVO.getRepeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
+
+        // Add password validation
+        this.passwordValidationService.validatePassword(adminAVO.getPassword(), locale);
 
         this.userValidationService.validateUsername(adminAVO.getUsername(), ADMIN_PREFIX, locale);
         var adminRoleEntity = this.roleService.findAdminRole(locale);

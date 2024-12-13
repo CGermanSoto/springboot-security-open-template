@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component
 public class ExceptionShortComponent {
@@ -141,5 +143,13 @@ public class ExceptionShortComponent {
 
     public InvalidCredentialsException invalidCredentialsException(String messageKey, String locale) {
         return new InvalidCredentialsException(messageKey, locale);
+    }
+
+    public InvalidPasswordComplexityException invalidPasswordComplexityException(String messageKey, String locale) {
+        return new InvalidPasswordComplexityException(messageKey, locale);
+    }
+
+    public InvalidPasswordComplexityException invalidPasswordComplexityException(List<String> messages, String locale) {
+        return new InvalidPasswordComplexityException(messages, locale);
     }
 }

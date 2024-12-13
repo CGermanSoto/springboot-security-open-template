@@ -16,7 +16,6 @@ import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,12 +39,12 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     private String customerRole;
 
     public UserCustomerServiceImpl(PasswordEncoder passwordEncoder,
-            IUserRepository userRepository,
-            IRoleService roleService,
-            ITokenServiceFacade tokenServiceFacade,
-                                   @Qualifier("IClientMapper") IClientMapper clientMapper,
-            IUserValidationService userValidationService,
-            ExceptionShortComponent exceptionShortComponent) {
+                                   IUserRepository userRepository,
+                                   IRoleService roleService,
+                                   ITokenServiceFacade tokenServiceFacade,
+                                   IClientMapper clientMapper,
+                                   IUserValidationService userValidationService,
+                                   ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;

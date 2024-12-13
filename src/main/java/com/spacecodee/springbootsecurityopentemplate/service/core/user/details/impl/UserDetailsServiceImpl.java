@@ -7,7 +7,6 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,8 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     private final IUserDetailsMapper userDetailsMapper;
     private final ExceptionShortComponent exceptionShortComponent;
 
-    public UserDetailsServiceImpl(IUserRepository userRepository, @Qualifier("IUserDetailsMapper") IUserDetailsMapper userDetailsMapper, ExceptionShortComponent exceptionShortComponent) {
+    public UserDetailsServiceImpl(IUserRepository userRepository, IUserDetailsMapper userDetailsMapper,
+            ExceptionShortComponent exceptionShortComponent) {
         this.userRepository = userRepository;
         this.userDetailsMapper = userDetailsMapper;
         this.exceptionShortComponent = exceptionShortComponent;
@@ -31,7 +31,8 @@ public class UserDetailsServiceImpl implements IUserDetailsService {
     public UserDetailsDTO findByUsername(String locale, String username) {
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserDetailsDTO)
-                .orElseThrow(() -> this.exceptionShortComponent.notFoundException("user.not.exists.by.username", locale));
+                .orElseThrow(
+                        () -> this.exceptionShortComponent.notFoundException("user.not.exists.by.username", locale));
     }
 
     @Transactional(readOnly = true)
