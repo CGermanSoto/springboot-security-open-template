@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,7 +31,6 @@ import java.util.Map;
 public class TokenServiceFacadeImpl implements ITokenServiceFacade {
     private final IJwtProviderService jwtProviderService;
     private final IJwtTokenManagementService tokenManagementService;
-    @Qualifier("IJwtTokenMapper")
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionShortComponent;
 
@@ -94,10 +92,10 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             log.info("Invalid token structure: {}", e.getMessage());
             this.tokenManagementService.invalidateToken(locale, token);
-            throw new TokenExpiredException("token.invalid", locale);
+            throw new TokenExpiredException("token.inValid", locale);
         } catch (Exception e) {
             log.error("Ups!, Unexpected error validating token: {}", e.getMessage());
-            throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
+            throw this.exceptionShortComponent.tokenInvalidException("token.inValid", locale);
         }
     }
 
@@ -122,7 +120,7 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             return this.handleExpiredToken(token, expiredClaims, locale);
         } catch (Exception e) {
             log.error("Unexpected error validating token: {}", e.getMessage());
-            throw this.exceptionShortComponent.tokenInvalidException("token.invalid", locale);
+            throw this.exceptionShortComponent.tokenInvalidException("token.inValid", locale);
         }
     }
 

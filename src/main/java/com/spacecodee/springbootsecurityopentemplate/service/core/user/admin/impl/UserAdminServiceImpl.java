@@ -62,7 +62,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     @Transactional
     public void add(AdminAVO adminAVO, String locale) {
         if (adminAVO == null) {
-            throw this.exceptionShortComponent.noContentException(ADMIN_PREFIX + ".added.failed", locale);
+            throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
         }
 
         if (AppUtils.comparePasswords(adminAVO.getPassword(), adminAVO.getRepeatPassword())) {
@@ -83,7 +83,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.save(userEntity);
         } catch (Exception e) {
             log.error("Error saving admin", e);
-            throw this.exceptionShortComponent.noCreatedException(ADMIN_PREFIX + ".added.failed", locale);
+            throw this.exceptionShortComponent.noCreatedException("admin.added.failed", locale);
         }
     }
 
@@ -110,20 +110,20 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.delete(existingAdmin);
         } catch (Exception e) {
             log.error("Error deleting admin", e);
-            throw this.exceptionShortComponent.noDeletedException(ADMIN_PREFIX + ".deleted.failed", locale);
+            throw this.exceptionShortComponent.noDeletedException("admin.deleted.failed", locale);
         }
     }
 
     @Override
     public AdminDTO findById(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(ADMIN_PREFIX + ".invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException("admin.invalid.id", locale);
         }
 
         return this.userRepository.findById(id)
                 .map(this.userDTOMapper::toDto)
                 .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
-                        ADMIN_PREFIX + ".not.exists.by.id",
+                        "admin.not.exists.by.id",
                         locale));
     }
 
@@ -136,7 +136,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private void validateLastAdmin(String locale) {
         var adminCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.adminRole));
         if (adminCount <= 1) {
-            throw this.exceptionShortComponent.lastAdminException(ADMIN_PREFIX + ".deleted.failed.last", locale);
+            throw this.exceptionShortComponent.lastAdminException("admin.deleted.failed.last", locale);
         }
     }
 
@@ -146,7 +146,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.save(admin);
         } catch (Exception e) {
             log.error("Error updating admin", e);
-            throw this.exceptionShortComponent.noUpdatedException(ADMIN_PREFIX + ".updated.failed", locale);
+            throw this.exceptionShortComponent.noUpdatedException("admin.updated.failed", locale);
         }
     }
 }
