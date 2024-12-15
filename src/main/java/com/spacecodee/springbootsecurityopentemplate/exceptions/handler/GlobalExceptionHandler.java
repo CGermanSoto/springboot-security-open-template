@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.handler;
 
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
+import com.spacecodee.springbootsecurityopentemplate.data.record.ValidationError;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordComplexityException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
@@ -18,6 +19,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoun
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.PasswordDoNotMatchException;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +28,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -37,10 +41,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final MessageUtilComponent messageUtilComponent;
+    private final MessageParameterHandler messageParameterHandler;
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiErrorPojo> handleBusinessException(@NotNull BaseException ex,
-                                                                HttpServletRequest request) {
+            HttpServletRequest request) {
         log.error("Business exception occurred: {}", ex.getMessage());
         return ResponseEntity
                 .status(determineHttpStatus(ex))
@@ -48,23 +53,66 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrorDataPojo<List<String>>> handleValidationException(
+    public ResponseEntity<ApiErrorDataPojo<List<ValidationError>>> handleValidationException(
             @NotNull MethodArgumentNotValidException ex,
             @NotNull HttpServletRequest request) {
-        var errors = ex.getBindingResult()
+        String locale = request.getLocale().toString();
+
+        List<ValidationError> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .map(error -> createValidationError(error, locale))
                 .toList();
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiErrorDataPojo.of(
-                        ex.getLocalizedMessage(),
-                        messageUtilComponent.getMessage("validation.error", "en"),
+                        ex.getClass().getSimpleName(),
+                        this.messageParameterHandler.createErrorMessage(
+                                "validation.error",
+                                locale,
+                                errors.size()),
                         request.getRequestURI(),
                         request.getMethod(),
                         errors));
+    }
+
+    private @NotNull ValidationError createValidationError(@NotNull FieldError error, String locale) {
+        // Get just the key without parameters
+        String messageTemplate = this.extractMessageKey(error.getDefaultMessage());
+        log.info("Message template: {}", messageTemplate);
+
+        // Extract validation parameters
+        Object[] validationParams = this.extractValidationParams(error);
+
+        // Get message from properties file
+        String message = "Size".equals(error.getCode())
+                ? this.messageUtilComponent.getMessage("validation.user." + error.getField() + ".size", locale,
+                        validationParams)
+                : this.messageUtilComponent.getMessage(messageTemplate, locale, validationParams);
+
+        return new ValidationError(
+                error.getField(),
+                error.getRejectedValue(),
+                message,
+                validationParams);
+    }
+
+    private Object[] extractValidationParams(@NotNull FieldError error) {
+        if ("Size".equals(error.getCode())) {
+            return new Object[] {
+                    error.getArguments()[2], // min -> {0}
+                    error.getArguments()[1] // max -> {1}
+            };
+        }
+        return new Object[] { error.getRejectedValue() };
+    }
+
+    private @NotNull String extractMessageKey(@NotNull String defaultMessage) {
+        if (defaultMessage != null && defaultMessage.startsWith("{") && defaultMessage.endsWith("}")) {
+            return defaultMessage.substring(1, defaultMessage.length() - 1);
+        }
+        return defaultMessage;
     }
 
     @ExceptionHandler(Exception.class)
@@ -113,7 +161,7 @@ public class GlobalExceptionHandler {
     }
 
     private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex,
-                                                      @NotNull HttpServletRequest request) {
+            @NotNull HttpServletRequest request) {
         String userMessage = messageUtilComponent.getMessage(ex.getMessage(), ex.getLocale());
         String technicalDetails = String.format(
                 "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
@@ -131,7 +179,7 @@ public class GlobalExceptionHandler {
     }
 
     private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,
-                                                             @NotNull HttpServletRequest request) {
+            @NotNull HttpServletRequest request) {
         return ApiErrorPojo.of(
                 ex.getLocalizedMessage(),
                 messageUtilComponent.getMessage("error.unexpected", "en"),
