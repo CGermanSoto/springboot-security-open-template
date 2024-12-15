@@ -18,34 +18,43 @@ public final class MessageParameterUtil {
         Object[] validatedParams = validateAndCleanParams(params);
 
         try {
-            return messageSource.getMessage(
-                    messageKey,
-                    validatedParams,
-                    LocaleContextHolder.getLocale());
+            var locale = LocaleContextHolder.getLocale();
+            log.debug("Formatting message: key='{}', locale='{}', params='{}'",
+                    messageKey, locale, Arrays.toString(validatedParams));
+
+            String message = messageSource.getMessage(messageKey, validatedParams, locale);
+            log.debug("Formatted message result: '{}'", message);
+            return message;
         } catch (Exception e) {
-            log.error("Error formatting message: {} with params: {}", messageKey, Arrays.toString(params), e);
+            log.error("Error formatting message: key='{}', params='{}', error='{}'",
+                    messageKey, Arrays.toString(params), e.getMessage());
             return messageKey;
         }
     }
 
     private static void validateMessageKey(String messageKey) {
         if (messageKey == null || messageKey.isBlank()) {
-            log.error("Message key is null or empty");
-            throw new IllegalArgumentException("Message key cannot be null or empty");
+            String error = "Message key cannot be null or empty";
+            log.error(error);
+            throw new IllegalArgumentException(error);
         }
     }
 
-    private static Object[] validateAndCleanParams(Object... params) {
+    public static Object[] validateAndCleanParams(Object... params) {
         if (params == null) {
             return new Object[0];
         }
 
         return Arrays.stream(params)
-                .map(param -> param == null ? "" : param)
-                .peek(param -> {
-                    if (param.toString().isBlank()) {
-                        log.warn("Empty parameter detected, using empty string");
+                .map(param -> {
+                    if (param == null) {
+                        log.warn("Null parameter detected, replacing with empty string");
+                        return "";
                     }
+                    if (param.toString().isBlank()) {
+                        log.warn("Blank parameter detected: {}", param.getClass().getSimpleName());
+                    }
+                    return param;
                 })
                 .toArray();
     }
