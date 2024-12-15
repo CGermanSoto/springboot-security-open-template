@@ -16,7 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JwtTokeAVO implements Serializable {
+public class JwtTokenAVO implements Serializable {
     @NotNull(message = "{validation.jwt.token.required," +
             "${validatedValue}")
     private String token;
