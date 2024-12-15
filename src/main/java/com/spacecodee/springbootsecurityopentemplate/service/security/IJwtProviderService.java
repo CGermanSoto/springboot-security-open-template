@@ -17,6 +17,8 @@ public interface IJwtProviderService {
 
     String extractUsername(String jwt);
 
+    String extractUsernameFromRequest(HttpServletRequest request);
+
     String extractJwtFromRequest(HttpServletRequest request);
 
     Date extractExpiration(String jwt);
