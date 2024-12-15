@@ -27,7 +27,7 @@
 
 ### Phase 3: Controller Integration
 1. Update AbstractController response methods
-2. Create message parameter builders
+2. Create message parameter handler
 3. Implement in authentication responses
 
 ### Phase 4: Validation Messages
