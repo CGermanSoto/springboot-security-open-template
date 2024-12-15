@@ -10,18 +10,27 @@ import com.spacecodee.springbootsecurityopentemplate.constants.ValidationConstan
 
 @Data
 public abstract class BaseUserVO implements Serializable {
-    @NotBlank(message = "{validation.user.username.required}")
-    @Size(min = ValidationConstants.MIN_USERNAME_LENGTH, max = ValidationConstants.MAX_USERNAME_LENGTH, message = "{"
-            + ValidationConstants.Messages.USERNAME_SIZE + "}")
-    private String username;
+        @NotBlank(message = "{validation.user.username.required}")
+        @Size(min = ValidationConstants.MIN_USERNAME_LENGTH, max = ValidationConstants.MAX_USERNAME_LENGTH, message = "{validation.user.username.size,"
+                        +
+                        "${validatedValue}," +
+                        "${min}," +
+                        "${max}}")
+        private String username;
 
-    @NotBlank(message = "{validation.user.fullname.required}")
-    @Size(min = ValidationConstants.MIN_NAME_LENGTH, max = ValidationConstants.MAX_NAME_LENGTH, message = "{"
-            + ValidationConstants.Messages.FULLNAME_SIZE + "}")
-    private String fullname;
+        @NotBlank(message = "{validation.user.fullname.required}")
+        @Size(min = ValidationConstants.MIN_NAME_LENGTH, max = ValidationConstants.MAX_NAME_LENGTH, message = "{validation.user.fullname.size,"
+                        +
+                        "${validatedValue}," +
+                        "${min}," +
+                        "${max}}")
+        private String fullname;
 
-    @NotBlank(message = "{validation.user.lastname.required}")
-    @Size(min = ValidationConstants.MIN_NAME_LENGTH, max = ValidationConstants.MAX_NAME_LENGTH, message = "{"
-            + ValidationConstants.Messages.LASTNAME_SIZE + "}")
-    private String lastname;
+        @NotBlank(message = "{validation.user.lastname.required}")
+        @Size(min = ValidationConstants.MIN_NAME_LENGTH, max = ValidationConstants.MAX_NAME_LENGTH, message = "{validation.user.lastname.size,"
+                        +
+                        "${validatedValue}," +
+                        "${min}," +
+                        "${max}}")
+        private String lastname;
 }
