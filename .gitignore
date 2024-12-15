@@ -1,6 +1,8 @@
 .DS_Store
 .devcontainer/.env
 /src/main/resources/application-local.properties
+error.log
+error.json
 
 HELP.md
 .gradle
