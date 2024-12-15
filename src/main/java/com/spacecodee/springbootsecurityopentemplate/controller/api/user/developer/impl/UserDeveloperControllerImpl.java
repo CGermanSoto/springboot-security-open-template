@@ -8,6 +8,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiRes
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.DeveloperDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.developer.IUserDeveloperService;
 import jakarta.validation.Valid;
@@ -25,8 +26,9 @@ public class UserDeveloperControllerImpl extends AbstractController implements I
     private final IUserDeveloperService userDeveloperService;
 
     public UserDeveloperControllerImpl(MessageUtilComponent messageUtilComponent,
+                                       MessageParameterHandler messageParameterHandler,
                                        IUserDeveloperService userDeveloperService) {
-        super(messageUtilComponent);
+        super(messageUtilComponent, messageParameterHandler);
         this.userDeveloperService = userDeveloperService;
     }
 
@@ -35,36 +37,36 @@ public class UserDeveloperControllerImpl extends AbstractController implements I
         this.userDeveloperService.add(request, locale);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(super.createResponse("developer.added.success", locale, HttpStatus.CREATED));
+                .body(super.createResponse("developer.added.success", locale,
+                        HttpStatus.CREATED, request.getUsername()));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> update(String locale, int id, @Valid DeveloperUVO request) {
         this.userDeveloperService.update(id, request, locale);
-        return ResponseEntity.ok(super.createResponse("developer.updated.success", locale, HttpStatus.OK));
+        return ResponseEntity.ok(super.createResponse("developer.updated.success",
+                locale, HttpStatus.OK, request.getUsername()));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> delete(String locale, int id) {
+        var developer = this.userDeveloperService.findById(id, locale);
         this.userDeveloperService.delete(id, locale);
-        return ResponseEntity.ok(super.createResponse("developer.deleted.success", locale, HttpStatus.OK));
+        return ResponseEntity.ok(super.createResponse("developer.deleted.success",
+                locale, HttpStatus.OK, developer.username()));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<DeveloperDTO>> findById(String locale, int id) {
-        return ResponseEntity.ok(super.createDataResponse(
-                this.userDeveloperService.findById(id, locale),
-                "developer.found.success",
-                locale,
-                HttpStatus.OK));
+        var developer = this.userDeveloperService.findById(id, locale);
+        return ResponseEntity.ok(super.createDataResponse(developer,
+                "developer.found.success", locale, HttpStatus.OK, developer.username()));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<List<DeveloperDTO>>> findAll(String locale) {
-        return ResponseEntity.ok(super.createDataResponse(
-                this.userDeveloperService.findAll(locale),
-                "developer.list.success",
-                locale,
-                HttpStatus.OK));
+        var developers = this.userDeveloperService.findAll(locale);
+        return ResponseEntity.ok(super.createDataResponse(developers,
+                "developer.list.success", locale, HttpStatus.OK, developers.size()));
     }
 }
