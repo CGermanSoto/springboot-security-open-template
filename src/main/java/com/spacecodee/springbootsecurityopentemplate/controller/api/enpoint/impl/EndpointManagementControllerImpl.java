@@ -10,6 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.PermissionVO;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IEndpointManagementService;
 import org.springframework.http.HttpStatus;
@@ -23,43 +24,52 @@ public class EndpointManagementControllerImpl extends AbstractController impleme
     private final IEndpointManagementService endpointManagementService;
 
     public EndpointManagementControllerImpl(MessageUtilComponent messageUtilComponent,
+                                            MessageParameterHandler messageParameterHandler,
                                             IEndpointManagementService endpointManagementService) {
-        super(messageUtilComponent);
+        super(messageUtilComponent, messageParameterHandler);
         this.endpointManagementService = endpointManagementService;
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<ModuleDTO>> createModule(String locale, ModuleVO moduleVO) {
+        var module = this.endpointManagementService.createModule(locale, moduleVO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(super.createDataResponse(
-                        this.endpointManagementService.createModule(locale, moduleVO),
+                        module,
                         "module.created.success",
                         locale,
-                        HttpStatus.CREATED));
+                        HttpStatus.CREATED,
+                        moduleVO.getName()));
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<OperationDTO>> createOperation(String locale, OperationVO operationVO) {
+    public ResponseEntity<ApiResponseDataPojo<OperationDTO>> createOperation(String locale,
+                                                                             OperationVO operationVO) {
+        var operation = this.endpointManagementService.createOperation(locale, operationVO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(super.createDataResponse(
-                        this.endpointManagementService.createOperation(locale, operationVO),
+                        operation,
                         "operation.created.success",
                         locale,
-                        HttpStatus.CREATED));
+                        HttpStatus.CREATED,
+                        operationVO.getTag()));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<PermissionDTO>> assignPermission(String locale,
                                                                                PermissionVO permissionVO) {
+        var permission = this.endpointManagementService.assignPermission(locale, permissionVO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(super.createDataResponse(
-                        this.endpointManagementService.assignPermission(locale, permissionVO),
+                        permission,
                         "permission.assigned.success",
                         locale,
-                        HttpStatus.CREATED));
+                        HttpStatus.CREATED,
+                        permission.operationDTO().id(),
+                        permission.roleDTO().id()));
     }
 
     @Override
@@ -68,7 +78,8 @@ public class EndpointManagementControllerImpl extends AbstractController impleme
         return ResponseEntity.ok(super.createResponse(
                 "permission.removed.success",
                 locale,
-                HttpStatus.OK));
+                HttpStatus.OK,
+                permissionId));
     }
 
     @Override
@@ -77,7 +88,8 @@ public class EndpointManagementControllerImpl extends AbstractController impleme
         return ResponseEntity.ok(super.createResponse(
                 "operation.removed.success",
                 locale,
-                HttpStatus.OK));
+                HttpStatus.OK,
+                operationId));
     }
 
     @Override
@@ -86,6 +98,7 @@ public class EndpointManagementControllerImpl extends AbstractController impleme
         return ResponseEntity.ok(super.createResponse(
                 "module.removed.success",
                 locale,
-                HttpStatus.OK));
+                HttpStatus.OK,
+                moduleId));
     }
 }
