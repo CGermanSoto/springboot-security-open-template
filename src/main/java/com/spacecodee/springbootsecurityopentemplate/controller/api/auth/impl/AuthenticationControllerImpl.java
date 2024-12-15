@@ -7,6 +7,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiRes
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
@@ -25,9 +26,10 @@ public class AuthenticationControllerImpl extends AbstractController implements 
     private final IAuthenticationService authenticationService;
 
     public AuthenticationControllerImpl(MessageUtilComponent messageUtilComponent,
+                                        MessageParameterHandler messageParameterHandler,
                                         IJwtProviderService jwtService,
                                         IAuthenticationService authenticationService) {
-        super(messageUtilComponent);
+        super(messageUtilComponent, messageParameterHandler);
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
     }
@@ -35,50 +37,51 @@ public class AuthenticationControllerImpl extends AbstractController implements 
     @Override
     public ResponseEntity<ApiResponseDataPojo<Boolean>> validate(String locale, HttpServletRequest request) {
         var jwt = this.jwtService.extractJwtFromRequest(request);
+        String username = this.jwtService.extractUsername(jwt);
+
         if (jwt == null) {
             return ResponseEntity.badRequest()
-                    .body(super.createDataResponse(false, "token.missing", locale, HttpStatus.BAD_REQUEST));
+                    .body(super.createDataResponse(false, "token.missing", locale,
+                            HttpStatus.BAD_REQUEST, username));
         }
 
         boolean isTokenValid = this.authenticationService.validateToken(locale, jwt);
         return ResponseEntity.ok(super.createDataResponse(isTokenValid,
-                isTokenValid ? "token.valid" : "token.inValid", locale, HttpStatus.OK));
+                isTokenValid ? "token.valid" : "token.inValid", locale,
+                HttpStatus.OK, username));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
                                                                                         LoginUserVO request) {
+        var response = this.authenticationService.login(locale, request);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(super.createDataResponse(
-                        this.authenticationService.login(locale, request),
-                        "login.success",
-                        locale,
-                        HttpStatus.ACCEPTED));
+                .body(super.createDataResponse(response, "login.success", locale,
+                        HttpStatus.ACCEPTED, request.username()));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(String locale) {
-        return ResponseEntity.ok(super.createDataResponse(
-                this.authenticationService.findLoggedInUser(locale),
-                "user.profile",
-                locale,
-                HttpStatus.OK));
+        var user = this.authenticationService.findLoggedInUser(locale);
+        return ResponseEntity.ok(super.createDataResponse(user,
+                "user.profile", locale, HttpStatus.OK, user.getUsername()));
     }
 
     @Override
     public ResponseEntity<ApiResponsePojo> logout(String locale, HttpServletRequest request) {
+        var username = this.jwtService.extractUsernameFromRequest(request);
         this.authenticationService.logout(locale, request);
-        return ResponseEntity.ok(super.createResponse("logout.success", locale, HttpStatus.OK));
+        return ResponseEntity.ok(super.createResponse("logout.success", locale,
+                HttpStatus.OK, username));
     }
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> refreshToken(
             String locale, HttpServletRequest request) {
-        return ResponseEntity.ok(super.createDataResponse(
-                this.authenticationService.refreshToken(locale, request),
-                "token.refreshed",
-                locale,
-                HttpStatus.OK));
+        var username = this.jwtService.extractUsernameFromRequest(request);
+        var response = this.authenticationService.refreshToken(locale, request);
+        return ResponseEntity.ok(super.createDataResponse(response,
+                "token.refreshed", locale, HttpStatus.OK, username));
     }
 }
