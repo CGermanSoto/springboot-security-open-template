@@ -68,7 +68,7 @@ public class MessageUtilComponent {
         }
     }
 
-    private void handleMessageError(String message, String locale, Exception e) {
+    private void handleMessageError(String message, String locale, @NotNull Exception e) {
         log.error("Error resolving message: key='{}', locale='{}', error='{}'",
                 message, locale, e.getMessage());
     }
