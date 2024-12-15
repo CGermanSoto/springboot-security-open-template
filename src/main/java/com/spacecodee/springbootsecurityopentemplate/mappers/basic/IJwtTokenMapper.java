@@ -3,7 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 import com.spacecodee.springbootsecurityopentemplate.data.base.IJwtTokenFields;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.JwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokenUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import org.mapstruct.*;
 
@@ -31,12 +31,12 @@ public interface IJwtTokenMapper {
     @Mapping(target = "valid", constant = "true")
     @Mapping(target = "userEntity", source = "userDetailsId", qualifiedByName = "mapUserIdToUserEntity")
     @Mapping(target = "expiryDate", source = "expireDate")
-    JwtTokeUVO toUVO(String token, Date expireDate, int userDetailsId);
+    JwtTokenUVO toUVO(String token, Date expireDate, int userDetailsId);
 
     // Entity conversions
     @InheritConfiguration(name = "mapCommonJwtFields")
     @Mapping(target = "userEntity", source = "userEntity")
-    JwtTokenEntity voToEntity(JwtTokeUVO jwtTokeUVO);
+    JwtTokenEntity voToEntity(JwtTokenUVO jwtTokenUVO);
 
     @InheritConfiguration(name = "mapCommonJwtFields")
     @Mapping(target = "userEntity", source = "userDetailsId", qualifiedByName = "mapUserIdToUserEntity")

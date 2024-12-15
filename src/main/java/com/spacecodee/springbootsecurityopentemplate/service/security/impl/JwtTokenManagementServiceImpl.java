@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokenUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
@@ -24,7 +24,7 @@ public class JwtTokenManagementServiceImpl implements IJwtTokenManagementService
 
     @Override
     @Transactional
-    public void saveToken(JwtTokeUVO token) {
+    public void saveToken(JwtTokenUVO token) {
         try {
             this.jwtTokenRepository.save(this.jwtTokenMapper.voToEntity(token));
         } catch (Exception e) {
