@@ -41,10 +41,6 @@ public class ExceptionShortComponent {
         return new TokenUnexpectedException(messageKey, locale);
     }
 
-    public UserNotFoundException userNotFoundException(String messageKey, String locale) {
-        return new UserNotFoundException(messageKey, locale);
-    }
-
     public TokenNotFoundException tokenNotFoundException(String messageKey, String locale) {
         return new TokenNotFoundException(messageKey, locale);
     }
@@ -77,20 +73,12 @@ public class ExceptionShortComponent {
         return new DoNotExistsByIdException(messageKey, locale);
     }
 
-    public PasswordDoNotMatchException passwordDoNotMatchException(String messageKey, String locale) {
-        return new PasswordDoNotMatchException(messageKey, locale);
-    }
-
     public UsernameNotFoundException usernameNotFoundException(String messageKey, String locale) {
         return new UsernameNotFoundException(messageKey, locale);
     }
 
     public RoleNotFoundException roleNotFoundException(String messageKey, String locale) {
         return new RoleNotFoundException(messageKey, locale);
-    }
-
-    public CannotSaveException cannotSaveUpdateException(String messageKey, String locale) {
-        return new CannotSaveException(messageKey, locale);
     }
 
     public CannotSaveException cannotSaveException(String messageKey, String locale) {
@@ -101,20 +89,12 @@ public class ExceptionShortComponent {
         return new ObjectNotFoundException(messageKey, locale);
     }
 
-    public InvalidPasswordException invalidPasswordException(String messageKey, String locale) {
-        return new InvalidPasswordException(messageKey, locale);
-    }
-
     public NoContentException noContentException(String messageKey, String locale) {
         return new NoContentException(messageKey, locale);
     }
 
     public NoCreatedException noCreatedException(String messageKey, String locale) {
         return new NoCreatedException(messageKey, locale);
-    }
-
-    public NoDisabledException noDisabledException(String messageKey, String locale) {
-        return new NoDisabledException(messageKey, locale);
     }
 
     public @NotNull ModuleNotFoundException moduleNotFoundException(String messageKey, String locale) {
@@ -139,10 +119,6 @@ public class ExceptionShortComponent {
 
     public PasswordDoNotMatchException passwordsDoNotMatchException(String messageKey, String locale) {
         return new PasswordDoNotMatchException(messageKey, locale);
-    }
-
-    public InvalidCredentialsException invalidCredentialsException(String messageKey, String locale) {
-        return new InvalidCredentialsException(messageKey, locale);
     }
 
     public InvalidCredentialsException invalidCredentialsException(String messageKey, String locale, String params) {
