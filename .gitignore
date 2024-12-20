@@ -3,7 +3,7 @@
 /src/main/resources/application-local.properties
 error.log
 error.json
-.github/copilot-instructions.md
+.github
 
 HELP.md
 .gradle
