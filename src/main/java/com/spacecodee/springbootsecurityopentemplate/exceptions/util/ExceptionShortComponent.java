@@ -145,6 +145,10 @@ public class ExceptionShortComponent {
         return new InvalidCredentialsException(messageKey, locale);
     }
 
+    public InvalidCredentialsException invalidCredentialsException(String messageKey, String locale, String params) {
+        return new InvalidCredentialsException(messageKey, locale, params);
+    }
+
     public InvalidPasswordComplexityException invalidPasswordComplexityException(String messageKey, String locale) {
         return new InvalidPasswordComplexityException(messageKey, locale);
     }

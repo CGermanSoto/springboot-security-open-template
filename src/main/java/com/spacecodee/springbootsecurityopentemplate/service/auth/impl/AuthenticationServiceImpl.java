@@ -39,7 +39,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             authResult = this.authenticationManager.authenticate(authentication);
         } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
             log.error("Error authenticating user: {}", e.getMessage());
-            throw this.exceptionShortComponent.invalidCredentialsException("auth.invalid.credentials", locale);
+            throw this.exceptionShortComponent.invalidCredentialsException(
+                    "auth.invalid.credentials",
+                    locale,
+                    userVO.username());
         } catch (Exception e) {
             log.error("Server error: {}", e.getMessage());
             throw this.exceptionShortComponent.invalidParameterException("error.server", locale);

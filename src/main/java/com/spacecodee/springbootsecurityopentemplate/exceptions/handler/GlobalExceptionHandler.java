@@ -164,20 +164,22 @@ public class GlobalExceptionHandler {
 
     private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex,
             @NotNull HttpServletRequest request) {
-        String userMessage = messageUtilComponent.getMessage(ex.getMessage(), ex.getLocale());
+
+        String userMessage = messageUtilComponent.getMessage(
+                ex.getMessageKey(),
+                ex.getLocale(),
+                ex.getParameters());
+
         String technicalDetails = String.format(
                 "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
                 ex.getClass().getSimpleName(),
-                ex.getMessage(),
+                ex.getMessageKey(),
                 ex.getLocale(),
                 request.getRequestURI(),
                 request.getMethod());
 
-        return ApiErrorPojo.of(
-                technicalDetails,
-                userMessage,
-                request.getRequestURI(),
-                request.getMethod());
+        return ApiErrorPojo.of(technicalDetails, userMessage,
+                request.getRequestURI(), request.getMethod());
     }
 
     private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,

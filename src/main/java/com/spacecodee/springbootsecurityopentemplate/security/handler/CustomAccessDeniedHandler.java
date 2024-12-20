@@ -34,7 +34,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                         @NotNull HttpServletResponse response,
                         @NotNull AccessDeniedException accessDeniedException) throws IOException {
 
-                // Get authenticated user
+                // Get an authenticated user
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String username = authentication != null ? authentication.getName() : "anonymous";
 
@@ -44,7 +44,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                                 accessDeniedException.getLocalizedMessage(),
                                 messageUtilComponent.getMessage("auth.access.denied",
                                                 request.getLocale().toString(),
-                                                username), // Pass username as parameter
+                                                username), // Pass username as a parameter
                                 request.getRequestURI(),
                                 request.getMethod());
 
