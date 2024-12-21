@@ -1,19 +1,12 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 
-import java.util.List;
-
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
-
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.TechnicianDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianAVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
+import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
         IRoleMapper.class })

@@ -11,6 +11,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUse
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.admin.IUserAdminService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
+import com.spacecodee.springbootsecurityopentemplate.service.security.password.IPasswordValidationService;
 import com.spacecodee.springbootsecurityopentemplate.service.validation.IUserValidationService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
@@ -34,6 +35,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private final IAdminMapper userDTOMapper;
     private final IUserValidationService userValidationService;
     private final ExceptionShortComponent exceptionShortComponent;
+    private final IPasswordValidationService passwordValidationService;
 
     @Value("${security.default.roles}")
     private String adminRole;
@@ -44,7 +46,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
             ITokenServiceFacade tokenServiceFacade,
             IAdminMapper userDTOMapper,
             IUserValidationService userValidationService,
-            ExceptionShortComponent exceptionShortComponent) {
+            ExceptionShortComponent exceptionShortComponent,
+            IPasswordValidationService passwordValidationService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -52,18 +55,22 @@ public class UserAdminServiceImpl implements IUserAdminService {
         this.userDTOMapper = userDTOMapper;
         this.userValidationService = userValidationService;
         this.exceptionShortComponent = exceptionShortComponent;
+        this.passwordValidationService = passwordValidationService;
     }
 
     @Override
     @Transactional
     public void add(AdminAVO adminAVO, String locale) {
         if (adminAVO == null) {
-            throw this.exceptionShortComponent.noContentException(ADMIN_PREFIX + ".added.failed", locale);
+            throw this.exceptionShortComponent.noContentException("admin.added.failed", locale);
         }
 
         if (AppUtils.comparePasswords(adminAVO.getPassword(), adminAVO.getRepeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
+
+        // Add password validation
+        this.passwordValidationService.validatePassword(adminAVO.getPassword(), locale);
 
         this.userValidationService.validateUsername(adminAVO.getUsername(), ADMIN_PREFIX, locale);
         var adminRoleEntity = this.roleService.findAdminRole(locale);
@@ -76,7 +83,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.save(userEntity);
         } catch (Exception e) {
             log.error("Error saving admin", e);
-            throw this.exceptionShortComponent.noCreatedException(ADMIN_PREFIX + ".added.failed", locale);
+            throw this.exceptionShortComponent.noCreatedException("admin.added.failed", locale);
         }
     }
 
@@ -103,20 +110,20 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.delete(existingAdmin);
         } catch (Exception e) {
             log.error("Error deleting admin", e);
-            throw this.exceptionShortComponent.noDeletedException(ADMIN_PREFIX + ".deleted.failed", locale);
+            throw this.exceptionShortComponent.noDeletedException("admin.deleted.failed", locale);
         }
     }
 
     @Override
     public AdminDTO findById(int id, String locale) {
         if (id <= 0) {
-            throw this.exceptionShortComponent.invalidParameterException(ADMIN_PREFIX + ".invalid.id", locale);
+            throw this.exceptionShortComponent.invalidParameterException("admin.invalid.id", locale);
         }
 
         return this.userRepository.findById(id)
                 .map(this.userDTOMapper::toDto)
                 .orElseThrow(() -> this.exceptionShortComponent.doNotExistsByIdException(
-                        ADMIN_PREFIX + ".not.exists.by.id",
+                        "admin.not.exists.by.id",
                         locale));
     }
 
@@ -129,7 +136,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
     private void validateLastAdmin(String locale) {
         var adminCount = this.userRepository.countByRoleEntity_Name(RoleEnum.valueOf(this.adminRole));
         if (adminCount <= 1) {
-            throw this.exceptionShortComponent.lastAdminException(ADMIN_PREFIX + ".deleted.failed.last", locale);
+            throw this.exceptionShortComponent.lastAdminException("admin.deleted.failed.last", locale);
         }
     }
 
@@ -139,7 +146,7 @@ public class UserAdminServiceImpl implements IUserAdminService {
             this.userRepository.save(admin);
         } catch (Exception e) {
             log.error("Error updating admin", e);
-            throw this.exceptionShortComponent.noUpdatedException(ADMIN_PREFIX + ".updated.failed", locale);
+            throw this.exceptionShortComponent.noUpdatedException("admin.updated.failed", locale);
         }
     }
 }

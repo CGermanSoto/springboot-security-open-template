@@ -3,7 +3,6 @@ package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
@@ -40,7 +39,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             authResult = this.authenticationManager.authenticate(authentication);
         } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
             log.error("Error authenticating user: {}", e.getMessage());
-            throw this.exceptionShortComponent.invalidCredentialsException("auth.invalid.credentials", locale);
+            throw this.exceptionShortComponent.invalidCredentialsException(
+                    "auth.invalid.credentials",
+                    locale,
+                    userVO.username());
         } catch (Exception e) {
             log.error("Server error: {}", e.getMessage());
             throw this.exceptionShortComponent.invalidParameterException("error.server", locale);

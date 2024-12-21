@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokenUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
@@ -11,7 +11,6 @@ import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtTokenM
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -20,13 +19,12 @@ import org.springframework.stereotype.Service;
 public class JwtTokenManagementServiceImpl implements IJwtTokenManagementService {
 
     private final IJwtTokenRepository jwtTokenRepository;
-    @Qualifier("IJwtTokenMapper")
     private final IJwtTokenMapper jwtTokenMapper;
     private final ExceptionShortComponent exceptionComponent;
 
     @Override
     @Transactional
-    public void saveToken(JwtTokeUVO token) {
+    public void saveToken(JwtTokenUVO token) {
         try {
             this.jwtTokenRepository.save(this.jwtTokenMapper.voToEntity(token));
         } catch (Exception e) {

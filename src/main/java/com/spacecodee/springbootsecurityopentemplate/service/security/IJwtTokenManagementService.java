@@ -1,11 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokeUVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokenUVO;
 
 public interface IJwtTokenManagementService {
 
-    void saveToken(JwtTokeUVO token);
+    void saveToken(JwtTokenUVO token);
 
     void invalidateToken(String locale, String token);
 

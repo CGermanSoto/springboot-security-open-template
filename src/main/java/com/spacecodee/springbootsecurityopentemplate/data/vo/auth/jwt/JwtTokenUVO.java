@@ -18,22 +18,26 @@ import java.util.Date;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JwtTokeUVO implements IJwtTokenFields, Serializable {
+public class JwtTokenUVO implements IJwtTokenFields, Serializable {
     @Getter
     private Integer id;
 
-    @NotNull(message = "{validation.jwt.token.required}")
+    @NotNull(message = "{validation.jwt.token.required," +
+            "${validatedValue}")
     private String token;
 
     @Getter
-    @NotNull(message = "{validation.jwt.valid.required}")
+    @NotNull(message = "{validation.jwt.valid.required," +
+            "${validatedValue}")
     private Boolean valid;
 
-    @NotNull(message = "{validation.jwt.expiry.required}")
+    @NotNull(message = "{validation.jwt.expiry.required," +
+            "${validatedValue}")
     private Date expiryDate;
 
     @Getter
-    @NotNull(message = "{validation.jwt.user.required}")
+    @NotNull(message = "{validation.jwt.user.required," +
+            "${validatedValue}")
     private UserEntity userEntity;
 
     @Override

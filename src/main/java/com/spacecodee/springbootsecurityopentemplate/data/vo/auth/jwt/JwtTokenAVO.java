@@ -16,16 +16,20 @@ import java.time.Instant;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JwtTokeAVO implements Serializable {
-    @NotNull(message = "{validation.jwt.token.required}")
+public class JwtTokenAVO implements Serializable {
+    @NotNull(message = "{validation.jwt.token.required," +
+            "${validatedValue}")
     private String token;
 
-    @NotNull(message = "{validation.jwt.valid.required}")
+    @NotNull(message = "{validation.jwt.valid.required," +
+            "${validatedValue}")
     private Boolean isValid;
 
-    @NotNull(message = "{validation.jwt.expiry.required}")
+    @NotNull(message = "{validation.jwt.expiry.required," +
+            "${validatedValue}")
     private Instant expiryDate;
 
-    @NotNull(message = "{validation.jwt.user.required}")
+    @NotNull(message = "{validation.jwt.user.required," +
+            "${validatedValue}")
     private UserEntity userEntity;
 }

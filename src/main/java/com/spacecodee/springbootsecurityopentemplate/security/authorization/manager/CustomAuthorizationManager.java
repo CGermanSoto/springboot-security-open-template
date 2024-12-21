@@ -109,7 +109,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         return url;
     }
 
-    private boolean isSwaggerUIPath(String url) {
+    private boolean isSwaggerUIPath(@NotNull String url) {
         return swaggerPaths.stream().anyMatch(url::startsWith);
     }
 }

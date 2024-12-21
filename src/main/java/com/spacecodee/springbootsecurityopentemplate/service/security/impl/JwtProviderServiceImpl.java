@@ -78,7 +78,18 @@ public class JwtProviderServiceImpl implements IJwtProviderService {
 
     @Override
     public String extractUsername(String jwt) {
-        return extractClaims(jwt).getSubject();
+        return this.extractClaims(jwt).getSubject();
+    }
+
+    @Override
+    public String extractUsernameFromRequest(HttpServletRequest request) {
+        var jwtExtracted = this.extractJwtFromRequest(request);
+        if (jwtExtracted == null) {
+            log.error("Attempt to extract username from null JWT");
+            throw this.exceptionShortComponent.invalidParameterException("auth.jwt.null", "en");
+        }
+
+        return this.extractUsername(jwtExtracted);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.language;
 
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.MessageParameterUtil;
 import com.spacecodee.springbootsecurityopentemplate.language.constant.LanguageConstants;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +24,53 @@ public class MessageUtilComponent {
     private static final Map<String, Locale> localeCache = new ConcurrentHashMap<>();
 
     public String getMessage(String message, String locale) {
-        Locale resolvedLocale = this.getLocaleApp(locale);
-        String resolvedMessage = getMessageSource().getMessage(message, null, resolvedLocale);
-        log.debug("Resolving message: key='{}', locale='{}', resolved='{}'",
-                message, locale, resolvedMessage);
-        return resolvedMessage;
+        validateMessage(message);
+        try {
+            Locale resolvedLocale = this.getLocaleApp(locale);
+            String resolvedMessage = getMessageSource().getMessage(message, null, resolvedLocale);
+            log.debug("Message resolved: key='{}', locale='{}', result='{}'",
+                    message, locale, resolvedMessage);
+            return resolvedMessage;
+        } catch (Exception e) {
+            handleMessageError(message, locale, e);
+            return message;
+        }
     }
 
     public String getMessage(String message, String locale, Object... args) {
-        return getMessageSource().getMessage(message, args, getLocaleApp(locale));
+        validateMessage(message);
+        try {
+            log.debug("Resolving parameterized message: key='{}', locale='{}', args='{}'",
+                    message, locale, Arrays.toString(args));
+
+            Object[] validatedArgs = MessageParameterUtil.validateAndCleanParams(args);
+            String resolvedMessage = getMessageSource().getMessage(message, validatedArgs, getLocaleApp(locale));
+
+            log.debug("Parameterized message resolved: '{}'", resolvedMessage);
+            return resolvedMessage;
+        } catch (Exception e) {
+            handleMessageError(message, locale, e);
+            return message;
+        }
     }
 
     public String getMessageWithFallback(String message, String locale, String defaultMessage) {
-        return getMessageSource().getMessage(message, null, defaultMessage, getLocaleApp(locale));
+        log.debug("Resolving message with fallback: key='{}', locale='{}', default='{}'",
+                message, locale, defaultMessage);
+        String resolvedMessage = getMessageSource().getMessage(message, null, defaultMessage, getLocaleApp(locale));
+        log.debug("Resolved message with fallback result: '{}'", resolvedMessage);
+        return resolvedMessage;
+    }
+
+    private void validateMessage(String message) {
+        if (message == null || message.isBlank()) {
+            throw new IllegalArgumentException("Message key cannot be null or empty");
+        }
+    }
+
+    private void handleMessageError(String message, String locale, @NotNull Exception e) {
+        log.error("Error resolving message: key='{}', locale='{}', error='{}'",
+                message, locale, e.getMessage());
     }
 
     private Locale getLocaleApp(String locale) {

@@ -16,7 +16,6 @@ import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserCustomerServiceImpl implements IUserCustomerService {
-    private static final String CLIENT_PREFIX = "customer";
+    private static final String CUSTOMER_PREFIX = "customer";
 
     private final PasswordEncoder passwordEncoder;
     private final IUserRepository userRepository;
@@ -40,12 +39,12 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     private String customerRole;
 
     public UserCustomerServiceImpl(PasswordEncoder passwordEncoder,
-            IUserRepository userRepository,
-            IRoleService roleService,
-            ITokenServiceFacade tokenServiceFacade,
-                                   @Qualifier("IClientMapper") IClientMapper clientMapper,
-            IUserValidationService userValidationService,
-            ExceptionShortComponent exceptionShortComponent) {
+                                   IUserRepository userRepository,
+                                   IRoleService roleService,
+                                   ITokenServiceFacade tokenServiceFacade,
+                                   IClientMapper clientMapper,
+                                   IUserValidationService userValidationService,
+                                   ExceptionShortComponent exceptionShortComponent) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -57,12 +56,16 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
 
     @Override
     @Transactional
-    public void add(@NotNull CustomerAVO customerAVO, String locale) {
-        if (!AppUtils.comparePasswords(customerAVO.getPassword(), customerAVO.getRepeatPassword())) {
+    public void add(CustomerAVO customerAVO, String locale) {
+        if (customerAVO == null) {
+            throw this.exceptionShortComponent.noContentException("customer.added.failed", locale);
+        }
+
+        if (AppUtils.comparePasswords(customerAVO.getPassword(), customerAVO.getRepeatPassword())) {
             throw this.exceptionShortComponent.passwordsDoNotMatchException("auth.password.do.not.match", locale);
         }
 
-        this.userValidationService.validateUsername(customerAVO.getUsername(), CLIENT_PREFIX, locale);
+        this.userValidationService.validateUsername(customerAVO.getUsername(), CUSTOMER_PREFIX, locale);
         var roleEntity = this.roleService.findByName(this.customerRole, locale);
         var clientEntity = this.clientMapper.voToEntity(customerAVO);
 
@@ -80,7 +83,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     @Override
     @Transactional
     public void update(int id, @NotNull CustomerUVO customerUVO, String locale) {
-        var existingClient = this.userValidationService.validateUserUpdate(id, customerUVO.getUsername(), CLIENT_PREFIX,
+        var existingClient = this.userValidationService.validateUserUpdate(id, customerUVO.getUsername(), CUSTOMER_PREFIX,
                 locale);
         boolean hasChanges = this.userValidationService.checkAndUpdateUserChanges(customerUVO, existingClient);
 
@@ -92,7 +95,7 @@ public class UserCustomerServiceImpl implements IUserCustomerService {
     @Override
     @Transactional
     public void delete(int id, String locale) {
-        var existingClient = this.userValidationService.validateUserUpdate(id, null, CLIENT_PREFIX, locale);
+        var existingClient = this.userValidationService.validateUserUpdate(id, null, CUSTOMER_PREFIX, locale);
         validateLastClient(locale);
 
         try {
