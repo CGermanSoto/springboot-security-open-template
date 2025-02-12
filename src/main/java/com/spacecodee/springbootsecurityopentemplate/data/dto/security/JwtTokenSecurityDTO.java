@@ -1,26 +1,24 @@
 package com.spacecodee.springbootsecurityopentemplate.data.dto.security;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import java.util.Date;
+import java.time.Instant;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@ToString
+@NoArgsConstructor
 public class JwtTokenSecurityDTO {
 
     private int id;
 
     private String token;
 
-    private Date expiryDate;
+    private Instant expiryDate;
 
     private boolean isValid;
 
     private UserSecurityDTO userSecurityDTO;
+
+    private String jti;
 
 }

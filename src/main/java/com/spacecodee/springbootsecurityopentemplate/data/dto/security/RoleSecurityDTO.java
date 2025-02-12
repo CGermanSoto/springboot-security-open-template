@@ -1,26 +1,19 @@
 package com.spacecodee.springbootsecurityopentemplate.data.dto.security;
 
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@ToString
-public class RoleSecurityDTO implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class RoleSecurityDTO {
 
     private int id;
 
     private RoleEnum name;
 
-    private List<PermissionSecurityDTO> permissionSecurityDTOList;
+    private List<PermissionSecurityDTO> permissionDTOList;
 
 }

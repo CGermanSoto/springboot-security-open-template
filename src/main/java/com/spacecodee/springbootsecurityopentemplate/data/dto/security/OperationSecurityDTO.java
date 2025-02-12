@@ -1,15 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.data.dto.security;
 
 import lombok.Data;
-
-import java.io.Serial;
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 @Data
-public class OperationSecurityDTO implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+@NoArgsConstructor
+public class OperationSecurityDTO {
 
     private int id;
 
@@ -21,6 +17,6 @@ public class OperationSecurityDTO implements Serializable {
 
     private boolean permitAll;
 
-    private ModuleSecurityDTO moduleDTO;
+    private ModuleSecurityDTO moduleSecurityDTO;
 
 }
