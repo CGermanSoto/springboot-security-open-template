@@ -18,6 +18,6 @@ public class UpdateModuleVO {
 
     @NotBlank(message = "{module.base.path.required}")
     @Size(max = 100, message = "{module.base.path.max.length}")
-    @Pattern(regexp = "^/[a-zA-Z-]+(?:/[a-zA-Z-]+)*$", message = "{module.base.path.pattern}")
+    @Pattern(regexp = "^/[a-zA-Z-]+(?:/[a-zA-Z-]+)*+$", message = "{module.base.path.pattern}")
     private String basePath;
 }

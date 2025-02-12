@@ -13,7 +13,7 @@ public class ModuleFilterVO {
     @Pattern(regexp = "^[a-zA-Z_]*$", message = "{module.name.pattern}")
     private String name;
 
-    @Pattern(regexp = "^/[a-zA-Z-]+(?:/[a-zA-Z-]+)*$", message = "{module.base.path.pattern}")
+    @Pattern(regexp = "^/[a-zA-Z-]+(?:/[a-zA-Z-]+)*+$", message = "{module.base.path.pattern}")
     private String basePath;
 
     @Min(value = 0, message = "{module.page.min}")
