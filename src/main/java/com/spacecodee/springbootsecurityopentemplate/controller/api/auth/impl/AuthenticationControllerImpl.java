@@ -58,7 +58,7 @@ public class AuthenticationControllerImpl extends AbstractController implements 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(super.createDataResponse(response, "login.success", locale,
-                        HttpStatus.ACCEPTED, request.username()));
+                        HttpStatus.ACCEPTED, request.getUsername()));
     }
 
     @Override
