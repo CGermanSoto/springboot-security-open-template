@@ -4,7 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.auth.Authentica
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public interface IAuthenticationController {
         @PostMapping("/authenticate")
         ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(
                         @Parameter(description = "Locale for response messages") @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale,
-                        @Parameter(description = "Login credentials") @RequestBody @Valid LoginUserVO request);
+                        @Parameter(description = "Login credentials") @RequestBody @Valid LoginVO request);
 
         @Operation(summary = "Get user profile", description = "Retrieves the profile of the currently authenticated user")
         @ApiResponse(responseCode = "200", description = "Profile retrieved successfully")

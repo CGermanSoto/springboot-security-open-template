@@ -6,7 +6,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.auth.Authentica
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
@@ -53,7 +53,7 @@ public class AuthenticationControllerImpl extends AbstractController implements 
 
     @Override
     public ResponseEntity<ApiResponseDataPojo<AuthenticationResponsePojo>> authenticate(String locale,
-                                                                                        LoginUserVO request) {
+                                                                                        LoginVO request) {
         var response = this.authenticationService.login(locale, request);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)

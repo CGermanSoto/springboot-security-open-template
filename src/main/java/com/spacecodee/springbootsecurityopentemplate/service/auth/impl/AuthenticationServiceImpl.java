@@ -2,7 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginUserVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
@@ -31,7 +31,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final ExceptionShortComponent exceptionShortComponent;
 
     @Override
-    public AuthenticationResponsePojo login(String locale, @NotNull LoginUserVO userVO) {
+    public AuthenticationResponsePojo login(String locale, @NotNull LoginVO userVO) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userVO.username(), userVO.password());
         Authentication authResult;
         // Authenticate user
