@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public AuthenticationResponsePojo login(String locale, @NotNull LoginVO userVO) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userVO.username(), userVO.password());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userVO.getUsername(), userVO.getPassword());
         Authentication authResult;
         // Authenticate user
         try {
@@ -42,7 +42,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             throw this.exceptionShortComponent.invalidCredentialsException(
                     "auth.invalid.credentials",
                     locale,
-                    userVO.username());
+                    userVO.getUsername());
         } catch (Exception e) {
             log.error("Server error: {}", e.getMessage());
             throw this.exceptionShortComponent.invalidParameterException("error.server", locale);
