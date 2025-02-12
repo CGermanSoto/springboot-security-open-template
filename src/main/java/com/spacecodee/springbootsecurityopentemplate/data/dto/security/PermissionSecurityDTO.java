@@ -13,12 +13,16 @@ import java.io.Serializable;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDetailsPermissionDTO implements Serializable {
+public class PermissionSecurityDTO implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 1L;
 
     private int id;
+
     @JsonIgnore
-    private UserDetailsRoleDTO roleDTO;
-    private UserDetailsOperationDTO operationDTO;
+    private RoleSecurityDTO roleDTO;
+
+    private OperationSecurityDTO operationDTO;
+
 }

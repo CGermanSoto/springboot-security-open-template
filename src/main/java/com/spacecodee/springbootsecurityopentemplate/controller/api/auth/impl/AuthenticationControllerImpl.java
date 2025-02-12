@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractCon
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
@@ -62,7 +62,7 @@ public class AuthenticationControllerImpl extends AbstractController implements 
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(String locale) {
+    public ResponseEntity<ApiResponseDataPojo<UserSecurityDTO>> profile(String locale) {
         var user = this.authenticationService.findLoggedInUser(locale);
         return ResponseEntity.ok(super.createDataResponse(user,
                 "user.profile", locale, HttpStatus.OK, user.getUsername()));

@@ -3,7 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.auth;
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -42,7 +42,7 @@ public interface IAuthenticationController {
         @ApiResponse(responseCode = "401", description = "Not authenticated")
         @SecurityRequirement(name = "bearerAuth")
         @GetMapping("/profile")
-        ResponseEntity<ApiResponseDataPojo<UserDetailsDTO>> profile(
+        ResponseEntity<ApiResponseDataPojo<UserSecurityDTO>> profile(
                         @Parameter(description = "Locale for response messages") @RequestHeader(name = "Accept-Language", required = false, defaultValue = "en") String locale);
 
         @Operation(summary = "Logout user", description = "Invalidates the current user's JWT token")

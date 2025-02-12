@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenClaims;
 import com.spacecodee.springbootsecurityopentemplate.data.record.TokenValidationResult;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
@@ -52,12 +52,12 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
             }
         }
 
-        UserDetailsDTO userDetailsDTO = (UserDetailsDTO) userDetails;
-        String token = jwtProviderService.generateToken(userDetails, this.generateExtraClaims(userDetailsDTO));
+        UserSecurityDTO userSecurityDTO = (UserSecurityDTO) userDetails;
+        String token = jwtProviderService.generateToken(userDetails, this.generateExtraClaims(userSecurityDTO));
         var expiry = jwtProviderService.extractExpiration(token);
 
         tokenManagementService.saveToken(
-                jwtTokenMapper.toUVO(token, expiry, (int) userDetailsDTO.getId()));
+                jwtTokenMapper.toUVO(token, expiry, (int) userSecurityDTO.getId()));
 
         return new AuthenticationResponsePojo(token);
     }
@@ -132,7 +132,7 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
 
         tokenManagementService.invalidateToken(locale, oldToken);
         tokenManagementService
-                .saveToken(jwtTokenMapper.toUVO(newToken, expiry, (int) ((UserDetailsDTO) userDetails).getId()));
+                .saveToken(jwtTokenMapper.toUVO(newToken, expiry, (int) ((UserSecurityDTO) userDetails).getId()));
 
         return newToken;
     }
@@ -167,11 +167,11 @@ public class TokenServiceFacadeImpl implements ITokenServiceFacade {
         }
     }
 
-    private @NotNull @UnmodifiableView Map<String, Object> generateExtraClaims(@NotNull UserDetailsDTO userDetailsDTO) {
+    private @NotNull @UnmodifiableView Map<String, Object> generateExtraClaims(@NotNull UserSecurityDTO userSecurityDTO) {
         return Map.of(
-                "userId", userDetailsDTO.getId(),
-                "name", userDetailsDTO.getName(),
-                "role", userDetailsDTO.getUserDetailsRoleDTO().getName(),
-                "authorities", userDetailsDTO.getAuthorities());
+                "userId", userSecurityDTO.getId(),
+                "name", userSecurityDTO.getName(),
+                "role", userSecurityDTO.getRoleSecurityDTO().getName(),
+                "authorities", userSecurityDTO.getAuthorities());
     }
 }

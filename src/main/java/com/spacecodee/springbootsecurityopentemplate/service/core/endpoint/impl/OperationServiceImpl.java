@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
@@ -17,7 +17,7 @@ public class OperationServiceImpl implements IOperationService {
     private final IOperationDetailsMapper operationDTOMapper;
 
     @Override
-    public List<UserDetailsOperationDTO> findByPublicAccess() {
+    public List<OperationSecurityDTO> findByPublicAccess() {
         var list = this.operationRepository.findByPermitAllIsPublic();
         return list.stream()
                 .map(this.operationDTOMapper::toUserDetailsOperationDTO)

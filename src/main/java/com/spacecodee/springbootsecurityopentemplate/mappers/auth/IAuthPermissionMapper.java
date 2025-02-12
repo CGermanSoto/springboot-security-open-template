@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.auth;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.PermissionEntity;
 import org.mapstruct.*;
@@ -14,7 +14,7 @@ import java.util.Set;
 public interface IAuthPermissionMapper {
 
     @Named("toUserDetailsPermissionDTOList")
-    default List<UserDetailsPermissionDTO> toUserDetailsPermissionDTOList(Set<PermissionEntity> permissionEntities) {
+    default List<PermissionSecurityDTO> toUserDetailsPermissionDTOList(Set<PermissionEntity> permissionEntities) {
         if (permissionEntities == null) {
             return Collections.emptyList();
         }
@@ -26,5 +26,5 @@ public interface IAuthPermissionMapper {
     @Named("toBasicUserDetailsPermissionDTO")
     @Mapping(target = "id", source = "id")
     @Mapping(target = "operationDTO", source = "operationEntity")
-    UserDetailsPermissionDTO toBasicUserDetailsPermissionDTO(PermissionEntity permissionEntity);
+    PermissionSecurityDTO toBasicUserDetailsPermissionDTO(PermissionEntity permissionEntity);
 }

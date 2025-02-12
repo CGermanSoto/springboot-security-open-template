@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
@@ -48,10 +48,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             throw this.exceptionShortComponent.invalidParameterException("error.server", locale);
         }
 
-        UserDetailsDTO userDetailsDTO = (UserDetailsDTO) authResult.getPrincipal();
+        UserSecurityDTO userSecurityDTO = (UserSecurityDTO) authResult.getPrincipal();
 
         // Use facade to handle token operations
-        return this.tokenServiceFacade.authenticateUser(userDetailsDTO, locale);
+        return this.tokenServiceFacade.authenticateUser(userSecurityDTO, locale);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     @Override
-    public UserDetailsDTO findLoggedInUser(String locale) {
+    public UserSecurityDTO findLoggedInUser(String locale) {
         var auth = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         var username = auth.getPrincipal().toString();
         return this.userDetailsService.findByUsername(locale, username);

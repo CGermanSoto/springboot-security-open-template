@@ -12,11 +12,15 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class UserDetailsRoleDTO implements Serializable {
+public class RoleSecurityDTO implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 1L;
 
     private int id;
+
     private RoleEnum name;
-    private List<UserDetailsPermissionDTO> userDetailsPermissionDTOList;
+
+    private List<PermissionSecurityDTO> permissionSecurityDTOList;
+
 }

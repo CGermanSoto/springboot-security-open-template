@@ -2,7 +2,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.auth.IAuthRoleMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.PermissionEntity;
 import org.mapstruct.Mapper;
@@ -16,7 +16,7 @@ public interface IPermissionDetailsMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "operationDTO", source = "operationEntity")
-    UserDetailsPermissionDTO toUserDetailsPermissionDTO(PermissionEntity permissionEntity);
+    PermissionSecurityDTO toUserDetailsPermissionDTO(PermissionEntity permissionEntity);
 
     @Mapping(target = "roleDTO", source = "roleEntity", qualifiedByName = "toBasicUserDetailsRoleDTO")
     @Mapping(target = "operationDTO", source = "operationEntity")

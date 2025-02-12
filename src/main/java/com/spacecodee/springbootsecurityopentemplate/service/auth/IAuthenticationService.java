@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.auth;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.common.auth.AuthenticationResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ public interface IAuthenticationService {
 
     boolean validateToken(String locale, String jwt);
 
-    UserDetailsDTO findLoggedInUser(String locale);
+    UserSecurityDTO findLoggedInUser(String locale);
 
     void logout(String locale, HttpServletRequest request);
 

@@ -2,7 +2,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.OperationEntity;
 import org.mapstruct.Mapper;
@@ -15,7 +15,7 @@ import org.mapstruct.ReportingPolicy;
 public interface IOperationDetailsMapper {
 
     @Mapping(target = "moduleDTO", source = "moduleEntity")
-    UserDetailsOperationDTO toUserDetailsOperationDTO(OperationEntity operationEntity);
+    OperationSecurityDTO toUserDetailsOperationDTO(OperationEntity operationEntity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "moduleEntity", source = "moduleId", qualifiedByName = "mapModuleIdToModuleEntity")

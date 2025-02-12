@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,6 +15,6 @@ public interface IUserDetailsMapper {
     @Mapping(target = "username", source = "username")
     @Mapping(target = "name", source = "fullname")
     @Mapping(target = "password", source = "password")
-    @Mapping(target = "userDetailsRoleDTO", source = "roleEntity")
-    UserDetailsDTO toUserDetailsDTO(UserEntity userEntity);
+    @Mapping(target = "roleSecurityDTO", source = "roleEntity")
+    UserSecurityDTO toUserDetailsDTO(UserEntity userEntity);
 }

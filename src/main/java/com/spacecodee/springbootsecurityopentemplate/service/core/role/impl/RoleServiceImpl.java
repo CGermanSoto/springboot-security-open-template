@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.role.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsRoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.RoleSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IRoleDetailsMapper;
@@ -31,7 +31,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public Optional<UserDetailsRoleDTO> findDefaultRole(String lang) {
+    public Optional<RoleSecurityDTO> findDefaultRole(String lang) {
         var roleEnum = RoleEnum.valueOf(defaultRoleName);
         return this.roleRepository.findByName(roleEnum)
                 .map(this.roleDTOMapper::toUserDetailsRoleDTO)

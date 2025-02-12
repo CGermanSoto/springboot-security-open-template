@@ -16,7 +16,7 @@ import java.util.Collections;
 @Getter
 @Setter
 @ToString
-public class UserDetailsDTO implements UserDetails {
+public class UserSecurityDTO implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -25,20 +25,20 @@ public class UserDetailsDTO implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
-    private UserDetailsRoleDTO userDetailsRoleDTO;
+    private RoleSecurityDTO roleSecurityDTO;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.userDetailsRoleDTO == null)
+        if (this.roleSecurityDTO == null)
             return Collections.emptyList();
 
-        var authorities = new ArrayList<>(this.userDetailsRoleDTO.getUserDetailsPermissionDTOList()
+        var authorities = new ArrayList<>(this.roleSecurityDTO.getPermissionSecurityDTOList()
                 .stream()
                 .map(each -> each.getOperationDTO().getTag())
                 .map(SimpleGrantedAuthority::new)
                 .toList());
 
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.userDetailsRoleDTO.getName()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.roleSecurityDTO.getName()));
 
         return authorities;
     }

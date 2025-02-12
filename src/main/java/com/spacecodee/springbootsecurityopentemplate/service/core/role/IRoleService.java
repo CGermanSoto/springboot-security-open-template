@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.role;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsRoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.RoleSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IRoleService {
 
-    Optional<UserDetailsRoleDTO> findDefaultRole(String lang);
+    Optional<RoleSecurityDTO> findDefaultRole(String lang);
 
     RoleEntity findAdminRole(String locale);
 

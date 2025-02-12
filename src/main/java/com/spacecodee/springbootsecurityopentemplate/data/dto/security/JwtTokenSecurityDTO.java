@@ -11,11 +11,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @ToString
-public class UserDetailsJwtTokenDTO {
+public class JwtTokenSecurityDTO {
 
     private int id;
+
     private String token;
+
     private Date expiryDate;
+
     private boolean isValid;
-    private UserDetailsDTO userDetailsDTO;
+
+    private UserSecurityDTO userSecurityDTO;
+
 }

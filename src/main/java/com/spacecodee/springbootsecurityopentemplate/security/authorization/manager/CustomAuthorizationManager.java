@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authorization.manager;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsOperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
@@ -72,14 +72,14 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
                 .anyMatch(operation -> matches(operation, url, httpMethod));
     }
 
-    private List<UserDetailsOperationDTO> obtainOperations(Authentication authentication) {
+    private List<OperationSecurityDTO> obtainOperations(Authentication authentication) {
         var authToken = (UsernamePasswordAuthenticationToken) authentication;
         var username = authToken.getPrincipal().toString();
         var locale = LocaleResolverFilter.getCurrentLocale();
         var user = this.userService.findByUsername(locale, username);
 
-        return user.getUserDetailsRoleDTO().getUserDetailsPermissionDTOList().stream()
-                .map(UserDetailsPermissionDTO::getOperationDTO).toList();
+        return user.getRoleSecurityDTO().getPermissionSecurityDTOList().stream()
+                .map(PermissionSecurityDTO::getOperationDTO).toList();
     }
 
     private boolean isPublic(String url, String httpMethod) {
@@ -88,7 +88,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
                 .anyMatch(operation -> matches(operation, url, httpMethod));
     }
 
-    private boolean matches(@NotNull UserDetailsOperationDTO operation, String url, String httpMethod) {
+    private boolean matches(@NotNull OperationSecurityDTO operation, String url, String httpMethod) {
         var pattern = Pattern.compile(operation.getModuleDTO().getBasePath() + operation.getPath());
         return pattern.matcher(url).matches() &&
                 operation.getHttpMethod().equalsIgnoreCase(httpMethod);
