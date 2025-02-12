@@ -1,9 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.basic;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminAVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
@@ -21,8 +19,4 @@ public interface IUserMapper {
     default Integer mapUserIdEntityToUser(UserEntity userEntity) {
         return userEntity != null ? userEntity.getId() : null;
     }
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "roleEntity", ignore = true)
-    UserEntity toEntity(AdminAVO adminAVO);
 }

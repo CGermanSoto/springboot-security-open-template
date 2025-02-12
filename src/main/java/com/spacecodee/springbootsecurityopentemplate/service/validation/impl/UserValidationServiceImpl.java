@@ -1,6 +1,5 @@
 package com.spacecodee.springbootsecurityopentemplate.service.validation.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.vo.user.admin.AdminUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperUVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.technician.TechnicianUVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
@@ -28,11 +27,6 @@ public class UserValidationServiceImpl implements IUserValidationService {
         String lastname;
 
         switch (userVO) {
-            case AdminUVO adminUVO -> {
-                username = adminUVO.getUsername();
-                fullname = adminUVO.getFullname();
-                lastname = adminUVO.getLastname();
-            }
             case DeveloperUVO developerUVO -> {
                 username = developerUVO.getUsername();
                 fullname = developerUVO.getFullname();
