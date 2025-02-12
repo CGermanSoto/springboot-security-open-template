@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsOperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;

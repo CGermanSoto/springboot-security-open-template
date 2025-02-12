@@ -2,7 +2,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.ModuleDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsModuleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.ModuleEntity;
 import org.mapstruct.*;

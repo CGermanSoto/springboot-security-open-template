@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.dto.user.details;
+package com.spacecodee.springbootsecurityopentemplate.data.dto.security;
 
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import lombok.*;

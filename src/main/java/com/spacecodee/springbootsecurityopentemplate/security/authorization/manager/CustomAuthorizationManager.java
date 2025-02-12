@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authorization.manager;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsOperationDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsOperationDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsPermissionDTO;
 import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;

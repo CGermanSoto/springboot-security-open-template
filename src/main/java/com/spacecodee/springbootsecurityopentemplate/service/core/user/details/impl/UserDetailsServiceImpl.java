@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.user.details.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IUserDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IUserRepository;

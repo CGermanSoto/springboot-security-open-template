@@ -1,7 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.RoleDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsRoleDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.auth.IAuthPermissionMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
 import org.mapstruct.Mapper;

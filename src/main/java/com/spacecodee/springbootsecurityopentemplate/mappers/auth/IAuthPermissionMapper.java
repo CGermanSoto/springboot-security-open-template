@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.auth;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsPermissionDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsPermissionDTO;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.PermissionEntity;
 import org.mapstruct.*;

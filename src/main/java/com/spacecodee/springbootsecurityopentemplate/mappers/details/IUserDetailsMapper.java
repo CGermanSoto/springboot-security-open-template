@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.mappers.details;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserDetailsDTO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
