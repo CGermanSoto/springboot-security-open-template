@@ -1,4 +1,4 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt;
 
-public class JwtTokenHeaderALgException {
+public class JwtTokenHeaderAlgException {
 }
