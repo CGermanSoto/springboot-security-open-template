@@ -12,10 +12,10 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.details.IModuleDeta
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IOperationDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IPermissionDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.PermissionEntity;
-import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IModuleRepository;
-import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IOperationRepository;
-import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IPermissionRepository;
-import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.core.IModuleRepository;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.core.IOperationRepository;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.core.IPermissionRepository;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.core.IRoleRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IEndpointManagementService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;

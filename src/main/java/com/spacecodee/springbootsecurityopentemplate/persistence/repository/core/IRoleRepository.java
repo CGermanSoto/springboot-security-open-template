@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.persistence.repository;
+package com.spacecodee.springbootsecurityopentemplate.persistence.repository.core;
 
 import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;

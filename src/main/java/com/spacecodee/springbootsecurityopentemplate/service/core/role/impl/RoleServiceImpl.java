@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.details.IRoleDetailsMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
-import com.spacecodee.springbootsecurityopentemplate.persistence.repository.IRoleRepository;
+import com.spacecodee.springbootsecurityopentemplate.persistence.repository.core.IRoleRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
 import com.spacecodee.springbootsecurityopentemplate.utils.AppUtils;
 import org.springframework.beans.factory.annotation.Value;

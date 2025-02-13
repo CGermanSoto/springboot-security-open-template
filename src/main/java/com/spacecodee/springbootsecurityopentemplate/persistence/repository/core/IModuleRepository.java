@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.persistence.repository;
+package com.spacecodee.springbootsecurityopentemplate.persistence.repository.core;
 
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.ModuleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
