@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.vo.user.guess;
+package com.spacecodee.springbootsecurityopentemplate.data.vo.user.guest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

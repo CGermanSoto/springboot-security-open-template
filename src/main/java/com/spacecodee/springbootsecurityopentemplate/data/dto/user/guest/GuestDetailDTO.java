@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.data.dto.user.guess;
+package com.spacecodee.springbootsecurityopentemplate.data.dto.user.guest;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
