@@ -6,4 +6,8 @@ public class PermissionNotFoundException extends BaseException {
     public PermissionNotFoundException(String messageKey, String locale) {
         super(messageKey, locale);
     }
+
+    public PermissionNotFoundException(String messageKey, String locale, Object... parameters) {
+        super(messageKey, locale, parameters);
+    }
 }

@@ -2,13 +2,13 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.validation;
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 
-public class AlreadyExistsException extends BaseException {
+public class IllegalArgumentException extends BaseException {
 
-    public AlreadyExistsException(String messageKey, String locale) {
+    public IllegalArgumentException(String messageKey, String locale) {
         super(messageKey, locale);
     }
 
-    public AlreadyExistsException(String messageKey, String locale, Object... parameters) {
+    public IllegalArgumentException(String messageKey, String locale, Object... parameters) {
         super(messageKey, locale, parameters);
     }
 

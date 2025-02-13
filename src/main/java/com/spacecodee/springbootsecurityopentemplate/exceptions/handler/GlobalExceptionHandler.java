@@ -4,34 +4,35 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErr
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.record.ValidationError;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordComplexityException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.*;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.ratelimit.RateLimitExceededException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.PermissionNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoContentException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastAdminException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastDeveloperException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.LastTechnicianException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoDisabledException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.*;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.PasswordDoNotMatchException;
-import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -39,153 +40,133 @@ import java.util.List;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private final MessageUtilComponent messageUtilComponent;
-    private final MessageParameterHandler messageParameterHandler;
 
-    @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiErrorPojo> handleBusinessException(@NotNull BaseException ex,
-            HttpServletRequest request) {
-        log.error("Business exception occurred: {}", ex.getMessage());
-        return ResponseEntity
-                .status(determineHttpStatus(ex))
-                .body(createErrorResponse(ex, request));
-    }
+    private final MessageUtilComponent messageUtilComponent;
+
+    @Value("${app.document.max-file-size:5}")
+    private int maxFileSizeMB;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorDataPojo<List<ValidationError>>> handleValidationException(
             @NotNull MethodArgumentNotValidException ex,
             @NotNull HttpServletRequest request) {
-        String locale = request.getLocale().toString();
 
-        List<ValidationError> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> createValidationError(error, locale))
-                .toList();
+        List<ValidationError> errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(this::createValidationError).toList();
+
+        String errorMessage = errors.isEmpty() ? messageUtilComponent.getMessage("validation.error", "1") : errors.getFirst().message();
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiErrorDataPojo.of(
-                        ex.getClass().getSimpleName(),
-                        this.messageParameterHandler.createErrorMessage(
-                                "validation.error",
-                                locale,
-                                errors.size()),
-                        request.getRequestURI(),
-                        request.getMethod(),
-                        errors));
+                .body(ApiErrorDataPojo.of(ex.getClass().getSimpleName(), errorMessage, request.getRequestURI(), request.getMethod(), errors));
     }
 
-    private @NotNull ValidationError createValidationError(@NotNull FieldError error, String locale) {
-        // Get just the key without parameters
-        String messageTemplate = this.extractMessageKey(error.getDefaultMessage());
-        log.info("Message template: {}", messageTemplate);
-
-        // Extract validation parameters
-        Object[] validationParams = this.extractValidationParams(error);
-
-        // Get message from properties file
-        String message = "Size".equals(error.getCode())
-                ? this.messageUtilComponent.getMessage("validation.user." + error.getField() + ".size", locale,
-                        validationParams)
-                : this.messageUtilComponent.getMessage(messageTemplate, locale, validationParams);
-
-        return new ValidationError(
-                error.getField(),
-                error.getRejectedValue(),
-                message,
-                validationParams);
-    }
-
-    private Object[] extractValidationParams(@NotNull FieldError error) {
-        if ("Size".equals(error.getCode())) {
-            return new Object[] {
-                    error.getArguments()[2], // min -> {0}
-                    error.getArguments()[1] // max -> {1}
-            };
+    private @NotNull ValidationError createValidationError(@NotNull FieldError error) {
+        Object rejectedValue = error.getRejectedValue();
+        if (rejectedValue instanceof MultipartFile multipartFile) {
+            rejectedValue = multipartFile.getOriginalFilename();
         }
-        return new Object[] { error.getRejectedValue() };
-    }
 
-    private @NotNull String extractMessageKey(@NotNull String defaultMessage) {
-        if (defaultMessage != null && defaultMessage.startsWith("{") && defaultMessage.endsWith("}")) {
-            return defaultMessage.substring(1, defaultMessage.length() - 1);
+        String message;
+        String defaultMessage = error.getDefaultMessage();
+
+        if (defaultMessage != null && !defaultMessage.startsWith("{")) {
+            message = defaultMessage;
+        } else if (defaultMessage != null && defaultMessage.startsWith("{") && defaultMessage.endsWith("}")) {
+            String key = defaultMessage.substring(1, defaultMessage.length() - 1);
+            message = messageUtilComponent.getMessage(key);
+        } else {
+            message = messageUtilComponent.getMessage("error.unknown");
         }
-        return defaultMessage;
+
+        return new ValidationError(error.getField(), rejectedValue, message, new Object[]{});
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorPojo> handleGenericException(Exception ex, HttpServletRequest request) {
-        log.error("Unexpected error", ex);
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createGenericErrorResponse(ex, request));
-    }
 
-    @ExceptionHandler(InvalidPasswordComplexityException.class)
-    public ResponseEntity<ApiErrorPojo> handlePasswordComplexityException(
-            @NotNull InvalidPasswordComplexityException ex,
-            @NotNull HttpServletRequest request) {
-        String locale = request.getLocale().toString();
-        StringBuilder messageBuilder = new StringBuilder();
+        if (ex instanceof BaseException baseEx) {
+            String userMessage = this.messageUtilComponent.getMessage(baseEx.getMessageKey(),
+                    baseEx.getParameters());
 
-        // Add requirements header
-        messageBuilder.append(this.messageUtilComponent.getMessage(
-                "validation.password.requirements",
-                locale));
+            ApiErrorPojo errorResponse = ApiErrorPojo.of("Authentication Generic Error", userMessage,
+                    request.getRequestURI(), request.getMethod());
 
-        if (ex.getMessage() != null) {
-            String[] messageKeys = ex.getMessage().split("\\|");
-
-            for (String messageKey : messageKeys) {
-                String[] parts = messageKey.split(",");
-                if (parts.length > 1) {
-                    Object[] params = new Object[parts.length - 1];
-                    for (int i = 1; i < parts.length; i++) {
-                        params[i - 1] = Integer.parseInt(parts[i]);
-                    }
-                    String message = this.messageUtilComponent.getMessage(parts[0], locale, params);
-                    messageBuilder.append("\n").append(message);
-                }
-            }
+            log.error("Authentication error: {}", userMessage);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ApiErrorPojo.of(
-                        ex.getClass().getSimpleName(),
-                        messageBuilder.toString(),
-                        request.getRequestURI(),
-                        request.getMethod()));
+        ApiErrorPojo errorResponse = ApiErrorPojo.of("Internal Server Error",
+                this.messageUtilComponent.getMessage("error.internal.server"), request.getRequestURI(), request.getMethod());
+
+        log.error("Unexpected error: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    private @NotNull ApiErrorPojo createErrorResponse(@NotNull BaseException ex,
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorPojo> handleHttpMessageNotReadableException(
+            @NotNull HttpMessageNotReadableException ex, @NotNull HttpServletRequest request) {
+
+        ApiErrorPojo errorResponse = ApiErrorPojo.of("Message Not Readable",
+                this.messageUtilComponent.getMessage("error.message.not.readable"), request.getRequestURI(), request.getMethod());
+
+        log.error("Message not readable: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(JwtTokenInvalidException.class)
+    public ResponseEntity<ApiErrorPojo> handleTokenInvalidException(
+            @NotNull JwtTokenInvalidException ex,
             @NotNull HttpServletRequest request) {
 
-        String userMessage = messageUtilComponent.getMessage(
-                ex.getMessageKey(),
-                ex.getLocale(),
-                ex.getParameters());
+        ApiErrorPojo errorResponse = ApiErrorPojo.of("Authentication Error",
+                this.messageUtilComponent.getMessage(ex.getMessageKey(), ex.getParameters()), request.getRequestURI(), request.getMethod());
 
-        String technicalDetails = String.format(
-                "Exception: %s, Key: %s, Locale: %s, Path: %s, Method: %s",
-                ex.getClass().getSimpleName(),
-                ex.getMessageKey(),
-                ex.getLocale(),
-                request.getRequestURI(),
-                request.getMethod());
+        log.debug("Token validation failed: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
 
-        return ApiErrorPojo.of(technicalDetails, userMessage,
+    @ExceptionHandler(JwtTokenException.class)
+    public ResponseEntity<ApiErrorPojo> handleTokenException(
+            @NotNull JwtTokenException ex,
+            @NotNull HttpServletRequest request) {
+
+        String resolvedMessage = this.messageUtilComponent.getMessage(ex.getMessageKey(), ex.getParameters());
+
+        ApiErrorPojo errorResponse = ApiErrorPojo.of("Authentication Error", resolvedMessage,
                 request.getRequestURI(), request.getMethod());
+
+        log.error("Token validation failed: {}", resolvedMessage);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
-    private @NotNull ApiErrorPojo createGenericErrorResponse(@NotNull Exception ex,
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ApiErrorPojo> handleBusinessException(
+            @NotNull BaseException ex,
             @NotNull HttpServletRequest request) {
-        return ApiErrorPojo.of(
-                ex.getLocalizedMessage(),
-                messageUtilComponent.getMessage("error.unexpected", "en"),
-                request.getRequestURI(),
-                request.getMethod());
+
+        String resolvedMessage = this.messageUtilComponent.getMessage(ex.getMessageKey(), ex.getParameters());
+
+        ApiErrorPojo errorResponse = ApiErrorPojo.of(ex.getClass().getSimpleName(), resolvedMessage,
+                request.getRequestURI(), request.getMethod());
+
+        log.error("Business exception: {}", resolvedMessage);
+        return ResponseEntity.status(determineHttpStatus(ex)).body(errorResponse);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiErrorPojo> handleMaxUploadSizeExceededException(
+            @NotNull MaxUploadSizeExceededException ex,
+            @NotNull HttpServletRequest request) {
+
+        ApiErrorPojo errorResponse = ApiErrorPojo.of(
+                "Max Upload Size Exceeded",
+                this.messageUtilComponent.getMessage("document.file.max.size.exceeded",
+                        String.valueOf(maxFileSizeMB)),
+                request.getRequestURI(), request.getMethod());
+
+        log.error("File size exceeded: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @Contract(pure = true)
@@ -205,6 +186,11 @@ public class GlobalExceptionHandler {
             case InvalidParameterException ignored -> HttpStatus.BAD_REQUEST;
             case PasswordDoNotMatchException ignored -> HttpStatus.BAD_REQUEST;
             case NoContentException ignored -> HttpStatus.NO_CONTENT;
+            case RateLimitExceededException ignored -> HttpStatus.TOO_MANY_REQUESTS;
+            case JwtTokenMalformedException ignored -> HttpStatus.BAD_REQUEST;
+            case JwtTokenValidationException ignored -> HttpStatus.UNAUTHORIZED;
+            case NoDisabledException ignored -> HttpStatus.BAD_REQUEST;
+            case UsernameAlreadyExistsException ignored -> HttpStatus.CONFLICT;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }

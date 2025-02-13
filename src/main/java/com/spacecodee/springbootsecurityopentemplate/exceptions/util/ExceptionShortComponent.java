@@ -5,136 +5,156 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtToke
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenInvalidException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenUnexpectedException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.ratelimit.RateLimitExceededException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.base.ObjectNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.PermissionNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.ratelimit.RateLimitException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.*;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.user.*;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UserNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.user.UsernameNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.DoNotExistsByIdException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.PasswordDoNotMatchException;
+import com.spacecodee.springbootsecurityopentemplate.utils.LocaleUtils;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
 public class ExceptionShortComponent {
 
+    private final LocaleUtils localeUtils;
+
     public Exception exception(String messageWithoutKey) {
         return new Exception(messageWithoutKey);
     }
 
-    public RateLimitExceededException rateLimitExceededException(String messageKey, String locale) {
-        return new RateLimitExceededException(messageKey, locale);
+    public AccessDeniedException accessDeniedException(String messageKey) {
+        return new AccessDeniedException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public JwtTokenInvalidException tokenInvalidException(String messageKey, String locale) {
-        return new JwtTokenInvalidException(messageKey, locale);
+    public UnauthorizedException unauthorizedException(String messageKey) {
+        return new UnauthorizedException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public JwtTokenExpiredException tokenExpiredException(String messageKey, String locale) {
-        return new JwtTokenExpiredException(messageKey, locale);
+    public UserNotFoundException userNotFoundException(String messageKey, String value) {
+        return new UserNotFoundException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public JwtTokenUnexpectedException tokenUnexpectedException(String messageKey, String locale) {
-        return new JwtTokenUnexpectedException(messageKey, locale);
+    public RateLimitException rateLimitException(String messageKey, String value) {
+        return new RateLimitException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public JwtTokenNotFoundException tokenNotFoundException(String messageKey, String locale) {
-        return new JwtTokenNotFoundException(messageKey, locale);
+    public JwtTokenInvalidException tokenInvalidException(String messageKey) {
+        return new JwtTokenInvalidException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public NoDeletedException noDeletedException(String messageKey, String locale) {
-        return new NoDeletedException(messageKey, locale);
+    public JwtTokenInvalidException tokenInvalidException(String messageKey, String value) {
+        return new JwtTokenInvalidException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public AlreadyExistsException alreadyExistsException(String messageKey, String locale) {
-        return new AlreadyExistsException(messageKey, locale);
+    public JwtTokenExpiredException tokenExpiredException(String messageKey) {
+        return new JwtTokenExpiredException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public LastAdminException lastAdminException(String messageKey, String locale) {
-        return new LastAdminException(messageKey, locale);
+    public JwtTokenExpiredException tokenExpiredException(String messageKey, String value) {
+        return new JwtTokenExpiredException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public LastDeveloperException lastDeveloperException(String messageKey, String locale) {
-        return new LastDeveloperException(messageKey, locale);
+    public JwtTokenUnexpectedException tokenUnexpectedException(String messageKey) {
+        return new JwtTokenUnexpectedException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public LastTechnicianException lastTechnicianException(String messageKey, String locale) {
-        return new LastTechnicianException(messageKey, locale);
+    public JwtTokenUnexpectedException tokenUnexpectedException(String messageKey, String value) {
+        return new JwtTokenUnexpectedException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public LastClientException lastClientException(String messageKey, String locale) {
-        return new LastClientException(messageKey, locale);
+    public JwtTokenNotFoundException tokenNotFoundException(String messageKey) {
+        return new JwtTokenNotFoundException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public DoNotExistsByIdException doNotExistsByIdException(String messageKey, String locale) {
-        return new DoNotExistsByIdException(messageKey, locale);
+    public NoDeletedException noDeletedException(String messageKey) {
+        return new NoDeletedException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public UsernameNotFoundException usernameNotFoundException(String messageKey, String locale) {
-        return new UsernameNotFoundException(messageKey, locale);
+    public NoDeletedException noDeletedException(String messageKey, String value) {
+        return new NoDeletedException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public RoleNotFoundException roleNotFoundException(String messageKey, String locale) {
-        return new RoleNotFoundException(messageKey, locale);
+    public NoDeletedException noDeletedException(String messageKey, String value0, String value1) {
+        return new NoDeletedException(messageKey, this.localeUtils.getCurrentLocale(), value0, value1);
     }
 
-    public CannotSaveException cannotSaveException(String messageKey, String locale) {
-        return new CannotSaveException(messageKey, locale);
+    public AlreadyExistsException alreadyExistsException(String messageKey) {
+        return new AlreadyExistsException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public ObjectNotFoundException notFoundException(String messageKey, String locale) {
-        return new ObjectNotFoundException(messageKey, locale);
+    public AlreadyExistsException alreadyExistsException(String messageKey, String value) {
+        return new AlreadyExistsException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public NoContentException noContentException(String messageKey, String locale) {
-        return new NoContentException(messageKey, locale);
+    public AlreadyExistsException alreadyExistsException(String messageKey, String value0, String value1) {
+        return new AlreadyExistsException(messageKey, this.localeUtils.getCurrentLocale(), value0, value1);
     }
 
-    public NoCreatedException noCreatedException(String messageKey, String locale) {
-        return new NoCreatedException(messageKey, locale);
+    public UsernameNotFoundException usernameNotFoundException(String messageKey) {
+        return new UsernameNotFoundException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public @NotNull ModuleNotFoundException moduleNotFoundException(String messageKey, String locale) {
-        return new ModuleNotFoundException(messageKey, locale);
+    public CannotSaveException cannotSaveException(String messageKey) {
+        return new CannotSaveException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public @NotNull OperationNotFoundException operationNotFoundException(String messageKey, String locale) {
-        return new OperationNotFoundException(messageKey, locale);
+    public ObjectNotFoundException objectNotFoundException(String messageKey) {
+        return new ObjectNotFoundException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public PermissionNotFoundException permissionNotFoundException(String messageKey, String locale) {
-        return new PermissionNotFoundException(messageKey, locale);
+    public ObjectNotFoundException objectNotFoundException(String messageKey, String value) {
+        return new ObjectNotFoundException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public InvalidParameterException invalidParameterException(String messageKey, String locale) {
-        return new InvalidParameterException(messageKey, locale);
+    public ObjectNotFoundException objectNotFoundException(String messageKey, String value0, String value1) {
+        return new ObjectNotFoundException(messageKey, this.localeUtils.getCurrentLocale(), value0, value1);
     }
 
-    public NoUpdatedException noUpdatedException(String messageKey, String locale) {
-        return new NoUpdatedException(messageKey, locale);
+    public NoContentException noContentException(String messageKey) {
+        return new NoContentException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public PasswordDoNotMatchException passwordsDoNotMatchException(String messageKey, String locale) {
-        return new PasswordDoNotMatchException(messageKey, locale);
+    public NoCreatedException noCreatedException(String messageKey) {
+        return new NoCreatedException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
-    public InvalidCredentialsException invalidCredentialsException(String messageKey, String locale, String params) {
-        return new InvalidCredentialsException(messageKey, locale, params);
+    public NoCreatedException noCreatedException(String messageKey, String value) {
+        return new NoCreatedException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
-    public InvalidPasswordComplexityException invalidPasswordComplexityException(String messageKey, String locale) {
-        return new InvalidPasswordComplexityException(messageKey, locale);
+    public NoCreatedException noCreatedException(String messageKey, String value0, String value1) {
+        return new NoCreatedException(messageKey, this.localeUtils.getCurrentLocale(), value0, value1);
     }
 
-    public InvalidPasswordComplexityException invalidPasswordComplexityException(List<String> messages, String locale) {
-        return new InvalidPasswordComplexityException(messages, locale);
+    public InvalidParameterException invalidParameterException(String messageKey) {
+        return new InvalidParameterException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public InvalidParameterException invalidParameterException(String messageKey, String value) {
+        return new InvalidParameterException(messageKey, this.localeUtils.getCurrentLocale(), value);
+    }
+
+    public InvalidParameterException invalidParameterException(String messageKey, String value0, String value1) {
+        return new InvalidParameterException(messageKey, this.localeUtils.getCurrentLocale(), value0, value1);
+    }
+
+    public NoUpdatedException noUpdatedException(String messageKey) {
+        return new NoUpdatedException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public NoUpdatedException noUpdatedException(String messageKey, String value) {
+        return new NoUpdatedException(messageKey, this.localeUtils.getCurrentLocale(), value);
+    }
+
+    public NoUpdatedException noUpdatedException(String messageKey, String value0, String value1) {
+        return new NoUpdatedException(messageKey, this.localeUtils.getCurrentLocale(), value0, value1);
+    }
+
+    public InvalidCredentialsException invalidCredentialsException(String messageKey, String... params) {
+        return new InvalidCredentialsException(messageKey, this.localeUtils.getCurrentLocale(), (Object) params);
     }
 }
