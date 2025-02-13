@@ -6,7 +6,6 @@ import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.auth.IAuthenticationService;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

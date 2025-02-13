@@ -3,8 +3,6 @@ package com.spacecodee.springbootsecurityopentemplate.security.authentication.fi
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenUnexpectedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.ITokenServiceFacade;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
