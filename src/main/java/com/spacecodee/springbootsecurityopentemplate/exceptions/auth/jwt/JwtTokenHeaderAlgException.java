@@ -2,9 +2,9 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt;
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 
-public class JwtTokenHeaderALGException extends BaseException {
+public class JwtTokenHeaderAlgException extends BaseException {
 
-    public JwtTokenHeaderALGException(String messageKey, String locale, Object... args) {
+    public JwtTokenHeaderAlgException(String messageKey, String locale, Object... args) {
         super(messageKey, locale, args);
     }
 }
