@@ -11,13 +11,15 @@ import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwt
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.builder.ITokenBuilderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.key.IJwtKeyService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.validation.impl.TokenValidationChainImpl;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
