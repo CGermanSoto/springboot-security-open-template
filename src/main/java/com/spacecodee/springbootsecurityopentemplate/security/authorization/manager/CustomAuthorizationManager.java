@@ -2,10 +2,18 @@ package com.spacecodee.springbootsecurityopentemplate.security.authorization.man
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
-import com.spacecodee.springbootsecurityopentemplate.security.authentication.filter.LocaleResolverFilter;
-import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IOperationService;
-import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
+import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
+import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IPermissionCacheService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ISecurityCacheService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ITokenCacheService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
+import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
+import com.spacecodee.springbootsecurityopentemplate.utils.PathUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,100 +24,135 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class CustomAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
+
+    private static final String INVALID_AUTH_TYPE = "Invalid authentication type";
 
     @Value("${app.api.context-path}")
     private String contextPath;
 
-    @Value("#{'${swagger.paths}'.split(',')}")
-    private List<String> swaggerPaths;
+    private final ISecurityCacheService securityCacheService;
 
-    private final IOperationService operationService;
-    private final IUserDetailsService userService;
+    private final IUserSecurityService userSecurityService;
 
-    private final Logger logger = Logger.getLogger(CustomAuthorizationManager.class.getName());
+    private final ISecurityPathService securityPathService;
 
-    public CustomAuthorizationManager(IOperationService operationService, IUserDetailsService userService) {
-        this.operationService = operationService;
-        this.userService = userService;
-    }
+    private final ITokenCacheService tokenCacheService;
+
+    private final TokenOperationsFacade tokenOperationsFacade;
+
+    private final IPermissionCacheService permissionCacheService;
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
-            @NotNull RequestAuthorizationContext object) {
+                                       @NotNull RequestAuthorizationContext context) {
+        return Optional.of(context)
+                .map(this::extractRequest)
+                .filter(request -> !this.isPublicAccess(request))
+                .map(request -> this.validateAuthentication(authentication.get(), request))
+                .orElseGet(() -> new AuthorizationDecision(true));
+    }
 
-        HttpServletRequest request = object.getRequest();
-        var url = this.extractUrl(request);
-        var httpMethod = request.getMethod();
+    @Contract(pure = true)
+    private HttpServletRequest extractRequest(@NotNull RequestAuthorizationContext context) {
+        return context.getRequest();
+    }
 
-        // First check if endpoint is public
-        if (isPublic(url, httpMethod)) {
-            return new AuthorizationDecision(true);
-        }
+    private boolean isPublicAccess(HttpServletRequest request) {
+        return this.securityPathService.shouldNotFilter(request) ||
+                this.securityPathService.isRefreshTokenPath(request.getRequestURI());
+    }
 
-        // If not public, verify the user has required permissions
-        var auth = authentication.get();
-        if (auth == null || !auth.isAuthenticated()) {
+    @Contract("_, _ -> new")
+    private @NotNull AuthorizationDecision validateAuthentication(Authentication authentication,
+                                                                  HttpServletRequest request) {
+        if (!this.isValidAuthentication(authentication)) {
+            log.warn(CustomAuthorizationManager.INVALID_AUTH_TYPE);
             return new AuthorizationDecision(false);
         }
 
-        return new AuthorizationDecision(isGranted(auth, url, httpMethod));
+        // Check token state
+        try {
+            String token = this.tokenOperationsFacade.extractJwtFromRequest(request);
+            TokenStateEnum currentState = this.tokenOperationsFacade.getTokenState(token);
+
+            if (currentState != TokenStateEnum.ACTIVE) {
+                log.warn("Token is not active. Current state: {}", currentState);
+                this.tokenOperationsFacade.handleTokenExpiration(token, "Token state check failed");
+                this.tokenCacheService.cacheTokenState(token, currentState);
+                return new AuthorizationDecision(false);
+            }
+
+            String url = this.extractUrl(request);
+            String httpMethod = request.getMethod();
+
+            return new AuthorizationDecision(this.hasRequiredPermissions(authentication, url, httpMethod));
+        } catch (Exception e) {
+            log.error("Error validating token: {}", e.getMessage());
+            return new AuthorizationDecision(false);
+        }
     }
 
-    private boolean isGranted(Authentication authentication, String url, String httpMethod) {
-        if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {
-            logger.warning("Invalid authentication type");
+    private boolean isValidAuthentication(Authentication authentication) {
+        return authentication != null &&
+                authentication.isAuthenticated() &&
+                authentication instanceof UsernamePasswordAuthenticationToken;
+    }
+
+    private boolean hasRequiredPermissions(Authentication authentication, String url, String httpMethod) {
+        try {
+            String username = authentication.getPrincipal().toString();
+            var userDetails = this.userSecurityService.findByUsername(username);
+            String roleId = String.valueOf(userDetails.getRoleSecurityDTO().getId());
+
+            // Try to get permissions from the cache first
+            List<String> permissions = this.permissionCacheService.getPermissionsFromCache(roleId);
+
+            // If not in cache, get from security cache service and store in permission cache
+            if (permissions == null) {
+                var operations = this.securityCacheService.getUserOperations(username,
+                        () -> userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
+                                .map(PermissionSecurityDTO::getOperationDTO).toList());
+
+                // Cache permissions
+                this.permissionCacheService.cachePermissions(roleId,
+                        operations.stream().map(op -> op.getHttpMethod() + ":" + op.getPath()).toList());
+
+                return operations.stream()
+                        .anyMatch(operation -> this.matchesOperation(operation, url, httpMethod));
+            }
+
+            // Check permissions from the cache
+            String requestedPermission = httpMethod + ":" + url;
+            return permissions.stream().anyMatch(permission -> PathUtils.matchesPattern(permission, requestedPermission));
+
+        } catch (Exception e) {
+            log.error("Error checking permissions: {}", e.getMessage());
             return false;
         }
-
-        var operations = obtainOperations(authentication);
-        return operations.stream()
-                .anyMatch(operation -> matches(operation, url, httpMethod));
     }
 
-    private List<OperationSecurityDTO> obtainOperations(Authentication authentication) {
-        var authToken = (UsernamePasswordAuthenticationToken) authentication;
-        var username = authToken.getPrincipal().toString();
-        var locale = LocaleResolverFilter.getCurrentLocale();
-        var user = this.userService.findByUsername(locale, username);
+    private boolean matchesOperation(@NotNull OperationSecurityDTO operation, String url, String httpMethod) {
+        String operationPath = operation.getModuleSecurityDTO().getBasePath() + operation.getPath();
+        boolean matches = PathUtils.matchesPattern(operationPath, url);
 
-        return user.getRoleSecurityDTO().getPermissionDTOList().stream()
-                .map(PermissionSecurityDTO::getOperationDTO).toList();
-    }
-
-    private boolean isPublic(String url, String httpMethod) {
-        var publicOperations = operationService.findByPublicAccess();
-        return publicOperations.stream()
-                .anyMatch(operation -> matches(operation, url, httpMethod));
-    }
-
-    private boolean matches(@NotNull OperationSecurityDTO operation, String url, String httpMethod) {
-        var pattern = Pattern.compile(operation.getModuleSecurityDTO().getBasePath() + operation.getPath());
-        return pattern.matcher(url).matches() &&
-                operation.getHttpMethod().equalsIgnoreCase(httpMethod);
+        return matches && operation.getHttpMethod().equalsIgnoreCase(httpMethod);
     }
 
     private @NotNull String extractUrl(@NotNull HttpServletRequest request) {
         String url = request.getRequestURI();
 
-        // Skip context path processing for Swagger paths
-        if (isSwaggerUIPath(url)) {
+        if (this.securityPathService.isSwaggerPath(url)) {
             return url;
         }
 
-        if (url.startsWith(this.contextPath)) {
-            url = url.substring(this.contextPath.length());
-        }
-
-        return url;
+        return url.startsWith(this.contextPath) ? url.substring(this.contextPath.length()) : url;
     }
 
-    private boolean isSwaggerUIPath(@NotNull String url) {
-        return swaggerPaths.stream().anyMatch(url::startsWith);
-    }
 }
