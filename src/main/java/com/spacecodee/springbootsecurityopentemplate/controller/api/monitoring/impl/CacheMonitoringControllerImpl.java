@@ -6,7 +6,6 @@ import com.spacecodee.springbootsecurityopentemplate.controller.api.monitoring.I
 import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractController;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
-import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +19,14 @@ public class CacheMonitoringControllerImpl extends AbstractController implements
 
     private final LoadingCache<String, Integer> requestCountsCache;
 
-    public CacheMonitoringControllerImpl(MessageUtilComponent messageUtilComponent,
-                                         MessageParameterHandler messageParameterHandler,
+    public CacheMonitoringControllerImpl(MessageParameterHandler messageParameterHandler,
                                          LoadingCache<String, Integer> requestCountsCache) {
-        super(messageUtilComponent, messageParameterHandler);
+        super(messageParameterHandler);
         this.requestCountsCache = requestCountsCache;
     }
 
     @Override
-    public ResponseEntity<ApiResponseDataPojo<CacheStats>> getCacheStats(String locale) {
+    public ResponseEntity<ApiResponseDataPojo<CacheStats>> getCacheStats() {
         log.debug("Retrieving cache statistics");
         CacheStats stats = this.requestCountsCache.stats();
 
@@ -36,7 +34,6 @@ public class CacheMonitoringControllerImpl extends AbstractController implements
                 super.createDataResponse(
                         stats,
                         "monitoring.cache.stats",
-                        locale,
                         HttpStatus.OK,
                         stats.hitCount(),
                         stats.missCount(),
