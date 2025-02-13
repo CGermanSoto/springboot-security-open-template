@@ -7,7 +7,6 @@ public final class LanguageConstants {
         throw new IllegalStateException("Constants class");
     }
 
-    public static final String DEFAULT_ENCODING = "UTF-8";
     public static final String DEFAULT_LOCALE = "en";
     public static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
 

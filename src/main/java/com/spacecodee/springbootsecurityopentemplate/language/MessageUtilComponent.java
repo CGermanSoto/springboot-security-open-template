@@ -2,6 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.language;
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.MessageParameterUtil;
 import com.spacecodee.springbootsecurityopentemplate.language.constant.LanguageConstants;
+import com.spacecodee.springbootsecurityopentemplate.utils.LocaleUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,12 @@ public class MessageUtilComponent {
 
     private final MessageSource messageSource;
     private static final Map<String, Locale> localeCache = new ConcurrentHashMap<>();
+    private final LocaleUtils localeUtils;
 
-    public String getMessage(String message, String locale) {
-        validateMessage(message);
+    public String getMessage(String message) {
+        var locale = localeUtils.getCurrentLocale();
+
+        this.validateMessage(message);
         try {
             Locale resolvedLocale = this.getLocaleApp(locale);
             String resolvedMessage = getMessageSource().getMessage(message, null, resolvedLocale);
@@ -32,13 +36,15 @@ public class MessageUtilComponent {
                     message, locale, resolvedMessage);
             return resolvedMessage;
         } catch (Exception e) {
-            handleMessageError(message, locale, e);
+            handleMessageError(message, e);
             return message;
         }
     }
 
-    public String getMessage(String message, String locale, Object... args) {
-        validateMessage(message);
+    public String getMessage(String message, Object... args) {
+        var locale = localeUtils.getCurrentLocale();
+
+        this.validateMessage(message);
         try {
             log.debug("Resolving parameterized message: key='{}', locale='{}', args='{}'",
                     message, locale, Arrays.toString(args));
@@ -49,17 +55,23 @@ public class MessageUtilComponent {
             log.debug("Parameterized message resolved: '{}'", resolvedMessage);
             return resolvedMessage;
         } catch (Exception e) {
-            handleMessageError(message, locale, e);
+            handleMessageError(message, e);
             return message;
         }
     }
 
-    public String getMessageWithFallback(String message, String locale, String defaultMessage) {
-        log.debug("Resolving message with fallback: key='{}', locale='{}', default='{}'",
-                message, locale, defaultMessage);
-        String resolvedMessage = getMessageSource().getMessage(message, null, defaultMessage, getLocaleApp(locale));
-        log.debug("Resolved message with fallback result: '{}'", resolvedMessage);
-        return resolvedMessage;
+    public String getMessage(String message, String locale, Object... args) {
+
+        this.validateMessage(message);
+        try {
+
+            Object[] validatedArgs = MessageParameterUtil.validateAndCleanParams(args);
+
+            return getMessageSource().getMessage(message, validatedArgs, getLocaleApp(locale));
+        } catch (Exception e) {
+            handleMessageError(message, e);
+            return message;
+        }
     }
 
     private void validateMessage(String message) {
@@ -68,7 +80,8 @@ public class MessageUtilComponent {
         }
     }
 
-    private void handleMessageError(String message, String locale, @NotNull Exception e) {
+    private void handleMessageError(String message, @NotNull Exception e) {
+        var locale = localeUtils.getCurrentLocale();
         log.error("Error resolving message: key='{}', locale='{}', error='{}'",
                 message, locale, e.getMessage());
     }
