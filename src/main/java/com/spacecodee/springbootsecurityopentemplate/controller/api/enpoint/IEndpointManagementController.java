@@ -5,9 +5,6 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiRes
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.ModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.core.PermissionVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -7,9 +7,6 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiRes
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.ModuleDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.OperationDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.PermissionDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.core.ModuleVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.core.OperationVO;
-import com.spacecodee.springbootsecurityopentemplate.data.vo.core.PermissionVO;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.endpoint.IEndpointManagementService;
