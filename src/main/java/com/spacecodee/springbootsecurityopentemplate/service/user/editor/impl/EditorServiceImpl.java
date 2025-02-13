@@ -266,4 +266,5 @@ public class EditorServiceImpl implements IEditorService {
             throw this.exceptionShortComponent.invalidParameterException("editor.id.invalid", String.valueOf(id));
         }
     }
+
 }
