@@ -35,35 +35,34 @@ public class HttpSecurityConfig {
     private final CustomSecurityHeadersConfigurer securityHeadersConfigurer;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .with(securityHeadersConfigurer, Customizer.withDefaults())
+                .with(this.securityHeadersConfigurer, Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
-                    // Swagger UI endpoints
                     auth.requestMatchers(
-                            "/v3/api-docs/**",
                             "/swagger-ui/**",
+                            "/v3/api-docs/**",
                             "/swagger-ui.html",
-                            "/webjars/**").permitAll();
-                    // All other requests go through CustomAuthorizationManager
+                            "/webjars/**",
+                            "/swagger-resources/**").permitAll();
                     auth.anyRequest().access(authorizationManager);
                 })
-                .addFilterAt(this.rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(this.localeResolverFilter, RateLimitFilter.class)
+                .addFilterBefore(this.localeResolverFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(this.jwtAuthenticationFilter, LocaleResolverFilter.class)
+                .addFilterAt(this.rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(this.authenticationEntryPoint)
                         .accessDeniedHandler(this.accessDeniedHandler))
-                .formLogin(form -> form
-                        .successHandler(this.authenticationSuccessHandler))
+                .formLogin(form -> form.successHandler(this.authenticationSuccessHandler))
                 .build();
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
