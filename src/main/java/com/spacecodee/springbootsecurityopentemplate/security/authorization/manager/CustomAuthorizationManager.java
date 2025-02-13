@@ -78,7 +78,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         var locale = LocaleResolverFilter.getCurrentLocale();
         var user = this.userService.findByUsername(locale, username);
 
-        return user.getRoleSecurityDTO().getPermissionSecurityDTOList().stream()
+        return user.getRoleSecurityDTO().getPermissionDTOList().stream()
                 .map(PermissionSecurityDTO::getOperationDTO).toList();
     }
 
@@ -89,7 +89,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     }
 
     private boolean matches(@NotNull OperationSecurityDTO operation, String url, String httpMethod) {
-        var pattern = Pattern.compile(operation.getModuleDTO().getBasePath() + operation.getPath());
+        var pattern = Pattern.compile(operation.getModuleSecurityDTO().getBasePath() + operation.getPath());
         return pattern.matcher(url).matches() &&
                 operation.getHttpMethod().equalsIgnoreCase(httpMethod);
     }
