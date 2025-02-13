@@ -1,6 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions.util;
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.*;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenInvalidException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenNotFoundException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenUnexpectedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.ratelimit.RateLimitExceededException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.OperationNotFoundException;
@@ -29,20 +34,20 @@ public class ExceptionShortComponent {
         return new RateLimitExceededException(messageKey, locale);
     }
 
-    public TokenInvalidException tokenInvalidException(String messageKey, String locale) {
-        return new TokenInvalidException(messageKey, locale);
+    public JwtTokenInvalidException tokenInvalidException(String messageKey, String locale) {
+        return new JwtTokenInvalidException(messageKey, locale);
     }
 
-    public TokenExpiredException tokenExpiredException(String messageKey, String locale) {
-        return new TokenExpiredException(messageKey, locale);
+    public JwtTokenExpiredException tokenExpiredException(String messageKey, String locale) {
+        return new JwtTokenExpiredException(messageKey, locale);
     }
 
-    public TokenUnexpectedException tokenUnexpectedException(String messageKey, String locale) {
-        return new TokenUnexpectedException(messageKey, locale);
+    public JwtTokenUnexpectedException tokenUnexpectedException(String messageKey, String locale) {
+        return new JwtTokenUnexpectedException(messageKey, locale);
     }
 
-    public TokenNotFoundException tokenNotFoundException(String messageKey, String locale) {
-        return new TokenNotFoundException(messageKey, locale);
+    public JwtTokenNotFoundException tokenNotFoundException(String messageKey, String locale) {
+        return new JwtTokenNotFoundException(messageKey, locale);
     }
 
     public NoDeletedException noDeletedException(String messageKey, String locale) {

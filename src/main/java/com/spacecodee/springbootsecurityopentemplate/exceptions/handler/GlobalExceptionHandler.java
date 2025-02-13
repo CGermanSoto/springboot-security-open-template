@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErr
 import com.spacecodee.springbootsecurityopentemplate.data.record.ValidationError;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidCredentialsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.InvalidPasswordComplexityException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.UnauthorizedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.endpoint.ModuleNotFoundException;
@@ -28,14 +28,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -198,7 +195,7 @@ public class GlobalExceptionHandler {
             case LastTechnicianException ignored -> HttpStatus.CONFLICT;
             case LastDeveloperException ignored -> HttpStatus.CONFLICT;
             case InvalidCredentialsException ignored -> HttpStatus.UNAUTHORIZED;
-            case TokenExpiredException ignored -> HttpStatus.UNAUTHORIZED;
+            case JwtTokenExpiredException ignored -> HttpStatus.UNAUTHORIZED;
             case UnauthorizedException ignored -> HttpStatus.FORBIDDEN;
             case UserNotFoundException ignored -> HttpStatus.NOT_FOUND;
             case ModuleNotFoundException ignored -> HttpStatus.NOT_FOUND;

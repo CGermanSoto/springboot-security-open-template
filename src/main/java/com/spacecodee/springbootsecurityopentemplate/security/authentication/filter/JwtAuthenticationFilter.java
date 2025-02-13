@@ -1,6 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authentication.filter;
 
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenUnexpectedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenUnexpectedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.core.user.details.IUserDetailsService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.IJwtProviderService;
@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             authenticationToken.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (TokenUnexpectedException e) {
+        } catch (JwtTokenUnexpectedException e) {
             log.warn("There was an unexpected error when we were trying to refresh the token, please log in again: {}",
                     e.getMessage());
             throw this.exceptionShortComponent.tokenUnexpectedException("token.unexpected", locale);

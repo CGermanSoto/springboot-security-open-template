@@ -2,7 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.SecurityJwtTokenDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.jwt.JwtTokenUVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.TokenExpiredException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenExpiredException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.mappers.basic.IJwtTokenMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
@@ -66,7 +66,7 @@ public class JwtTokenManagementServiceImpl implements IJwtTokenManagementService
     public boolean existsToken(String locale, String token) {
         try {
             return this.jwtTokenRepository.existsByToken(token);
-        } catch (TokenExpiredException e) {
+        } catch (JwtTokenExpiredException e) {
             log.error("Error checking token existence: {}", e.getMessage());
             throw this.exceptionComponent.tokenNotFoundException("token.not.exists", locale);
         } catch (Exception e) {
