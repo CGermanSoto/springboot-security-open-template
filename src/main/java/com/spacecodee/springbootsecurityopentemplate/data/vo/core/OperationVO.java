@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import com.spacecodee.springbootsecurityopentemplate.constants.ValidationConstants;
-
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 

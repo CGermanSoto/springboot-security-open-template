@@ -1,7 +1,5 @@
 package com.spacecodee.springbootsecurityopentemplate.data.vo.core;
 
-import com.spacecodee.springbootsecurityopentemplate.constants.ValidationConstants;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
