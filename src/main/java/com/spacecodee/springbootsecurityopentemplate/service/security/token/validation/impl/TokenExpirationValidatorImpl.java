@@ -17,6 +17,7 @@ import java.util.Date;
 public class TokenExpirationValidatorImpl implements ITokenValidatorService {
 
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final JwtParser jwtParser;
 
     @Override

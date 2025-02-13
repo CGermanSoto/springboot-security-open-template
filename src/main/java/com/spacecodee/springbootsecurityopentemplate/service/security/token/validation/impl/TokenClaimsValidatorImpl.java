@@ -18,7 +18,9 @@ import java.util.List;
 public class TokenClaimsValidatorImpl implements ITokenValidatorService {
 
     private static final List<String> REQUIRED_CLAIMS = List.of("sub", "iat", "exp");
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final JwtParser jwtParser;
 
     private static final String AUTH_TOKEN_CLAIMS_INVALID = "auth.token.claims.invalid";

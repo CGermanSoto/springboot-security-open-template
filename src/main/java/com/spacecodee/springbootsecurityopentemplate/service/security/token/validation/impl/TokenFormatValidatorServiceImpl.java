@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 public class TokenFormatValidatorServiceImpl implements ITokenValidatorService {
 
     private static final int EXPECTED_PARTS = 3;
+
     private final ExceptionShortComponent exceptionShortComponent;
 
     @Override

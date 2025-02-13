@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class TokenSignatureValidatorImpl implements ITokenValidatorService {
 
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final JwtParser jwtParser;
 
     @Override

@@ -13,9 +13,13 @@ import java.util.List;
 public class TokenValidationChainImpl {
 
     private final TokenFormatValidatorServiceImpl tokenFormatValidator;
+
     private final TokenSignatureValidatorImpl tokenSignatureValidator;
+
     private final TokenExpirationValidatorImpl tokenExpirationValidator;
+
     private final TokenClaimsValidatorImpl tokenClaimsValidator;
+
     private final TokenHeaderValidatorImpl tokenHeaderValidator;
 
     private List<ITokenValidatorService> validators;

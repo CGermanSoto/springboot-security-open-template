@@ -20,7 +20,9 @@ import java.util.Map;
 public class TokenHeaderValidatorImpl implements ITokenValidatorService {
 
     private static final String EXPECTED_TYPE = "JWT";
+
     private static final String EXPECTED_ALG = "HS256";
+
     private final ExceptionShortComponent exceptionShortComponent;
 
     @Override
