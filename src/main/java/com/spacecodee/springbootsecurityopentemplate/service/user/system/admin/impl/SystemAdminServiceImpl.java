@@ -265,5 +265,5 @@ public class SystemAdminServiceImpl implements ISystemAdminService {
             throw this.exceptionShortComponent.invalidParameterException("system.admin.id.invalid", String.valueOf(id));
         }
     }
-}
 
+}
