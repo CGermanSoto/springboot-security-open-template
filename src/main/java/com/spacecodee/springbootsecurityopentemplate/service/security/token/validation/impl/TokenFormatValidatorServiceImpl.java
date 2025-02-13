@@ -2,7 +2,6 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.token.val
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.validation.ITokenValidatorService;
-import com.spacecodee.springbootsecurityopentemplate.utils.LocaleUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ public class TokenFormatValidatorServiceImpl implements ITokenValidatorService {
 
         String[] parts = token.split("\\.");
         if (parts.length != EXPECTED_PARTS) {
-            throw exceptionShortComponent.tokenInvalidException("auth.token.invalid.format");
+            throw exceptionShortComponent.jwtTokenInvalidFormatException("auth.token.invalid.format");
         }
     }
 }

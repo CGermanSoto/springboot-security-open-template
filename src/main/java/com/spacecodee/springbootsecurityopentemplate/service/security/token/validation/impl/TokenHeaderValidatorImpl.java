@@ -31,7 +31,7 @@ public class TokenHeaderValidatorImpl implements ITokenValidatorService {
             this.validateHeader(headerJson);
         } catch (Exception e) {
             log.error("Invalid JWT header: {}", e.getMessage());
-            throw this.exceptionShortComponent.tokenInvalidException("auth.token.header.validation.error");
+            throw this.exceptionShortComponent.jwtTokenHeaderValidationException("auth.token.header.validation.error");
         }
     }
 
@@ -41,7 +41,7 @@ public class TokenHeaderValidatorImpl implements ITokenValidatorService {
             return new String(decodedBytes, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
             log.error("Invalid JWT header encoding: {}", e.getMessage());
-            throw this.exceptionShortComponent.tokenInvalidException("auth.token.header.decode.error");
+            throw this.exceptionShortComponent.jwtTokenHeaderDecodeException("auth.token.header.decode.error");
         }
     }
 
@@ -52,15 +52,15 @@ public class TokenHeaderValidatorImpl implements ITokenValidatorService {
             });
 
             if (!EXPECTED_TYPE.equals(header.get("typ"))) {
-                throw this.exceptionShortComponent.tokenInvalidException("auth.token.header.type.invalid");
+                throw this.exceptionShortComponent.jwtTokenHeaderTypeException("auth.token.header.type.invalid");
             }
 
             if (!EXPECTED_ALG.equals(header.get("alg"))) {
-                throw this.exceptionShortComponent.tokenInvalidException("auth.token.header.alg.invalid");
+                throw this.exceptionShortComponent.jwtTokenHeaderAlgException("auth.token.header.alg.invalid");
             }
         } catch (JsonProcessingException e) {
             log.error("Invalid JWT header format: {}", e.getMessage());
-            throw this.exceptionShortComponent.tokenInvalidException("auth.token.header.format.invalid");
+            throw this.exceptionShortComponent.jwtTokenHeaderFormatException("auth.token.header.format.invalid");
         }
     }
 }

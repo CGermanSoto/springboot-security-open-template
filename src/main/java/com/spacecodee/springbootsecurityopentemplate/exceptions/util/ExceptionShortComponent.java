@@ -1,10 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.exceptions.util;
 
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.*;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenExpiredException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenInvalidException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenNotFoundException;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenUnexpectedException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.*;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.ratelimit.RateLimitException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.*;
@@ -24,6 +21,14 @@ public class ExceptionShortComponent {
 
     public Exception exception(String messageWithoutKey) {
         return new Exception(messageWithoutKey);
+    }
+
+    public JwtTokenClaimsInvalidException jwtTokenClaimsInvalidException(String messageKey) {
+        return new JwtTokenClaimsInvalidException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenClaimsMissingException jwtTokenClaimsMissingException(String messageKey, String value) {
+        return new JwtTokenClaimsMissingException(messageKey, this.localeUtils.getCurrentLocale(), value);
     }
 
     public AccessDeniedException accessDeniedException(String messageKey) {
@@ -52,6 +57,34 @@ public class ExceptionShortComponent {
 
     public JwtTokenExpiredException tokenExpiredException(String messageKey) {
         return new JwtTokenExpiredException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenInvalidFormatException jwtTokenInvalidFormatException(String messageKey) {
+        return new JwtTokenInvalidFormatException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenHeaderValidationException jwtTokenHeaderValidationException(String messageKey) {
+        return new JwtTokenHeaderValidationException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenHeaderFormatException jwtTokenHeaderFormatException(String messageKey) {
+        return new JwtTokenHeaderFormatException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenHeaderTypeException jwtTokenHeaderTypeException(String messageKey) {
+        return new JwtTokenHeaderTypeException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenHeaderAlgException jwtTokenHeaderAlgException(String messageKey) {
+        return new JwtTokenHeaderAlgException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenSignatureException jwtTokenSignatureException(String messageKey) {
+        return new JwtTokenSignatureException(messageKey, this.localeUtils.getCurrentLocale());
+    }
+
+    public JwtTokenHeaderDecodeException jwtTokenHeaderDecodeException(String messageKey) {
+        return new JwtTokenHeaderDecodeException(messageKey, this.localeUtils.getCurrentLocale());
     }
 
     public JwtTokenExpiredException tokenExpiredException(String messageKey, String value) {

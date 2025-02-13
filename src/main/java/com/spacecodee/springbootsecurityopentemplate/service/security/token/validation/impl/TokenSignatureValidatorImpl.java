@@ -22,7 +22,7 @@ public class TokenSignatureValidatorImpl implements ITokenValidatorService {
             this.jwtParser.parseSignedClaims(token);
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
-            throw exceptionShortComponent.tokenInvalidException("auth.token.signature.invalid");
+            throw exceptionShortComponent.jwtTokenSignatureException("auth.token.signature.invalid");
         }
     }
 }

@@ -32,7 +32,7 @@ public class TokenClaimsValidatorImpl implements ITokenValidatorService {
             this.validateClaimsExpiration(claims);
         } catch (Exception e) {
             log.error("Error validating token claims: {}", e.getMessage());
-            throw this.exceptionShortComponent.tokenInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
+            throw this.exceptionShortComponent.jwtTokenClaimsInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
         }
     }
 
@@ -40,7 +40,7 @@ public class TokenClaimsValidatorImpl implements ITokenValidatorService {
         for (String claim : REQUIRED_CLAIMS) {
             if (claims.get(claim) == null) {
                 log.error("Missing required claim: {}", claim);
-                throw this.exceptionShortComponent.tokenInvalidException("auth.token.claim.missing", claim);
+                throw this.exceptionShortComponent.jwtTokenClaimsMissingException("auth.token.claim.missing", claim);
             }
         }
     }
@@ -48,17 +48,17 @@ public class TokenClaimsValidatorImpl implements ITokenValidatorService {
     private void validateClaimsFormat(@NotNull Claims claims) {
         if (claims.getSubject() == null) {
             log.error("Invalid subject claim format");
-            throw this.exceptionShortComponent.tokenInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
+            throw this.exceptionShortComponent.jwtTokenClaimsInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
         }
 
         if (claims.getIssuedAt() == null) {
             log.error("Invalid issuedAt claim format");
-            throw this.exceptionShortComponent.tokenInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
+            throw this.exceptionShortComponent.jwtTokenClaimsInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
         }
 
         if (claims.getExpiration() == null) {
             log.error("Invalid expiration claim format");
-            throw this.exceptionShortComponent.tokenInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
+            throw this.exceptionShortComponent.jwtTokenClaimsInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
         }
     }
 
@@ -71,7 +71,7 @@ public class TokenClaimsValidatorImpl implements ITokenValidatorService {
 
         if (claims.getIssuedAt().after(now)) {
             log.error("Token issued in the future");
-            throw this.exceptionShortComponent.tokenInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
+            throw this.exceptionShortComponent.jwtTokenClaimsInvalidException(AUTH_TOKEN_CLAIMS_INVALID);
         }
     }
 
