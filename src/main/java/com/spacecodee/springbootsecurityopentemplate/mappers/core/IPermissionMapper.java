@@ -25,8 +25,6 @@ public interface IPermissionMapper {
     @Mapping(target = "operationHttpMethod", source = "operationEntity.httpMethod")
     PermissionDetailDTO toDetailDTO(PermissionEntity entity);
 
-    List<PermissionDTO> toDTOList(List<PermissionEntity> entities);
-
     List<PermissionDetailDTO> toDetailDTOList(List<PermissionEntity> entities);
 
     @Mapping(target = "id", ignore = true)

@@ -22,8 +22,6 @@ public interface IRoleMapper {
     @Mapping(target = "permissions", expression = "java(mapPermissions(entity))")
     RoleDetailDTO toDetailDTO(RoleEntity entity);
 
-    List<RoleDTO> toDTOList(List<RoleEntity> entities);
-
     List<RoleDetailDTO> toDetailDTOList(List<RoleEntity> entities);
 
     @Mapping(target = "id", ignore = true)

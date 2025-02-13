@@ -21,8 +21,6 @@ public interface IOperationMapper {
     @Mapping(target = "moduleBasePath", source = "moduleEntity.basePath")
     OperationDetailDTO toDetailDTO(OperationEntity entity);
 
-    List<OperationDTO> toDTOList(List<OperationEntity> entities);
-
     List<OperationDetailDTO> toDetailDTOList(List<OperationEntity> entities);
 
     @Mapping(target = "id", ignore = true)
