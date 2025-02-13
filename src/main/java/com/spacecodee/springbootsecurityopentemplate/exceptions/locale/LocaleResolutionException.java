@@ -11,4 +11,5 @@ public class LocaleResolutionException extends BaseException {
     public LocaleResolutionException(String messageKey, String locale) {
         super(messageKey, locale);
     }
+
 }
