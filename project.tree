@@ -1,0 +1,512 @@
+springbootsecurityopentemplate
+├── SpringbootSecurityOpenTemplateApplication.java
+├── config
+│   ├── AopConfig.java
+│   ├── JacksonConfig.java
+│   ├── JwtConfig.java
+│   ├── SecurityCacheConfig.java
+│   ├── SwaggerConfig.java
+│   ├── WebConfig.java
+│   └── converter
+│       └── StringToMapConverter.java
+├── constants
+│   ├── ApiConstants.java
+│   └── SecurityConstants.java
+├── controller
+│   ├── api
+│   │   ├── auth
+│   │   │   ├── IAuthController.java
+│   │   │   ├── impl
+│   │   │   │   └── AuthControllerImpl.java
+│   │   │   └── package-info.java
+│   │   ├── core
+│   │   │   ├── IModuleController.java
+│   │   │   ├── IOperationController.java
+│   │   │   ├── IPermissionController.java
+│   │   │   ├── IRoleController.java
+│   │   │   └── impl
+│   │   │       ├── ModuleControllerImpl.java
+│   │   │       ├── OperationControllerImpl.java
+│   │   │       ├── PermissionControllerImpl.java
+│   │   │       └── RoleControllerImpl.java
+│   │   ├── monitoring
+│   │   │   ├── ICacheMonitoringController.java
+│   │   │   ├── IRateLimitMonitoringController.java
+│   │   │   └── impl
+│   │   │       ├── CacheMonitoringControllerImpl.java
+│   │   │       └── RateLimitMonitoringControllerImpl.java
+│   │   ├── package-info.java
+│   │   ├── security
+│   │   │   ├── IPermissionJwtController.java
+│   │   │   └── impl
+│   │   │       └── PermissionJwtControllerImpl.java
+│   │   └── user
+│   │       ├── IUserController.java
+│   │       ├── developer
+│   │       │   ├── IDeveloperController.java
+│   │       │   ├── impl
+│   │       │   │   └── DeveloperControllerImpl.java
+│   │       │   └── package-info.java
+│   │       ├── editor
+│   │       │   ├── IEditorController.java
+│   │       │   └── impl
+│   │       │       └── EditorControllerImpl.java
+│   │       ├── guest
+│   │       │   ├── IGuestController.java
+│   │       │   └── impl
+│   │       │       └── GuestControllerImpl.java
+│   │       ├── impl
+│   │       │   └── UserControllerImpl.java
+│   │       ├── manager
+│   │       │   ├── IManagerController.java
+│   │       │   └── impl
+│   │       │       └── ManagerControllerImpl.java
+│   │       ├── package-info.java
+│   │       ├── system
+│   │       │   └── admin
+│   │       │       ├── ISystemAdminController.java
+│   │       │       └── impl
+│   │       │           └── SystemAdminControllerImpl.java
+│   │       └── viewer
+│   │           ├── IViewerController.java
+│   │           └── impl
+│   │               └── ViewerControllerImpl.java
+│   └── base
+│       ├── AbstractController.java
+│       └── package-info.java
+├── data
+│   ├── base
+│   │   └── IJwtTokenFields.java
+│   ├── common
+│   │   ├── auth
+│   │   │   └── AuthenticationResponsePojo.java
+│   │   └── response
+│   │       ├── ApiErrorDataPojo.java
+│   │       ├── ApiErrorPojo.java
+│   │       ├── ApiResponseDataPojo.java
+│   │       ├── ApiResponsePojo.java
+│   │       └── BaseResponsePojo.java
+│   ├── dto
+│   │   ├── auth
+│   │   │   ├── AuthResponseDTO.java
+│   │   │   ├── JwtTokenDTO.java
+│   │   │   └── SecurityJwtTokenDTO.java
+│   │   ├── base
+│   │   │   └── BaseAuditDTO.java
+│   │   ├── core
+│   │   │   ├── ModuleDTO.java
+│   │   │   ├── OperationDTO.java
+│   │   │   ├── PermissionDTO.java
+│   │   │   ├── RoleDTO.java
+│   │   │   ├── UserDTO.java
+│   │   │   ├── module
+│   │   │   │   └── ModuleDTO.java
+│   │   │   ├── operation
+│   │   │   │   ├── OperationDTO.java
+│   │   │   │   └── OperationDetailDTO.java
+│   │   │   ├── permission
+│   │   │   │   ├── PermissionDTO.java
+│   │   │   │   └── PermissionDetailDTO.java
+│   │   │   └── role
+│   │   │       ├── RoleDTO.java
+│   │   │       └── RoleDetailDTO.java
+│   │   ├── security
+│   │   │   ├── JwtTokenSecurityDTO.java
+│   │   │   ├── ModuleSecurityDTO.java
+│   │   │   ├── OperationSecurityDTO.java
+│   │   │   ├── OperationSecurityPathDTO.java
+│   │   │   ├── PermissionSecurityDTO.java
+│   │   │   ├── RoleSecurityDTO.java
+│   │   │   └── UserSecurityDTO.java
+│   │   └── user
+│   │       ├── UserDTO.java
+│   │       ├── UserDetailDTO.java
+│   │       ├── UserProfileDTO.java
+│   │       ├── developer
+│   │       │   ├── DeveloperDTO.java
+│   │       │   └── DeveloperDetailDTO.java
+│   │       ├── editor
+│   │       │   ├── EditorDTO.java
+│   │       │   └── EditorDetailDTO.java
+│   │       ├── guest
+│   │       │   ├── GuestDTO.java
+│   │       │   └── GuestDetailDTO.java
+│   │       ├── manager
+│   │       │   ├── ManagerDTO.java
+│   │       │   └── ManagerDetailDTO.java
+│   │       ├── system
+│   │       │   └── admin
+│   │       │       ├── SystemAdminDTO.java
+│   │       │       └── SystemAdminDetailDTO.java
+│   │       └── viewer
+│   │           ├── ViewerDTO.java
+│   │           └── ViewerDetailDTO.java
+│   ├── record
+│   │   ├── TokenClaims.java
+│   │   ├── TokenEvent.java
+│   │   ├── TokenStateChangeEvent.java
+│   │   ├── TokenValidationResult.java
+│   │   └── ValidationError.java
+│   └── vo
+│       ├── auth
+│       │   └── LoginVO.java
+│       ├── core
+│       │   ├── module
+│       │   │   ├── CreateModuleVO.java
+│       │   │   ├── ModuleFilterVO.java
+│       │   │   └── UpdateModuleVO.java
+│       │   ├── operation
+│       │   │   ├── CreateOperationVO.java
+│       │   │   ├── OperationFilterVO.java
+│       │   │   └── UpdateOperationVO.java
+│       │   ├── permission
+│       │   │   ├── CreatePermissionVO.java
+│       │   │   ├── PermissionFilterVO.java
+│       │   │   └── UpdatePermissionVO.java
+│       │   └── role
+│       │       ├── CreateRoleVO.java
+│       │       ├── RoleFilterVO.java
+│       │       └── UpdateRoleVO.java
+│       ├── jwt
+│       │   ├── CreateJwtTokenVO.java
+│       │   └── UpdateJwtTokenVO.java
+│       └── user
+│           ├── developer
+│           │   ├── CreateDeveloperVO.java
+│           │   ├── DeveloperFilterVO.java
+│           │   └── UpdateDeveloperVO.java
+│           ├── editor
+│           │   ├── CreateEditorVO.java
+│           │   ├── EditorFilterVO.java
+│           │   └── UpdateEditorVO.java
+│           ├── guest
+│           │   ├── CreateGuestVO.java
+│           │   ├── GuestFilterVO.java
+│           │   └── UpdateGuestVO.java
+│           ├── manager
+│           │   ├── CreateManagerVO.java
+│           │   ├── ManagerFilterVO.java
+│           │   └── UpdateManagerVO.java
+│           ├── system
+│           │   └── admin
+│           │       ├── CreateSystemAdminVO.java
+│           │       ├── SystemAdminFilterVO.java
+│           │       └── UpdateSystemAdminVO.java
+│           └── viewer
+│               ├── CreateViewerVO.java
+│               ├── UpdateViewerVO.java
+│               └── ViewerFilterVO.java
+├── enums
+│   ├── PasswordValidationRule.java
+│   ├── RoleEnum.java
+│   ├── RolePermissionEnum.java
+│   └── TokenStateEnum.java
+├── events
+│   └── security
+│       └── token
+│           └── TokenEventListener.java
+├── exceptions
+│   ├── auth
+│   │   ├── AccessDeniedException.java
+│   │   ├── InvalidCredentialsException.java
+│   │   ├── InvalidPasswordComplexityException.java
+│   │   ├── InvalidPasswordException.java
+│   │   ├── UnauthorizedException.java
+│   │   ├── jwt
+│   │   │   ├── JwtTokenAuthenticationException.java
+│   │   │   ├── JwtTokenClaimsInvalidException.java
+│   │   │   ├── JwtTokenClaimsMissingException.java
+│   │   │   ├── JwtTokenException.java
+│   │   │   ├── JwtTokenExpiredException.java
+│   │   │   ├── JwtTokenHeaderAlgException.java
+│   │   │   ├── JwtTokenHeaderDecodeException.java
+│   │   │   ├── JwtTokenHeaderFormatException.java
+│   │   │   ├── JwtTokenHeaderTypeException.java
+│   │   │   ├── JwtTokenHeaderValidationException.java
+│   │   │   ├── JwtTokenInvalidException.java
+│   │   │   ├── JwtTokenInvalidFormatException.java
+│   │   │   ├── JwtTokenInvalidSignatureException.java
+│   │   │   ├── JwtTokenMalformedException.java
+│   │   │   ├── JwtTokenMissingClaimException.java
+│   │   │   ├── JwtTokenNotFoundException.java
+│   │   │   ├── JwtTokenSignatureException.java
+│   │   │   ├── JwtTokenUnexpectedException.java
+│   │   │   └── JwtTokenValidationException.java
+│   │   ├── package-info.java
+│   │   └── ratelimit
+│   │       ├── RateLimitExceededException.java
+│   │       └── RateLimitException.java
+│   ├── base
+│   │   └── BaseException.java
+│   ├── endpoint
+│   │   ├── ModuleNotFoundException.java
+│   │   ├── OperationNotFoundException.java
+│   │   ├── PermissionNotFoundException.java
+│   │   └── package-info.java
+│   ├── handler
+│   │   └── GlobalExceptionHandler.java
+│   ├── locale
+│   │   └── LocaleResolutionException.java
+│   ├── operation
+│   │   ├── CannotSaveException.java
+│   │   ├── NoContentException.java
+│   │   ├── NoCreatedException.java
+│   │   ├── NoDeletedException.java
+│   │   ├── NoDisabledException.java
+│   │   ├── NoUpdatedException.java
+│   │   └── package-info.java
+│   ├── user
+│   │   ├── LastAdminException.java
+│   │   ├── LastClientException.java
+│   │   ├── LastDeveloperException.java
+│   │   ├── LastTechnicianException.java
+│   │   ├── RoleNotFoundException.java
+│   │   ├── UserNotFoundException.java
+│   │   ├── UsernameAlreadyExistsException.java
+│   │   ├── UsernameNotFoundException.java
+│   │   └── package-info.java
+│   ├── util
+│   │   ├── ExceptionShortComponent.java
+│   │   └── MessageParameterUtil.java
+│   └── validation
+│       ├── AlreadyExistsException.java
+│       ├── DoNotExistsByIdException.java
+│       ├── IllegalArgumentException.java
+│       ├── InvalidParameterException.java
+│       ├── ObjectNotFoundException.java
+│       ├── PasswordDoNotMatchException.java
+│       ├── ValidationException.java
+│       └── package-info.java
+├── language
+│   ├── MessageConfig.java
+│   ├── MessageParameterHandler.java
+│   ├── MessageResolverService.java
+│   ├── MessageUtilComponent.java
+│   ├── config
+│   │   └── LocaleConfig.java
+│   └── constant
+│       └── LanguageConstants.java
+├── mappers
+│   ├── core
+│   │   ├── IModuleMapper.java
+│   │   ├── IOperationMapper.java
+│   │   ├── IPermissionMapper.java
+│   │   └── IRoleMapper.java
+│   ├── security
+│   │   ├── IJwtTokenSecurityMapper.java
+│   │   ├── IModuleSecurityMapper.java
+│   │   ├── IOperationSecurityMapper.java
+│   │   ├── IPermissionSecurityMapper.java
+│   │   ├── IRoleSecurityMapper.java
+│   │   ├── IUserSecurityMapper.java
+│   │   └── auth
+│   │       └── IAuthMapper.java
+│   └── user
+│       ├── IUserMapper.java
+│       ├── developer
+│       │   └── IDeveloperMapper.java
+│       ├── editor
+│       │   └── IEditorMapper.java
+│       ├── guest
+│       │   └── IGuestMapper.java
+│       ├── manager
+│       │   └── IManagerMapper.java
+│       ├── system
+│       │   └── admin
+│       │       └── ISystemAdminMapper.java
+│       └── viewer
+│           └── IViewerMapper.java
+├── persistence
+│   ├── entity
+│   │   ├── BaseAuditEntity.java
+│   │   ├── JwtTokenEntity.java
+│   │   ├── ModuleEntity.java
+│   │   ├── OperationEntity.java
+│   │   ├── PermissionEntity.java
+│   │   ├── RoleEntity.java
+│   │   └── UserEntity.java
+│   └── repository
+│       ├── core
+│       │   ├── IModuleRepository.java
+│       │   ├── IOperationRepository.java
+│       │   ├── IPermissionRepository.java
+│       │   └── IRoleRepository.java
+│       ├── security
+│       │   ├── jwt
+│       │   │   └── IJwtTokenSecurityRepository.java
+│       │   ├── operation
+│       │   │   └── IOperationSecurityRepository.java
+│       │   └── user
+│       │       └── IUserSecurityRepository.java
+│       └── user
+│           ├── IDeveloperRepository.java
+│           ├── IEditorRepository.java
+│           ├── IGuestRepository.java
+│           ├── IManagerRepository.java
+│           ├── ISystemAdminRepository.java
+│           ├── IUserRepository.java
+│           └── IViewerRepository.java
+├── security
+│   ├── authentication
+│   │   └── filter
+│   │       ├── JwtAuthenticationFilter.java
+│   │       ├── LocaleResolverFilter.java
+│   │       └── RateLimitFilter.java
+│   ├── authorization
+│   │   ├── evaluator
+│   │   │   └── CustomPermissionEvaluator.java
+│   │   └── manager
+│   │       └── CustomAuthorizationManager.java
+│   ├── config
+│   │   ├── CorsConfig.java
+│   │   ├── CustomSecurityHeadersConfigurer.java
+│   │   ├── HttpSecurityConfig.java
+│   │   ├── MethodSecurityConfig.java
+│   │   ├── PasswordEncoderConfig.java
+│   │   └── RateLimitConfig.java
+│   ├── handler
+│   │   ├── CustomAccessDeniedHandler.java
+│   │   ├── CustomAuthenticationEntryPoint.java
+│   │   └── CustomAuthenticationSuccessHandler.java
+│   ├── path
+│   │   ├── ISecurityPathService.java
+│   │   └── impl
+│   │       └── SecurityPathServiceImpl.java
+│   └── util
+│       └── SecurityUtils.java
+├── service
+│   ├── core
+│   │   ├── module
+│   │   │   ├── IModuleService.java
+│   │   │   └── impl
+│   │   │       └── ModuleServiceImpl.java
+│   │   ├── operation
+│   │   │   ├── IOperationService.java
+│   │   │   └── impl
+│   │   │       └── OperationServiceImpl.java
+│   │   ├── package-info.java
+│   │   ├── permission
+│   │   │   ├── IPermissionService.java
+│   │   │   └── impl
+│   │   │       └── PermissionServiceImpl.java
+│   │   └── role
+│   │       ├── IRoleService.java
+│   │       └── impl
+│   │           └── RoleServiceImpl.java
+│   ├── security
+│   │   ├── operation
+│   │   │   ├── IOperationSecurityService.java
+│   │   │   └── impl
+│   │   │       └── OperationSecurityServiceImpl.java
+│   │   ├── package-info.java
+│   │   ├── token
+│   │   │   ├── IJwtProviderService.java
+│   │   │   ├── IJwtTokenSecurityService.java
+│   │   │   ├── auth
+│   │   │   │   ├── IAuthService.java
+│   │   │   │   └── impl
+│   │   │   │       └── AuthServiceImpl.java
+│   │   │   ├── builder
+│   │   │   │   ├── ITokenBuilderService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenBuilderServiceImpl.java
+│   │   │   ├── cache
+│   │   │   │   ├── IPermissionCacheService.java
+│   │   │   │   ├── IRateLimitCacheService.java
+│   │   │   │   ├── ISecurityCacheService.java
+│   │   │   │   ├── ITokenCacheService.java
+│   │   │   │   └── impl
+│   │   │   │       ├── PermissionCacheServiceImpl.java
+│   │   │   │       ├── RateLimitCacheServiceImpl.java
+│   │   │   │       ├── SecurityCacheServiceImpl.java
+│   │   │   │       └── TokenCacheServiceImpl.java
+│   │   │   ├── cleanup
+│   │   │   │   ├── ITokenCleanupService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenCleanupServiceImpl.java
+│   │   │   ├── event
+│   │   │   │   ├── ITokenEventBusService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenEventBusServiceImpl.java
+│   │   │   ├── facade
+│   │   │   │   └── TokenOperationsFacade.java
+│   │   │   ├── impl
+│   │   │   │   ├── JwtProviderServiceImpl.java
+│   │   │   │   └── JwtTokenSecurityServiceImpl.java
+│   │   │   ├── key
+│   │   │   │   ├── IJwtKeyService.java
+│   │   │   │   └── impl
+│   │   │   │       └── JwtKeyServiceImpl.java
+│   │   │   ├── lifecycle
+│   │   │   │   ├── ITokenLifecycleService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenLifecycleServiceImpl.java
+│   │   │   ├── metrics
+│   │   │   │   ├── ITokenMetricsService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenMetricsServiceImpl.java
+│   │   │   ├── ratelimit
+│   │   │   │   ├── ITokenRateLimitService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenRateLimitServiceImpl.java
+│   │   │   ├── refresh
+│   │   │   │   ├── ITokenRefreshTrackingService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenRefreshTrackingServiceImpl.java
+│   │   │   ├── state
+│   │   │   │   ├── ITokenStateService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenStateServiceImpl.java
+│   │   │   ├── usage
+│   │   │   │   ├── ITokenUsageTrackingService.java
+│   │   │   │   └── impl
+│   │   │   │       └── TokenUsageTrackingServiceImpl.java
+│   │   │   └── validation
+│   │   │       ├── ITokenValidatorService.java
+│   │   │       └── impl
+│   │   │           ├── TokenClaimsValidatorImpl.java
+│   │   │           ├── TokenExpirationValidatorImpl.java
+│   │   │           ├── TokenFormatValidatorServiceImpl.java
+│   │   │           ├── TokenHeaderValidatorImpl.java
+│   │   │           ├── TokenSignatureValidatorImpl.java
+│   │   │           └── TokenValidationChainImpl.java
+│   │   └── user
+│   │       ├── IUserSecurityService.java
+│   │       └── impl
+│   │           └── UserSecurityServiceImpl.java
+│   ├── storage
+│   │   ├── IFileStorageService.java
+│   │   └── impl
+│   │       └── FileStorageServiceImpl.java
+│   └── user
+│       ├── IUserService.java
+│       ├── developer
+│       │   ├── IDeveloperService.java
+│       │   └── impl
+│       │       └── DeveloperServiceImpl.java
+│       ├── editor
+│       │   ├── IEditorService.java
+│       │   └── impl
+│       │       └── EditorServiceImpl.java
+│       ├── guest
+│       │   ├── IGuestService.java
+│       │   └── impl
+│       │       └── GuestServiceImpl.java
+│       ├── impl
+│       │   └── UserServiceImpl.java
+│       ├── manager
+│       │   ├── IManagerService.java
+│       │   └── impl
+│       │       └── ManagerServiceImpl.java
+│       ├── system
+│       │   └── admin
+│       │       ├── ISystemAdminService.java
+│       │       └── impl
+│       │           └── SystemAdminServiceImpl.java
+│       └── viewer
+│           ├── IViewerService.java
+│           └── impl
+│               └── ViewerServiceImpl.java
+└── utils
+    ├── LocaleUtils.java
+    └── PathUtils.java
