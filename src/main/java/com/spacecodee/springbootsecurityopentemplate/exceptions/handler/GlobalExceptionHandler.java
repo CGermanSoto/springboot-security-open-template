@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -31,7 +30,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -42,9 +40,6 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     private final MessageUtilComponent messageUtilComponent;
-
-    @Value("${app.document.max-file-size:5}")
-    private int maxFileSizeMB;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorDataPojo<List<ValidationError>>> handleValidationException(
@@ -152,21 +147,6 @@ public class GlobalExceptionHandler {
 
         log.error("Business exception: {}", resolvedMessage);
         return ResponseEntity.status(determineHttpStatus(ex)).body(errorResponse);
-    }
-
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ApiErrorPojo> handleMaxUploadSizeExceededException(
-            @NotNull MaxUploadSizeExceededException ex,
-            @NotNull HttpServletRequest request) {
-
-        ApiErrorPojo errorResponse = ApiErrorPojo.of(
-                "Max Upload Size Exceeded",
-                this.messageUtilComponent.getMessage("document.file.max.size.exceeded",
-                        String.valueOf(maxFileSizeMB)),
-                request.getRequestURI(), request.getMethod());
-
-        log.error("File size exceeded: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @Contract(pure = true)
