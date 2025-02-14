@@ -1,0 +1,13 @@
+name: 🐛 Bug Report
+description: File a bug report
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to fill out this bug report!
+contact_links:
+  - name: Security Issue
+    url: mailto:spacecodee@gmail.com
+    about: Please report security vulnerabilities directly to the maintainers
+  - name: Question or Discussion
+    url: https://github.com/your-username/spring-security-jwt-template/discussions
+    about: Please ask and answer questions here
