@@ -1,4 +1,4 @@
-# 🔐 Spring Security JWT Template - Spring Boot 3.3.5
+# 🔐 Spring Security JWT Template — Spring Boot 3.3.5
 
 ## 📋 Prerequisites
 
@@ -8,35 +8,9 @@
 
 ## ⚙️ Configuration
 
-Create `application-local.properties` in resources folder:
+Copy and update the `application-local.properties.example` in resources folder, it should be named `application-local.properties`
 
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-security.jwt.expiration-in-minutes=#expiration time in minutes
-# Make it longer and encode with 'https://www.base64encode.org/'
-security.jwt.secret-key=#your secret key
-security.default.roles=#admin role
-security.default.role=#user role
-security.default.developer.role=#developer role
-security.default.technician.role=#technician role
-security.default.customer.role=#customer role
-security.cors.allowed-origins=https://example.com,https://www.example.com
-security.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
-security.cors.allowed-headers=Authorization,Content-Type,Accept-Language
-```
-
-Create `.env` file in the .devcontainer folder of the application
-
-```.env
-POSTGRES_USER=#your-database-user
-POSTGRES_PASSWORD=#your-database-password
-POSTGRES_DB=#your-database-name
-SPRING_PROFILES_ACTIVE=#your-spring-profile-local,dev,ect
-JAVA_VERSION=21
-GRADLE_VERSION=8.5
-```
+Copy and update the `.env.example` file in the .devcontainer folder of the application, it should be named `.env`
 
 📚 Documentation
 ----------------
@@ -47,13 +21,16 @@ GRADLE_VERSION=8.5
 🛡️ Security Features
 ---------------------
 
-**User Management**
+**Authentication & Authorization**
 
 - ✅ JWT-based authentication
-- ✅ Role-based access control
+- ✅ Role-based access control (RBAC)
+- ✅ Permission-based access control
 - ✅ Secure password handling
 - ✅ Token invalidation on user updates
 - ✅ Locale-based responses (en/es)
+- ✅ Cache-based permission management
+- ✅ Dynamic path pattern matching
 
 **Developer Protection**
 
@@ -61,6 +38,8 @@ GRADLE_VERSION=8.5
 - ✅ Automatic token invalidation before deletion
 - ✅ Username uniqueness validation
 - ✅ Safe update operations
+- ✅ Path-based permission control
+- ✅ Status change validation
 
 **Admin Protection**
 
@@ -68,6 +47,7 @@ GRADLE_VERSION=8.5
 - ✅ Automatic token invalidation before deletion
 - ✅ Username uniqueness validation
 - ✅ Safe update operations
+- ✅ Enhanced path security
 
 **Customer Management**
 
@@ -75,6 +55,7 @@ GRADLE_VERSION=8.5
 - ✅ Role-based access control
 - ✅ Username uniqueness validation
 - ✅ Safe update operations
+- ✅ Status management
 
 **Business Rules**
 
@@ -84,6 +65,8 @@ GRADLE_VERSION=8.5
 - Validates unique usernames across all user types
 - Auto-logout (token invalidation) on profile updates
 - Internationalization support (i18n)
+- Permission caching with Guava
+- Dynamic path pattern matching for endpoints
 
 *Token Security:*
 
@@ -92,6 +75,17 @@ GRADLE_VERSION=8.5
 - Expiration handling
 - Refresh token support
 - JWT validation and cleanup
+- Role-only JWT payload
+- Cached permissions management
+
+*Path Security:*
+
+- Dynamic path pattern matching
+- Support for numeric IDs in paths
+- Boolean status handling
+- Nested resource protection
+- Base path standardization
+- API version prefix handling
 
 *API Documentation:*
 
@@ -99,6 +93,14 @@ GRADLE_VERSION=8.5
 - OpenAPI 3.0 specification
 - Interactive API testing
 - Endpoint authorization information
+- Permission requirements documentation
+
+*Performance Improvements:*
+
+- Guava cache implementation
+- Optimized path matching
+- Efficient permission checking
+- Pattern-based URL matching
 
 *Useful links:*
 
