@@ -111,29 +111,31 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             var userDetails = this.userSecurityService.findByUsername(username);
             String roleId = String.valueOf(userDetails.getRoleSecurityDTO().getId());
 
-            // Try to get permissions from the cache first
+            // Get permissions from cache
             List<String> permissions = this.permissionCacheService.getPermissionsFromCache(roleId);
 
-            // If not in cache, get from security cache service and store in permission cache
-            if (permissions == null) {
+            // Build the request permission pattern
+            String requestedPermission = httpMethod + ":" + url;
+
+            if (permissions == null || permissions.isEmpty()) {
                 var operations = this.securityCacheService.getUserOperations(username,
                         () -> userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
-                                .map(PermissionSecurityDTO::getOperationDTO).toList());
+                                .map(PermissionSecurityDTO::getOperationDTO)
+                                .toList());
 
-                // Cache permissions
-                this.permissionCacheService.cachePermissions(roleId,
-                        operations.stream().map(op -> op.getHttpMethod() + ":" + op.getPath()).toList());
+                permissions = operations.stream()
+                        .map(op -> op.getHttpMethod() + ":" +
+                                (op.getModuleSecurityDTO() != null ? op.getModuleSecurityDTO().getBasePath() : "") +
+                                op.getPath())
+                        .toList();
 
-                return operations.stream()
-                        .anyMatch(operation -> this.matchesOperation(operation, url, httpMethod));
+                this.permissionCacheService.cachePermissions(roleId, permissions);
             }
 
-            // Check permissions from the cache
-            String requestedPermission = httpMethod + ":" + url;
-            return permissions.stream().anyMatch(permission -> PathUtils.matchesPattern(permission, requestedPermission));
-
+            return permissions.stream()
+                    .anyMatch(permission -> PathUtils.matchesPattern(permission, requestedPermission));
         } catch (Exception e) {
-            log.error("Error checking permissions: {}", e.getMessage());
+            log.error("Error checking permissions: {}", e.getMessage(), e);
             return false;
         }
     }
@@ -148,11 +150,12 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private @NotNull String extractUrl(@NotNull HttpServletRequest request) {
         String url = request.getRequestURI();
 
-        if (this.securityPathService.isSwaggerPath(url)) {
-            return url;
+        // Remove the context path and api/v1 prefix
+        if (url.startsWith(this.contextPath)) {
+            url = url.substring(this.contextPath.length());
         }
 
-        return url.startsWith(this.contextPath) ? url.substring(this.contextPath.length()) : url;
+        return url;
     }
 
 }
