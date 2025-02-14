@@ -108,6 +108,4 @@ Copy and update the `.env.example` file in the .devcontainer folder of the appli
 
 ## License
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-
-This project is licensed under the Apache License 2.0—see the [LICENSE](LICENSE) file for details.
+[![License](https://img.shields.io/badge/License-Apache%202.
