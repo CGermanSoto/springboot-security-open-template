@@ -105,3 +105,9 @@ Copy and update the `.env.example` file in the .devcontainer folder of the appli
 *Useful links:*
 
 - To convert any text into Markdown format: [Markdown Converter](https://euangoddard.github.io/clipboard2markdown/)
+
+## License
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
+This project is licensed under the Apache License 2.0—see the [LICENSE](LICENSE) file for details.
