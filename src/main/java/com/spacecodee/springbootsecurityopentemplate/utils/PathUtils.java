@@ -5,10 +5,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.AntPathMatcher;
 
+import java.util.Map;
+import java.util.regex.Pattern;
+
 @Slf4j
 public class PathUtils {
 
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private static final Map<Pattern, String> PATTERN_REPLACEMENTS = Map.ofEntries(
+            Map.entry(Pattern.compile("/\\[0-9]\\*/"), "/**/"), // Numeric wildcards with slash
+            Map.entry(Pattern.compile("/\\[0-9\\*]/"), "/**/"),
+            Map.entry(Pattern.compile("/\\[\\d+\\*]/"), "/**/"),
+            Map.entry(Pattern.compile("/\\[0-9]\\*$"), "/*"), // Numeric wildcards at the end
+            Map.entry(Pattern.compile("/\\[0-9\\*]$"), "/*"),
+            Map.entry(Pattern.compile("/\\[\\d+\\*]$"), "/*"),
+            Map.entry(Pattern.compile("\\[\\d+]"), "*"), // Single numeric segment
+            Map.entry(Pattern.compile("\\[\\^/]\\+"), "*"), // Any non-slash characters
+            Map.entry(Pattern.compile("/\\[\\^/]\\+/"), "/**/"), // Any non-slash characters with slash
+            Map.entry(Pattern.compile("/\\[\\^/]\\+$"), "/*"), // Any non-slash characters at the end
+            Map.entry(Pattern.compile("/\\[0-9]\\+/"), "/*/"), // Numeric IDs with slashes
+            Map.entry(Pattern.compile("\\[0-9]\\+"), "*"), // Numeric IDs without slashes
+            Map.entry(Pattern.compile("\\(true\\|false\\)"), "*"), // Boolean values
+            Map.entry(Pattern.compile("/status/\\(true\\|false\\)"), "/status/*") // Status with boolean
+    );
 
     private PathUtils() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
@@ -46,12 +65,16 @@ public class PathUtils {
         String patternPath = patternParts[1];
         String requestPath = pathParts[1];
 
-        // Direct match
-        if (patternPath.equals(requestPath)) {
-            log.debug("Direct path match found");
-            return true;
+        // Apply pattern replacements
+        String antPattern = patternPath;
+        for (Map.Entry<Pattern, String> replacement : PATTERN_REPLACEMENTS.entrySet()) {
+            String before = antPattern;
+            antPattern = replacement.getKey().matcher(antPattern).replaceAll(replacement.getValue());
+            if (!before.equals(antPattern)) {
+                log.debug("Pattern transformed from '{}' to '{}'", before, antPattern);
+            }
         }
 
-        return pathMatcher.match(patternPath, requestPath);
+        return pathMatcher.match(antPattern, requestPath);
     }
 }
