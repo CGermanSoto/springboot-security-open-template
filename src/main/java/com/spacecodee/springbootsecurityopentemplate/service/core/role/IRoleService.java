@@ -1,20 +1,30 @@
 package com.spacecodee.springbootsecurityopentemplate.service.core.role;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.user.details.UserDetailsRoleDTO;
-import com.spacecodee.springbootsecurityopentemplate.enums.RoleEnum;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.role.RoleDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.core.role.RoleDetailDTO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.role.CreateRoleVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.role.RoleFilterVO;
+import com.spacecodee.springbootsecurityopentemplate.data.vo.core.role.UpdateRoleVO;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.RoleEntity;
+import org.springframework.data.domain.Page;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface IRoleService {
 
-    Optional<UserDetailsRoleDTO> findDefaultRole(String lang);
+    RoleDTO createRole(CreateRoleVO createRoleVO);
 
-    RoleEntity findAdminRole(String locale);
+    RoleDTO updateRole(UpdateRoleVO updateRoleVO);
 
-    Optional<RoleEnum> getRoleEnum(String roleName, String lang);
+    RoleDTO getRoleById(Integer id);
 
-    boolean existsById(int roleId);
+    RoleDetailDTO getRoleDetailById(Integer id);
 
-    RoleEntity findByName(String developerRole, String locale);
+    Page<RoleDTO> searchRoles(RoleFilterVO filterVO);
+
+    List<RoleDTO> getAllRoles();
+
+    void deleteRole(Integer id);
+
+    RoleEntity findByName(String roleName);
 }

@@ -1,11 +1,8 @@
 package com.spacecodee.springbootsecurityopentemplate.persistence.entity;
 
+import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
@@ -15,54 +12,68 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Getter
 @ToString
 @Accessors(chain = true)
 @Entity()
 @Table(name = "jwt_token", schema = "public")
-public class JwtTokenEntity implements Serializable {
+public class JwtTokenEntity extends BaseAuditEntity implements Serializable {
+
     @Serial
     private static final long serialVersionUID = -5856445426538329660L;
-    private Integer id;
-
-    private String token;
-
-    private Boolean isValid = false;
-
-    private Instant expiryDate;
-
-    private UserEntity userEntity;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "jwt_token_id_gen")
     @SequenceGenerator(name = "jwt_token_id_gen", sequenceName = "jwt_token_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+    private Integer id;
 
-    @NotNull
-    @Column(name = "token", nullable = false, length = Integer.MAX_VALUE)
-    public String getToken() {
-        return token;
-    }
+    @Column(name = "token", nullable = false)
+    private String token;
 
-    @NotNull
     @Column(name = "is_valid", nullable = false)
-    public Boolean getIsValid() {
-        return isValid;
-    }
+    private boolean isValid = false;
 
-    @NotNull
     @Column(name = "expiry_date", nullable = false)
-    public Instant getExpiryDate() {
-        return expiryDate;
-    }
+    private Instant expiryDate;
 
-    @NotNull
+    @Column(name = "is_revoked", nullable = false)
+    private Boolean isRevoked = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state", nullable = false)
+    private TokenStateEnum state;
+
+    @Column(name = "revoked_at")
+    private Instant revokedAt;
+
+    @Column(name = "revoked_reason")
+    private String revokedReason;
+
+    @Column(name = "refresh_count")
+    private Integer refreshCount = 0;
+
+    @Column(name = "last_refresh_at")
+    private Instant lastRefreshAt;
+
+    @Column(name = "previous_token")
+    private String previousToken;
+
+    @Column(name = "usage_count")
+    private Integer usageCount = 0;
+
+    @Column(name = "last_access_at")
+    private Instant lastAccessAt;
+
+    @Column(name = "last_operation")
+    private String lastOperation;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    public UserEntity getUserEntity() {
-        return userEntity;
-    }
+    @ToString.Exclude
+    private UserEntity userEntity;
+
+    @Column(name = "jti", nullable = false)
+    private String jti;
 
 }

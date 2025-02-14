@@ -1,27 +1,38 @@
 package com.spacecodee.springbootsecurityopentemplate.security.util;
 
-import org.jetbrains.annotations.Nullable;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
-public final class SecurityUtils {
-    private SecurityUtils() {
-        throw new IllegalStateException("Utility class");
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class SecurityUtils {
+
+    private final IJwtProviderService jwtProviderService;
+
+    private final ExceptionShortComponent exceptionShortComponent;
+
+    private final HttpServletRequest httpServletRequest;
+
+    public Integer getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw this.exceptionShortComponent.unauthorizedException("auth.request.null");
+        }
+
+        try {
+            String token = this.jwtProviderService.extractJwtFromRequest(this.httpServletRequest);
+            return this.jwtProviderService.extractUserId(token);
+        } catch (Exception e) {
+            log.error("Error getting current user ID", e);
+            throw this.exceptionShortComponent.tokenInvalidException("auth.token.userid.invalid");
+        }
     }
 
-    public static @Nullable String getCurrentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null ? auth.getName() : null;
-    }
-
-    public static boolean hasRole(String role) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_" + role));
-    }
-
-    public static boolean isAuthenticated() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && auth.isAuthenticated();
-    }
 }

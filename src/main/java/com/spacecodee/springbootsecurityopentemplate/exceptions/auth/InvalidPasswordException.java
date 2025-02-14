@@ -8,6 +8,7 @@ import java.util.List;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidPasswordException extends BaseException {
+
     public InvalidPasswordException(List<String> messages, String locale) {
         super(String.join(" ", messages), locale);
     }
@@ -15,4 +16,5 @@ public class InvalidPasswordException extends BaseException {
     public InvalidPasswordException(String message, String locale) {
         super(message, locale);
     }
+
 }

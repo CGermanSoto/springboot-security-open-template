@@ -2,6 +2,8 @@ package com.spacecodee.springbootsecurityopentemplate.exceptions.util;
 
 import java.util.Arrays;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -40,7 +42,8 @@ public final class MessageParameterUtil {
         }
     }
 
-    public static Object[] validateAndCleanParams(Object... params) {
+    @Contract("null -> new")
+    public static Object @NotNull [] validateAndCleanParams(Object... params) {
         if (params == null) {
             return new Object[0];
         }

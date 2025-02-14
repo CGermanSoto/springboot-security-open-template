@@ -2,10 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
@@ -14,61 +11,52 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Getter
 @ToString
 @Accessors(chain = true)
 @Entity()
 @Table(name = "\"user\"", schema = "public")
-public class UserEntity implements Serializable {
+public class UserEntity extends BaseAuditEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 4916740038552609450L;
-    private Integer id;
-
-    private String username;
-
-    private String password;
-
-    private String fullname;
-
-    private String lastname;
-
-    private RoleEntity roleEntity;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_gen")
     @SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+    private Integer id;
 
     @NotNull
     @Column(name = "username", nullable = false, length = Integer.MAX_VALUE)
-    public String getUsername() {
-        return username;
-    }
+    private String username;
 
     @NotNull
     @Column(name = "password", nullable = false, length = Integer.MAX_VALUE)
-    public String getPassword() {
-        return password;
-    }
+    private String password;
 
     @NotNull
-    @Column(name = "fullname", nullable = false, length = Integer.MAX_VALUE)
-    public String getFullname() {
-        return fullname;
-    }
+    @Column(name = "first_name", nullable = false, length = Integer.MAX_VALUE)
+    private String firstName;
 
     @NotNull
-    @Column(name = "lastname", nullable = false, length = Integer.MAX_VALUE)
-    public String getLastname() {
-        return lastname;
-    }
+    @Column(name = "last_name", nullable = false, length = Integer.MAX_VALUE)
+    private String lastName;
 
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "rol_id", nullable = false)
-    public RoleEntity getRoleEntity() {
-        return roleEntity;
-    }
+    private RoleEntity roleEntity;
+
+    @NotNull
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
+    @Column(name = "status")
+    private Boolean status = true;
+
+    @Column(name = "profile_picture_path")
+    private String profilePicturePath;
 }

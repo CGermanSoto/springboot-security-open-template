@@ -6,6 +6,7 @@ import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,10 +16,12 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableScheduling
 public class RateLimitConfig {
+
     @Bean
-    LoadingCache<String, Integer> requestCountsCache() {
+    LoadingCache<String, Integer> requestCountsCache(
+            @Value("${security.rate-limit.duration-minutes}") int durationMinutes) {
         return CacheBuilder.newBuilder()
-                .expireAfterWrite(15, TimeUnit.MINUTES)
+                .expireAfterWrite(durationMinutes, TimeUnit.MINUTES)
                 .recordStats()
                 .maximumSize(10000)
                 .build(new CacheLoader<>() {
@@ -34,4 +37,5 @@ public class RateLimitConfig {
     CacheStats cacheStats(LoadingCache<String, Integer> cache) {
         return cache.stats();
     }
+
 }

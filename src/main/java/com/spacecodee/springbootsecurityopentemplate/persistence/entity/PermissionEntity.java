@@ -3,10 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.persistence.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
@@ -15,39 +12,37 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Getter
 @ToString
 @Accessors(chain = true)
 @Entity()
 @Table(name = "permission", schema = "public")
 public class PermissionEntity implements Serializable {
+
     @Serial
     private static final long serialVersionUID = -1389093610467033486L;
-    private Integer id;
-
-    private RoleEntity roleEntity;
-
-    private OperationEntity operationEntity;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permission_id_gen")
     @SequenceGenerator(name = "permission_id_gen", sequenceName = "permission_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    public Integer getId() {
-        return id;
-    }
+    private Integer id;
+
+    @Column(name = "role_id", insertable = false, updatable = false)
+    private Integer roleId;
+
+    @Column(name = "operation_id", insertable = false, updatable = false)
+    private Integer operationId;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    public RoleEntity getRoleEntity() {
-        return roleEntity;
-    }
+    private RoleEntity roleEntity;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "operation_id", nullable = false)
-    public OperationEntity getOperationEntity() {
-        return operationEntity;
-    }
+    @ToString.Exclude
+    private OperationEntity operationEntity;
 
 }

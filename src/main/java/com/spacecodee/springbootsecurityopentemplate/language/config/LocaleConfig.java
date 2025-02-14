@@ -21,7 +21,7 @@ public class LocaleConfig {
     @Bean
     public LocaleResolver localeResolver() {
         var resolver = new AcceptHeaderLocaleResolver();
-        resolver.setSupportedLocales(SUPPORTED_LOCALES);
+        resolver.setSupportedLocales(LocaleConfig.SUPPORTED_LOCALES);
         resolver.setDefaultLocale(Locale.forLanguageTag(LanguageConstants.DEFAULT_LOCALE));
         return resolver;
     }
