@@ -302,7 +302,6 @@ ALTER TABLE ONLY public."user" ALTER COLUMN id SET DEFAULT nextval('public.user_
 -- Data for Name: jwt_token; Type: TABLE DATA; Schema: public; Owner: spacecodee
 --
 
-INSERT INTO public.jwt_token VALUES (23, 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJzcGFjZWNvZGVlXzE3Mzk1Njk1NTgxMzYiLCJpYXQiOjE3Mzk1Njk1NTgsImV4cCI6MTczOTU3MTM1OCwiaXNzIjoiZG9jdW1lbnQtbWFuYWdlbWVudC1zeXN0ZW0iLCJzdWIiOiJzcGFjZWNvZGVlIiwidHlwZSI6IkJlYXJlciIsInVzZXJJZCI6MSwicm9sZSI6IkRFVkVMT1BFUiJ9.Zqct7wNXOI4hOZWca-G0dfNvf_O4sX_UfTB3ASDOYYM', true, '2025-02-14 22:15:58', 1, false, 'ACTIVE', NULL, NULL, 3, '2025-02-14 21:45:58.220953', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJzcGFjZWNvZGVlXzE3Mzk1NjczOTU1NTYiLCJpYXQiOjE3Mzk1NjczOTUsImV4cCI6MTczOTU2OTE5NSwiaXNzIjoiZG9jdW1lbnQtbWFuYWdlbWVudC1zeXN0ZW0iLCJzdWIiOiJzcGFjZWNvZGVlIiwidHlwZSI6IkJlYXJlciIsInVzZXJJZCI6MSwicm9sZSI6IkRFVkVMT1BFUiJ9.tS11QX5704jDyQVseLbdC6xqbVsp-STuDU928xj6RHc', 134, '2025-02-14 22:00:46.142361', 'Token authenticated successfully', 'spacecodee_1739552544805', '2025-02-14 17:02:24.82059', '2025-02-14 22:00:46.143169');
 
 
 --
@@ -643,7 +642,7 @@ INSERT INTO public."user" VALUES (6, 'root_admin', '$2a$10$XT2Yf/s4IPoJo3pPsAtC3
 -- Name: jwt_token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: spacecodee
 --
 
-SELECT pg_catalog.setval('public.jwt_token_id_seq', 23, true);
+SELECT pg_catalog.setval('public.jwt_token_id_seq', 1, false);
 
 
 --
