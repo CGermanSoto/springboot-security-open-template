@@ -3,6 +3,9 @@ package com.spacecodee.springbootsecurityopentemplate.controller.api.security;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.core.permission.PermissionDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +21,14 @@ public interface IPermissionJwtController {
     @Operation(summary = "Get user permissions", description = "Retrieves all permissions for the current user")
     @ApiResponse(responseCode = "200", description = "Permissions retrieved successfully")
     @ApiResponse(responseCode = "404", description = "The user has no permissions")
+    @Parameter(
+            name = "Accept-Language",
+            in = ParameterIn.HEADER,
+            required = true,
+            description = "Language code (e.g., 'en' for English, 'es' for Spanish)",
+            example = "en",
+            schema = @Schema(type = "string", defaultValue = "en")
+    )
     @GetMapping("/user/permissions")
     ResponseEntity<ApiResponseDataPojo<List<PermissionDetailDTO>>> getCurrentUserPermissions();
 
