@@ -1,14 +1,33 @@
-spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-security.jwt.expiration-in-minutes=                                       #expiration time in minutes
-# Make it longer and encode with 'https://www.base64encode.org/'
-security.jwt.secret-key=                                                  #your secret key
-security.default.roles=                                                   #admin role
-security.default.role=                                                    #user role
-security.default.developer.role=                                          #developer role
-security.default.technician.role=                                         #technician role
-security.default.customer.role=                                           #customer role
-security.cors.allowed-origins=https://example.com,https://www.example.com
-security.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+# Database configuration for PostgreSQL using docker in a devcontainer
+spring.datasource.url=jdbc:postgresql://postgres_db:5432/${POSTGRES_DB}
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.password=${POSTGRES_PASSWORD}
+security.jwt.expiration-in-minutes=30
+security.jwt.max-refresh-count=5
+security.token.rate-limit.max-attempts=5
+security.token.rate-limit.window-minutes=2
+security.cache.max-size=1000
+security.cache.expire-after-minutes=30
+security.cache.refresh-rate-minutes=60
+security.cache.rate-limit-duration-minutes=10
+# Security Jwt
+Use the next web page to generate a secret key: https://www.base64encode.org/
+security.jwt.secret-key=Yoursupersecretkey
+security.cors.allowed-origins=x.space,y.com,z.com
+security.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS,PATCH
 security.cors.allowed-headers=Authorization,Content-Type,Accept-Language
+# Rate Limit Configuration
+security.rate-limit.max-attempts=5
+security.rate-limit.duration-minutes=10
+# Roles
+role.default.admin=SYSTEM_ADMIN
+role.default.developer=DEVELOPER
+role.default.manager=MANAGER
+role.default.editor=EDITOR
+role.default.viewer=VIEWER
+role.default.guest=GUEST
+# Token Cleanup Configuration
+security.token.cleanup.expired.cron=0 0 */1 * * *
+security.token.cleanup.revoked.cron=0 30 */2 * * *
+security.token.cleanup.inactive.cron=0 0 0 * * *
+security.token.cleanup.blacklisted.cron=0 15 */3 * * *
