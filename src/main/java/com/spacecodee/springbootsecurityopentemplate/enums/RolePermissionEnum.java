@@ -36,7 +36,7 @@ public enum RolePermissionEnum {
     UPDATE_STATUS_ONE_EDITOR,
     FIND_ONE_EDITOR,
     FIND_ONE_DETAIL_EDITOR,
-    FIND_ALL_PAGE_EDITOR,
+    FIND_ALL_PAGE_EDITORS,
 
     // Viewer
     CREATE_ONE_VIEWER,
@@ -102,5 +102,13 @@ public enum RolePermissionEnum {
     FIND_ALL_PERMISSION_BY_ROLE,
 
     // Permission JWT
-    FIND_PERMISSIONS_BY_CURRENT_USER
+    FIND_PERMISSIONS_BY_CURRENT_USER,
+
+    // Cache Monitoring
+    GET_CACHE_STATS,
+
+    // Rate Limit Monitoring
+    GET_RATE_LIMIT_STATS,
+    RESET_IP_RATE_LIMIT,
+    CLEAN_UP_RATE_LIMIT
 }

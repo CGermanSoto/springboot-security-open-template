@@ -43,7 +43,7 @@ public enum RoleEnum {
             RolePermissionEnum.UPDATE_STATUS_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_DETAIL_EDITOR,
-            RolePermissionEnum.FIND_ALL_PAGE_EDITOR,
+            RolePermissionEnum.FIND_ALL_PAGE_EDITORS,
 
             RolePermissionEnum.CREATE_ONE_VIEWER,
             RolePermissionEnum.DELETE_ONE_VIEWER,
@@ -100,7 +100,13 @@ public enum RoleEnum {
             RolePermissionEnum.FIND_ONE_DETAIL_PERMISSION,
             RolePermissionEnum.FIND_ALL_PAGE_PERMISSION,
             RolePermissionEnum.FIND_ALL_PERMISSION,
-            RolePermissionEnum.FIND_ALL_PERMISSION_BY_ROLE
+            RolePermissionEnum.FIND_ALL_PERMISSION_BY_ROLE,
+
+            RolePermissionEnum.GET_CACHE_STATS,
+
+            RolePermissionEnum.GET_RATE_LIMIT_STATS,
+            RolePermissionEnum.RESET_IP_RATE_LIMIT,
+            RolePermissionEnum.CLEAN_UP_RATE_LIMIT
     )),
 
     SYSTEM_ADMIN(Arrays.asList(
@@ -126,7 +132,7 @@ public enum RoleEnum {
             RolePermissionEnum.UPDATE_STATUS_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_DETAIL_EDITOR,
-            RolePermissionEnum.FIND_ALL_PAGE_EDITOR,
+            RolePermissionEnum.FIND_ALL_PAGE_EDITORS,
 
             RolePermissionEnum.CREATE_ONE_VIEWER,
             RolePermissionEnum.DELETE_ONE_VIEWER,
@@ -150,7 +156,13 @@ public enum RoleEnum {
             RolePermissionEnum.LOGOUT,
             RolePermissionEnum.REFRESH_TOKEN,
 
-            RolePermissionEnum.FIND_PERMISSIONS_BY_CURRENT_USER
+            RolePermissionEnum.FIND_PERMISSIONS_BY_CURRENT_USER,
+
+            RolePermissionEnum.GET_CACHE_STATS,
+
+            RolePermissionEnum.GET_RATE_LIMIT_STATS,
+            RolePermissionEnum.RESET_IP_RATE_LIMIT,
+            RolePermissionEnum.CLEAN_UP_RATE_LIMIT
     )),
 
     MANAGER(Arrays.asList(
@@ -164,7 +176,7 @@ public enum RoleEnum {
             RolePermissionEnum.UPDATE_STATUS_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_DETAIL_EDITOR,
-            RolePermissionEnum.FIND_ALL_PAGE_EDITOR,
+            RolePermissionEnum.FIND_ALL_PAGE_EDITORS,
 
             RolePermissionEnum.CREATE_ONE_VIEWER,
             RolePermissionEnum.DELETE_ONE_VIEWER,
@@ -194,7 +206,7 @@ public enum RoleEnum {
     EDITOR(List.of(
             RolePermissionEnum.FIND_ONE_EDITOR,
             RolePermissionEnum.FIND_ONE_DETAIL_EDITOR,
-            RolePermissionEnum.FIND_ALL_PAGE_EDITOR,
+            RolePermissionEnum.FIND_ALL_PAGE_EDITORS,
 
             RolePermissionEnum.CREATE_ONE_VIEWER,
             RolePermissionEnum.DELETE_ONE_VIEWER,
