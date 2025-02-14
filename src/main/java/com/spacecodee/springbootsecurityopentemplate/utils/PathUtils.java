@@ -5,9 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.AntPathMatcher;
 
-import java.util.Map;
-import java.util.regex.Pattern;
-
 @Slf4j
 public class PathUtils {
 
@@ -25,27 +22,36 @@ public class PathUtils {
     }
 
     public static boolean matchesPattern(@NotNull String pattern, String path) {
+        // Remove trailing slashes and normalize paths
         pattern = pattern.replaceAll("/+$", "");
         path = path.replaceAll("/+$", "");
 
-        Map<Pattern, String> replacements = Map.of(
-                Pattern.compile("/\\[0-9]\\*/"), "/**/", // Numeric wildcards with slash
-                Pattern.compile("/\\[0-9\\*]/"), "/**/",
-                Pattern.compile("/\\[\\d+\\*]/"), "/**/",
-                Pattern.compile("/\\[0-9]\\*$"), "/*", // Numeric wildcards at the end
-                Pattern.compile("/\\[0-9\\*]$"), "/*",
-                Pattern.compile("/\\[\\d+\\*]$"), "/*",
-                Pattern.compile("\\[\\d+]"), "*", // Single numeric segment
-                Pattern.compile("\\[\\^/]\\+"), "*", // Any non-slash characters
-                Pattern.compile("/\\[\\^/]\\+/"), "/**/", // Any non-slash characters with slash
-                Pattern.compile("/\\[\\^/]\\+$"), "/*" // Any non-slash characters at the end
-        );
+        // Remove /api/v1 prefix if present
+        path = path.replace("/api/v1", "");
 
-        String antPattern = pattern;
-        for (Map.Entry<Pattern, String> replacement : replacements.entrySet()) {
-            antPattern = replacement.getKey().matcher(antPattern).replaceAll(replacement.getValue());
+        // Split into method and path parts
+        String[] patternParts = pattern.split(":", 2);
+        String[] pathParts = path.split(":", 2);
+
+        if (patternParts.length != 2 || pathParts.length != 2) {
+            return false;
         }
 
-        return PathUtils.pathMatcher.match(antPattern, path);
+        // Check if methods match
+        if (!patternParts[0].equalsIgnoreCase(pathParts[0])) {
+            return false;
+        }
+
+        // Compare paths
+        String patternPath = patternParts[1];
+        String requestPath = pathParts[1];
+
+        // Direct match
+        if (patternPath.equals(requestPath)) {
+            log.debug("Direct path match found");
+            return true;
+        }
+
+        return pathMatcher.match(patternPath, requestPath);
     }
 }
