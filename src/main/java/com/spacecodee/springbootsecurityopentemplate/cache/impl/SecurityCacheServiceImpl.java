@@ -5,7 +5,7 @@ import com.google.common.cache.CacheStats;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityPathDTO;
 import com.spacecodee.springbootsecurityopentemplate.service.security.operation.IOperationSecurityService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ISecurityCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

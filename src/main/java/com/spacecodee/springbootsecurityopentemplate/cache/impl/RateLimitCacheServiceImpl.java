@@ -2,7 +2,7 @@ package com.spacecodee.springbootsecurityopentemplate.cache.impl;
 
 import com.google.common.cache.Cache;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IRateLimitCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.IRateLimitCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

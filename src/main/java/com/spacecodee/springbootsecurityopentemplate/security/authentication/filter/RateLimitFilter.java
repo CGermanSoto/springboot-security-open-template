@@ -3,7 +3,7 @@ package com.spacecodee.springbootsecurityopentemplate.security.authentication.fi
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IRateLimitCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.IRateLimitCacheService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

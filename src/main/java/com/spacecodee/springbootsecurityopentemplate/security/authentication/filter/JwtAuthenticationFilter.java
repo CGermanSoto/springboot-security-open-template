@@ -10,7 +10,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseExcepti
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ITokenCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 import io.jsonwebtoken.ExpiredJwtException;

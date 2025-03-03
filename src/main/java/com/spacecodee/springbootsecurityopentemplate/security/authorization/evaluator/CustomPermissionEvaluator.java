@@ -7,7 +7,7 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IPermissionCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.IPermissionCacheService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 
 import java.io.Serializable;

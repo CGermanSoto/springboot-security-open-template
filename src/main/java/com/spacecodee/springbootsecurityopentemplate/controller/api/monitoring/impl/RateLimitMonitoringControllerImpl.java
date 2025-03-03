@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.controller.base.AbstractCon
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponseDataPojo;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiResponsePojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IRateLimitCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.IRateLimitCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -4,9 +4,9 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.security.Operation
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IPermissionCacheService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ISecurityCacheService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ITokenCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.IPermissionCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.utils.PathUtils;

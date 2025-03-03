@@ -5,7 +5,7 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecur
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ITokenCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
