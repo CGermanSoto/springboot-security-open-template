@@ -38,4 +38,6 @@ public interface IJwtTokenSecurityRepository extends JpaRepository<JwtTokenEntit
 
     @Query("SELECT t FROM JwtTokenEntity t WHERE t.expiryDate < :now AND t.isRevoked = false")
     List<JwtTokenEntity> findExpiredTokens(@Param("now") Instant now);
+
+    List<JwtTokenEntity> findAllByUserEntity_Username(String username);
 }
