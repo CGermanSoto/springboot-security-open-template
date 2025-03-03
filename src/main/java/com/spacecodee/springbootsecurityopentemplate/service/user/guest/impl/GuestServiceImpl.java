@@ -14,6 +14,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.user.guest.IGuestMa
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.user.IGuestRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.guest.IGuestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +28,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GuestServiceImpl implements IGuestService {
 
     private final IRoleService roleService;
+
     private final IGuestRepository guestRepository;
+
     private final IGuestMapper guestMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.guest}")
     private String guestRole;
@@ -76,12 +85,26 @@ public class GuestServiceImpl implements IGuestService {
         try {
             UserEntity existingGuest = ((IGuestService) AopContext.currentProxy()).getGuestEntityById(updateGuestVO.getId());
 
+            String originalEmail = existingGuest.getEmail();
+            String originalUsername = existingGuest.getUsername();
+
             if (updateGuestVO.getStatus() != null) {
                 existingGuest.setStatus(Boolean.parseBoolean(updateGuestVO.getStatus()));
             }
+
             this.guestMapper.updateEntity(existingGuest, updateGuestVO);
 
-            return this.guestMapper.toDto(this.guestRepository.save(existingGuest));
+            boolean sensitiveDataChanged = !originalEmail.equals(existingGuest.getEmail()) ||
+                    !originalUsername.equals(existingGuest.getUsername());
+
+            UserEntity updatedEditor = this.guestRepository.save(existingGuest);
+
+            if (sensitiveDataChanged) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(),
+                        "Profile updated with sensitive data change");
+            }
+
+            return this.guestMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | NoContentException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -181,9 +204,16 @@ public class GuestServiceImpl implements IGuestService {
 
         try {
             UserEntity guestEntity = ((IGuestService) AopContext.currentProxy()).getGuestEntityById(id);
+            boolean statusChanged = !Objects.equals(guestEntity.getStatus(), status);
             guestEntity.setStatus(status);
 
-            return this.guestMapper.toDto(this.guestRepository.save(guestEntity));
+            UserEntity updatedEditor = this.guestRepository.save(guestEntity);
+
+            if (statusChanged && Boolean.TRUE.equals(!status)) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(), "Account disabled");
+            }
+
+            return this.guestMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -237,6 +267,8 @@ public class GuestServiceImpl implements IGuestService {
         }
 
         try {
+            this.jwtTokenSecurityService.revokeAllUserTokens(guestEntity.getUsername(), "Account deleted");
+
             this.guestRepository.delete(guestEntity);
         } catch (InvalidParameterException e) {
             throw e;
