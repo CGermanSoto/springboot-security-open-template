@@ -210,9 +210,12 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
             UserEntity updatedDeveloper = this.developerRepository.save(developer);
 
-            // If an account was disabled, revoke all tokens
             if (statusChanged && Boolean.TRUE.equals(!status)) {
-                this.jwtTokenSecurityService.revokeAllUserTokens(updatedDeveloper.getUsername(), "Account disabled");
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(
+                        updatedDeveloper.getUsername(), "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, updatedDeveloper.getUsername());
             }
 
             return this.developerMapper.toDto(updatedDeveloper);
@@ -268,7 +271,11 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
         UserEntity developer = ((IDeveloperService) AopContext.currentProxy()).getDeveloperEntityById(id);
         try {
-            this.jwtTokenSecurityService.revokeAllUserTokens(developer.getUsername(), "Account deleted");
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(
+                    developer.getUsername(), "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, developer.getUsername());
 
             this.developerRepository.delete(developer);
         } catch (InvalidParameterException e) {

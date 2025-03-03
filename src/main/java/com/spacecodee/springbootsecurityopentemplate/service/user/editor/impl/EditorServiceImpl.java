@@ -210,7 +210,11 @@ public class EditorServiceImpl implements IEditorService {
             UserEntity updatedEditor = this.editorRepository.save(editorEntity);
 
             if (statusChanged && Boolean.TRUE.equals(!status)) {
-                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(), "Account disabled");
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(),
+                        "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, updatedEditor.getUsername());
             }
 
             return this.editorMapper.toDto(updatedEditor);
@@ -266,7 +270,10 @@ public class EditorServiceImpl implements IEditorService {
 
         UserEntity editorEntity = ((IEditorService) AopContext.currentProxy()).getEditorEntityById(id);
         try {
-            this.jwtTokenSecurityService.revokeAllUserTokens(editorEntity.getUsername(), "Account deleted");
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(editorEntity.getUsername(), "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, editorEntity.getUsername());
 
             this.editorRepository.delete(editorEntity);
         } catch (InvalidParameterException e) {

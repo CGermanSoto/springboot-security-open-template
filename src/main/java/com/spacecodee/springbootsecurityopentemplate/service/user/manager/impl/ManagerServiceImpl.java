@@ -208,7 +208,10 @@ public class ManagerServiceImpl implements IManagerService {
             UserEntity updatedManager = this.managerRepository.save(managerEntity);
 
             if (statusChanged && Boolean.TRUE.equals(!status)) {
-                this.jwtTokenSecurityService.revokeAllUserTokens(updatedManager.getUsername(), "Account disabled");
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedManager.getUsername(), "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, updatedManager.getUsername());
             }
 
             return this.managerMapper.toDto(updatedManager);
@@ -264,7 +267,11 @@ public class ManagerServiceImpl implements IManagerService {
 
         UserEntity managerEntity = ((IManagerService) AopContext.currentProxy()).getManagerEntityById(id);
         try {
-            this.jwtTokenSecurityService.revokeAllUserTokens(managerEntity.getUsername(), "Account deleted");
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(managerEntity.getUsername(),
+                    "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, managerEntity.getUsername());
 
             this.managerRepository.delete(managerEntity);
         } catch (InvalidParameterException e) {

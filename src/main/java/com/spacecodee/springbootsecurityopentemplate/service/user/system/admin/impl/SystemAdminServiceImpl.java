@@ -209,7 +209,10 @@ public class SystemAdminServiceImpl implements ISystemAdminService {
             UserEntity updatedSystemAdmin = this.systemAdminRepository.save(systemAdmin);
 
             if (statusChanged && Boolean.TRUE.equals(!status)) {
-                this.jwtTokenSecurityService.revokeAllUserTokens(updatedSystemAdmin.getUsername(), "Account disabled");
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedSystemAdmin.getUsername(), "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, systemAdmin.getUsername());
             }
 
             return this.systemAdminMapper.toDto(updatedSystemAdmin);
@@ -265,7 +268,10 @@ public class SystemAdminServiceImpl implements ISystemAdminService {
 
         UserEntity systemAdmin = ((ISystemAdminService) AopContext.currentProxy()).getSystemAdminEntityById(id);
         try {
-            this.jwtTokenSecurityService.revokeAllUserTokens(systemAdmin.getUsername(), "Account deleted");
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(systemAdmin.getUsername(), "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, systemAdmin.getUsername());
 
             this.systemAdminRepository.delete(systemAdmin);
         } catch (InvalidParameterException e) {

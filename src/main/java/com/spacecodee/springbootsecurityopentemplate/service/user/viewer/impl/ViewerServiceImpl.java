@@ -209,7 +209,10 @@ public class ViewerServiceImpl implements IViewerService {
             UserEntity updatedViewer = this.viewerRepository.save(viewerEntity);
 
             if (statusChanged && Boolean.TRUE.equals(!status)) {
-                this.jwtTokenSecurityService.revokeAllUserTokens(updatedViewer.getUsername(), "Account disabled");
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedViewer.getUsername(), "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, viewerEntity.getUsername());
             }
 
             return this.viewerMapper.toDto(updatedViewer);
@@ -265,7 +268,10 @@ public class ViewerServiceImpl implements IViewerService {
 
         UserEntity viewerEntity = ((IViewerService) AopContext.currentProxy()).getViewerEntityById(id);
         try {
-            this.jwtTokenSecurityService.revokeAllUserTokens(viewerEntity.getUsername(), "Account deleted");
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(viewerEntity.getUsername(), "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, viewerEntity.getUsername());
 
             this.viewerRepository.delete(viewerEntity);
         } catch (ObjectNotFoundException | InvalidParameterException e) {

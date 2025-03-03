@@ -207,13 +207,17 @@ public class GuestServiceImpl implements IGuestService {
             boolean statusChanged = !Objects.equals(guestEntity.getStatus(), status);
             guestEntity.setStatus(status);
 
-            UserEntity updatedEditor = this.guestRepository.save(guestEntity);
+            UserEntity updatedGuest = this.guestRepository.save(guestEntity);
 
             if (statusChanged && Boolean.TRUE.equals(!status)) {
-                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(), "Account disabled");
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedGuest.getUsername(),
+                        "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, updatedGuest.getUsername());
             }
 
-            return this.guestMapper.toDto(updatedEditor);
+            return this.guestMapper.toDto(updatedGuest);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -267,7 +271,11 @@ public class GuestServiceImpl implements IGuestService {
         }
 
         try {
-            this.jwtTokenSecurityService.revokeAllUserTokens(guestEntity.getUsername(), "Account deleted");
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(guestEntity.getUsername(),
+                    "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, guestEntity.getUsername());
 
             this.guestRepository.delete(guestEntity);
         } catch (InvalidParameterException e) {
