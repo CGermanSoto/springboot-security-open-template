@@ -122,6 +122,7 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
                     .findAllByUsername(username);
 
             if (userTokens == null || userTokens.isEmpty()) {
+                log.info("No tokens to revoke for user: {}", username);
                 return 0;
             }
 
@@ -133,6 +134,9 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
                     count++;
                 }
             }
+
+            log.info("Successfully revoked {}/{} tokens for user: {}",
+                    count, userTokens.size(), username);
 
             return count;
         } catch (Exception e) {
