@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,32 +26,45 @@ import java.io.IOException;
 @Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-        private final MessageUtilComponent messageUtilComponent;
-        private static final ObjectMapper objectMapper = new ObjectMapper()
-                        .registerModule(new JavaTimeModule());
+    private final TokenOperationsFacade tokenOperationsFacade;
 
-        @Override
-        public void handle(
-                        @NotNull HttpServletRequest request,
-                        @NotNull HttpServletResponse response,
-                        @NotNull AccessDeniedException accessDeniedException) throws IOException {
+    private final ITokenLifecycleService tokenLifecycleService;
 
-                // Get an authenticated user
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                String username = authentication != null ? authentication.getName() : "anonymous";
+    private final MessageUtilComponent messageUtilComponent;
 
-                log.warn("Access denied to resource: {} for user: {}", request.getRequestURI(), username);
+    private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-                var errorResponse = ApiErrorPojo.of(
-                                accessDeniedException.getLocalizedMessage(),
-                                messageUtilComponent.getMessage("auth.access.denied",
-                                                request.getLocale().toString(),
-                                                username), // Pass username as a parameter
-                                request.getRequestURI(),
-                                request.getMethod());
+    @Override
+    public void handle(
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull AccessDeniedException accessDeniedException) throws IOException {
 
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-                response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        // Get an authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication != null ? authentication.getName() : "anonymous";
+
+        log.warn("Access denied to resource: {} for user: {}", request.getRequestURI(), username);
+
+        try {
+            String token = this.tokenOperationsFacade.extractJwtFromRequest(request);
+            if (token != null && !token.isEmpty()) {
+                this.tokenLifecycleService.handleTokenAccess(token, "Access denied to " + request.getRequestURI());
+            }
+        } catch (Exception e) {
+            log.debug("Could not track token for denied access: {}", e.getMessage());
         }
+
+        var errorResponse = ApiErrorPojo.of(
+                accessDeniedException.getLocalizedMessage(),
+                messageUtilComponent.getMessage("auth.access.denied",
+                        request.getLocale().toString(),
+                        username), // Pass username as a parameter
+                request.getRequestURI(),
+                request.getMethod());
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+    }
 }
