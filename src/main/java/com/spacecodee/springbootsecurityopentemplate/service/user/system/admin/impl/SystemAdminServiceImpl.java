@@ -14,6 +14,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.user.system.admin.I
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.user.ISystemAdminRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.system.admin.ISystemAdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +28,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SystemAdminServiceImpl implements ISystemAdminService {
 
     private final IRoleService roleService;
+
     private final ISystemAdminRepository systemAdminRepository;
+
     private final ISystemAdminMapper systemAdminMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.admin}")
     private String systemAdminRole;
@@ -75,13 +84,28 @@ public class SystemAdminServiceImpl implements ISystemAdminService {
 
         try {
             UserEntity existingAdmin = ((ISystemAdminService) AopContext.currentProxy()).getSystemAdminEntityById(updateSystemAdminVO.getId());
+
+            String originalEmail = existingAdmin.getEmail();
+            String originalUsername = existingAdmin.getUsername();
+
             if (updateSystemAdminVO.getStatus() != null) {
                 existingAdmin.setStatus(Boolean.parseBoolean(updateSystemAdminVO.getStatus()));
             }
-            this.systemAdminMapper.updateEntity(existingAdmin, updateSystemAdminVO);
-            existingAdmin = this.systemAdminRepository.save(existingAdmin);
 
-            return this.systemAdminMapper.toDto(existingAdmin);
+            this.systemAdminMapper.updateEntity(existingAdmin, updateSystemAdminVO);
+
+            boolean sensitiveDataChanged = !originalEmail.equals(existingAdmin.getEmail()) ||
+                    !originalUsername.equals(existingAdmin.getUsername());
+
+            UserEntity updatedEditor = this.systemAdminRepository.save(existingAdmin);
+
+            // If sensitive data changed, revoke all user tokens
+            if (sensitiveDataChanged) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(),
+                        "Profile updated with sensitive data change");
+            }
+
+            return this.systemAdminMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | NoContentException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -179,9 +203,16 @@ public class SystemAdminServiceImpl implements ISystemAdminService {
 
         try {
             UserEntity systemAdmin = ((ISystemAdminService) AopContext.currentProxy()).getSystemAdminEntityById(id);
+            boolean statusChanged = !Objects.equals(systemAdmin.getStatus(), status);
             systemAdmin.setStatus(status);
 
-            return this.systemAdminMapper.toDto(this.systemAdminRepository.save(systemAdmin));
+            UserEntity updatedSystemAdmin = this.systemAdminRepository.save(systemAdmin);
+
+            if (statusChanged && Boolean.TRUE.equals(!status)) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedSystemAdmin.getUsername(), "Account disabled");
+            }
+
+            return this.systemAdminMapper.toDto(updatedSystemAdmin);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -234,6 +265,8 @@ public class SystemAdminServiceImpl implements ISystemAdminService {
 
         UserEntity systemAdmin = ((ISystemAdminService) AopContext.currentProxy()).getSystemAdminEntityById(id);
         try {
+            this.jwtTokenSecurityService.revokeAllUserTokens(systemAdmin.getUsername(), "Account deleted");
+
             this.systemAdminRepository.delete(systemAdmin);
         } catch (InvalidParameterException e) {
             throw e;
