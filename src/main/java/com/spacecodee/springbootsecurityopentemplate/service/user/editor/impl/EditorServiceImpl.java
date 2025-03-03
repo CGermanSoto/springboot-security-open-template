@@ -14,6 +14,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.user.editor.IEditor
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.user.IEditorRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.editor.IEditorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +28,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EditorServiceImpl implements IEditorService {
 
     private final IRoleService roleService;
+
     private final IEditorRepository editorRepository;
+
     private final IEditorMapper editorMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.editor}")
     private String editorRole;
@@ -76,12 +85,27 @@ public class EditorServiceImpl implements IEditorService {
 
         try {
             UserEntity existingEditor = ((IEditorService) AopContext.currentProxy()).getEditorEntityById(updateEditorVO.getId());
+
+            String originalEmail = existingEditor.getEmail();
+            String originalUsername = existingEditor.getUsername();
+
             if (updateEditorVO.getStatus() != null) {
                 existingEditor.setStatus(Boolean.parseBoolean(updateEditorVO.getStatus()));
             }
+
             this.editorMapper.updateEntity(existingEditor, updateEditorVO);
 
-            return this.editorMapper.toDto(this.editorRepository.save(existingEditor));
+            boolean sensitiveDataChanged = !originalEmail.equals(existingEditor.getEmail()) ||
+                    !originalUsername.equals(existingEditor.getUsername());
+
+            UserEntity updatedEditor = this.editorRepository.save(existingEditor);
+
+            if (sensitiveDataChanged) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(),
+                        "Profile updated with sensitive data change");
+            }
+
+            return this.editorMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | NoContentException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -180,9 +204,16 @@ public class EditorServiceImpl implements IEditorService {
 
         try {
             UserEntity editorEntity = ((IEditorService) AopContext.currentProxy()).getEditorEntityById(id);
+            boolean statusChanged = !Objects.equals(editorEntity.getStatus(), status);
             editorEntity.setStatus(status);
 
-            return this.editorMapper.toDto(this.editorRepository.save(editorEntity));
+            UserEntity updatedEditor = this.editorRepository.save(editorEntity);
+
+            if (statusChanged && Boolean.TRUE.equals(!status)) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(), "Account disabled");
+            }
+
+            return this.editorMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -235,6 +266,8 @@ public class EditorServiceImpl implements IEditorService {
 
         UserEntity editorEntity = ((IEditorService) AopContext.currentProxy()).getEditorEntityById(id);
         try {
+            this.jwtTokenSecurityService.revokeAllUserTokens(editorEntity.getUsername(), "Account deleted");
+
             this.editorRepository.delete(editorEntity);
         } catch (InvalidParameterException e) {
             throw e;
