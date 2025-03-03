@@ -28,7 +28,7 @@ public class SecurityCacheConfig {
     @Value("${security.cache.expire-after-minutes}")
     private int expireAfterMinutes;
 
-    @Value("${security.cache.rate-limit-duration-minutes}")
+    @Value("${security.rate-limit.duration-minutes}")
     private int rateLimitDurationMinutes;
 
     private <T> @NotNull Cache<String, T> buildCache(int expiresInMinutes) {
