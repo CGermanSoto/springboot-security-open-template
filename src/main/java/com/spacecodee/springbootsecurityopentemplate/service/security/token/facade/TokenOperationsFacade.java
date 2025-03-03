@@ -1,13 +1,11 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.token.facade;
 
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
-import org.springframework.stereotype.Component;
-
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -25,18 +23,6 @@ public class TokenOperationsFacade {
             this.tokenLifecycleService.handleExpiredToken(token);
         }
         return isValid;
-    }
-
-    public void initiateNewToken(String token, String username) {
-        this.tokenLifecycleService.initiateToken(token, username);
-    }
-
-    public void activateToken(String token) {
-        this.tokenLifecycleService.activateToken(token);
-    }
-
-    public void performTokenRefresh(String oldToken, String newToken) {
-        this.tokenLifecycleService.refreshToken(oldToken, newToken);
     }
 
     public String extractUsername(String token) {
