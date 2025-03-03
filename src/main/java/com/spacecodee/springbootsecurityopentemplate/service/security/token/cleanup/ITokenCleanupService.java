@@ -2,6 +2,8 @@ package com.spacecodee.springbootsecurityopentemplate.service.security.token.cle
 
 public interface ITokenCleanupService {
 
+    void cleanupAllTokens();
+
     void cleanupExpiredTokens();
 
     void cleanupRevokedTokens();

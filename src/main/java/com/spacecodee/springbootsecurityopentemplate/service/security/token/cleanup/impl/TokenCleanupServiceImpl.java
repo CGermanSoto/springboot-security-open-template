@@ -49,6 +49,19 @@ public class TokenCleanupServiceImpl implements ITokenCleanupService {
         this.doCleanupBlacklistedTokens();
     }
 
+    @Override
+    @Transactional
+    public void cleanupAllTokens() {
+        log.info("Starting comprehensive token cleanup");
+
+        this.doCleanupExpiredTokens();
+        this.doCleanupRevokedTokens();
+        this.doCleanupInactiveTokens();
+        this.doCleanupBlacklistedTokens();
+
+        log.info("Comprehensive token cleanup completed");
+    }
+
     private void doCleanupExpiredTokens() {
         try {
             int count = this.jwtTokenRepository.deleteExpiredTokens(Instant.now());
