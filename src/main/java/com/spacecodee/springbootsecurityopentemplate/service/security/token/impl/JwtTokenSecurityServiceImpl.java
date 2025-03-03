@@ -8,10 +8,10 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionSh
 import com.spacecodee.springbootsecurityopentemplate.mappers.security.IJwtTokenSecurityMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
-import com.spacecodee.springbootsecurityopentemplate.persistence.repository.security.jwt.IJwtTokenSecurityRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.repository.ITokenRepositoryService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.state.ITokenStateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -28,15 +28,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
 
-    private final IJwtTokenSecurityRepository jwtTokenRepository;
-
+    private final ITokenRepositoryService tokenRepositoryService;
     private final IJwtTokenSecurityMapper jwtTokenMapper;
-
     private final ExceptionShortComponent exceptionComponent;
-
     private final IJwtProviderService jwtProviderService;
-
-    private final ITokenLifecycleService tokenLifecycleService;
+    private final ITokenStateService tokenStateService;
 
     private static final String TOKEN_NOT_FOUND = "token.not.found";
 
@@ -44,7 +40,7 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
     @Transactional(rollbackFor = Exception.class)
     public void updateTokenToRefresh(UpdateJwtTokenVO token) {
         try {
-            this.jwtTokenRepository.save(this.jwtTokenMapper.toEntity(token));
+            this.tokenRepositoryService.save(this.jwtTokenMapper.toEntity(token));
         } catch (ObjectOptimisticLockingFailureException e) {
             log.error("Concurrent modification detected: {}", e.getMessage());
             throw this.exceptionComponent.cannotSaveException("token.update.concurrent");
@@ -55,35 +51,10 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateTokenFromLifecycle(JwtTokenEntity tokenEntity) {
-        try {
-            this.jwtTokenRepository.save(tokenEntity);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            log.error("Concurrent modification in entity detected: {}", e.getMessage());
-            throw this.exceptionComponent.cannotSaveException("token.update.concurrent");
-        } catch (Exception e) {
-            log.error("Error updating token Entity: {}", e.getMessage());
-            throw this.exceptionComponent.cannotSaveException("token.update.failed");
-        }
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void invalidateToken(String token) {
-        try {
-            this.jwtTokenRepository.deleteByToken(token);
-        } catch (Exception e) {
-            log.error("Error invalidating token: {}", e.getMessage());
-            throw this.exceptionComponent.tokenNotFoundException("token.not.delete");
-        }
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public JwtTokenEntity findByToken(String token) {
         try {
-            return this.jwtTokenRepository.findByToken(token)
+            return this.tokenRepositoryService.findByToken(token)
                     .orElseThrow(() -> this.exceptionComponent
                             .tokenNotFoundException(JwtTokenSecurityServiceImpl.TOKEN_NOT_FOUND));
         } catch (JwtTokenNotFoundException e) {
@@ -97,7 +68,7 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
     @Override
     @Transactional(noRollbackFor = JwtTokenNotFoundException.class)
     public JwtTokenEntity handleExistingToken(String username, boolean includeExpired) {
-        JwtTokenEntity existingToken = jwtTokenRepository.findJwtTokenEntityByUserEntity_Username(username)
+        JwtTokenEntity existingToken = tokenRepositoryService.findJwtTokenEntityByUserEntity_Username(username)
                 .orElse(null);
 
         if (existingToken == null) {
@@ -113,7 +84,6 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
             return existingToken;
         }
 
-        // Return an expired token if requested
         return includeExpired ? existingToken : null;
     }
 
@@ -126,7 +96,7 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
 
         CreateJwtTokenVO tokenVO = this.jwtTokenMapper.toCreateJwtTokenVO(newToken, user, expiryDate);
         JwtTokenEntity tokenEntity = this.jwtTokenMapper.toEntity(tokenVO);
-        return this.jwtTokenRepository.save(tokenEntity);
+        return this.tokenRepositoryService.save(tokenEntity);
     }
 
     @Override
@@ -141,15 +111,15 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
         refreshedToken.setId(existingToken.getId());
         refreshedToken.setUserEntity(existingToken.getUserEntity());
 
-        return this.jwtTokenRepository.save(refreshedToken);
+        return this.tokenRepositoryService.save(refreshedToken);
     }
 
     @Override
     @Transactional
     public int revokeAllUserTokens(String username, String reason) {
         try {
-            List<JwtTokenEntity> userTokens = this.jwtTokenRepository
-                    .findAllByUserEntity_Username(username);
+            List<JwtTokenEntity> userTokens = this.tokenRepositoryService
+                    .findAllByUsername(username);
 
             if (userTokens == null || userTokens.isEmpty()) {
                 return 0;
@@ -173,7 +143,7 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
 
     private boolean revokeToken(JwtTokenEntity token) {
         try {
-            this.tokenLifecycleService.revokeToken(token.getToken());
+            this.tokenStateService.revokeToken(token.getToken(), "Token revoked via security service");
             return true;
         } catch (Exception e) {
             log.warn("Could not revoke token {}: {}", token.getId(), e.getMessage());
