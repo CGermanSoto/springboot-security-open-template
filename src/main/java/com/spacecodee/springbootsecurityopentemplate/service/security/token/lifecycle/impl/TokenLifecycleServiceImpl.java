@@ -24,9 +24,8 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
     private final MessageResolverService messageResolver;
     private final ExceptionShortComponent exceptionComponent;
     private final ITokenStateService tokenStateService;
-    private ITokenLifecycleService self;  // Self-proxy for transactional calls
+    private ITokenLifecycleService self;
 
-    // Use constructor injection for required dependencies
     public TokenLifecycleServiceImpl(IJwtTokenSecurityService tokenSecurityService,
                                      MessageResolverService messageResolver,
                                      ExceptionShortComponent exceptionComponent,
@@ -37,7 +36,6 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
         this.tokenStateService = tokenStateService;
     }
 
-    // Self-inject the proxy
     @Autowired
     public void setSelf(@Lazy ITokenLifecycleService self) {
         this.self = self;
