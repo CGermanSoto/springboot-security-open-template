@@ -36,10 +36,15 @@ import java.util.Objects;
 public class DeveloperServiceImpl implements IDeveloperService {
 
     private final IRoleService roleService;
+
     private final IDeveloperRepository developerRepository;
+
     private final IDeveloperMapper developerMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final PasswordEncoder passwordEncoder;
+
     private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.developer}")
