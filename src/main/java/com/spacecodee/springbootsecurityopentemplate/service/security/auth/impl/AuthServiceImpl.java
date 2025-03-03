@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.security.token.auth.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.security.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.AuthResponseDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
@@ -12,7 +12,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtToken
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.auth.IAuthService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.auth.IAuthService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 import io.jsonwebtoken.Claims;

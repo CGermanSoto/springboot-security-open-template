@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.security.token.auth;
+package com.spacecodee.springbootsecurityopentemplate.service.security.auth;
 
 import org.jetbrains.annotations.NotNull;
 
