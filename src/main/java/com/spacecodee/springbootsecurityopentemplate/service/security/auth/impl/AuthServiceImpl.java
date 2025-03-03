@@ -61,16 +61,23 @@ public class AuthServiceImpl implements IAuthService {
 
             if (existingToken != null) {
                 if (existingToken.isValid() && jwtProviderService.isTokenValid(existingToken.getToken())) {
+                    // Activate existing token
+                    tokenLifecycleService.activateToken(existingToken.getToken());
                     return this.authMapper.toAuthResponseDTO(existingToken, user);
                 }
 
+                // Refresh existing token
                 JwtTokenEntity refreshedToken = jwtTokenSecurityService.refreshExistingTokenOnLogin(
                         userSecurityDTO,
                         existingToken);
+                tokenLifecycleService.refreshToken(existingToken.getToken(), refreshedToken.getToken());
                 return authMapper.toAuthResponseDTO(refreshedToken, user);
             }
 
+            // Create a new token
             JwtTokenEntity newToken = jwtTokenSecurityService.createNewTokenInLogin(userSecurityDTO, user);
+            tokenLifecycleService.initiateToken(newToken.getToken(), user.getUsername());
+            tokenLifecycleService.activateToken(newToken.getToken());
             return authMapper.toAuthResponseDTO(newToken, user);
 
         } catch (BadCredentialsException e) {
