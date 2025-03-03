@@ -97,13 +97,11 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
             this.developerMapper.updateEntity(existingDeveloper, updateDeveloperVO);
 
-            // Check if sensitive data was changed
             boolean sensitiveDataChanged = !originalEmail.equals(existingDeveloper.getEmail()) ||
                     !originalUsername.equals(existingDeveloper.getUsername());
 
             UserEntity updatedDeveloper = this.developerRepository.save(existingDeveloper);
 
-            // If sensitive data changed, revoke all user tokens
             if (sensitiveDataChanged) {
                 this.jwtTokenSecurityService.revokeAllUserTokens(updatedDeveloper.getUsername(),
                         "Profile updated with sensitive data change");
