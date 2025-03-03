@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.security.token.cache;
+package com.spacecodee.springbootsecurityopentemplate.cache;
 
 import com.google.common.cache.CacheStats;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;

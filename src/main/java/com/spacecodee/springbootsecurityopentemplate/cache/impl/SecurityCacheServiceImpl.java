@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.impl;
+package com.spacecodee.springbootsecurityopentemplate.cache.impl;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheStats;
