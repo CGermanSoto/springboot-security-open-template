@@ -8,4 +8,7 @@ public interface ITokenStateService {
 
     void updateTokenAccess(String token, String operation);
 
+    void revokeToken(String token, String reason);
+
+    TokenStateEnum getTokenState(String token);
 }
