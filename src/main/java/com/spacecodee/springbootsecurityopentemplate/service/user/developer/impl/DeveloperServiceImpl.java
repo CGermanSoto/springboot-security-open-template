@@ -5,15 +5,16 @@ import com.spacecodee.springbootsecurityopentemplate.data.dto.user.developer.Dev
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.CreateDeveloperVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.DeveloperFilterVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.user.developer.UpdateDeveloperVO;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.operation.NoContentException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.AlreadyExistsException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.InvalidParameterException;
+import com.spacecodee.springbootsecurityopentemplate.exceptions.validation.ObjectNotFoundException;
 import com.spacecodee.springbootsecurityopentemplate.mappers.user.developer.IDeveloperMapper;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.user.IDeveloperRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.developer.IDeveloperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,7 @@ public class DeveloperServiceImpl implements IDeveloperService {
     private final IDeveloperMapper developerMapper;
     private final ExceptionShortComponent exceptionShortComponent;
     private final PasswordEncoder passwordEncoder;
+    private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.developer}")
     private String developerRole;
@@ -63,7 +67,8 @@ public class DeveloperServiceImpl implements IDeveloperService {
         } catch (AlreadyExistsException | ObjectNotFoundException | NoContentException e) {
             throw e;
         } catch (Exception e) {
-            throw this.exceptionShortComponent.noCreatedException("developer.create.failed", createDeveloperVO.getUsername());
+            throw this.exceptionShortComponent.noCreatedException("developer.create.failed",
+                    createDeveloperVO.getUsername());
         }
     }
 
@@ -74,7 +79,12 @@ public class DeveloperServiceImpl implements IDeveloperService {
         this.validateId(updateDeveloperVO.getId());
 
         try {
-            UserEntity existingDeveloper = ((IDeveloperService) AopContext.currentProxy()).getDeveloperEntityById(updateDeveloperVO.getId());
+            UserEntity existingDeveloper = ((IDeveloperService) AopContext.currentProxy())
+                    .getDeveloperEntityById(updateDeveloperVO.getId());
+
+            // Store original data for comparison
+            String originalEmail = existingDeveloper.getEmail();
+            String originalUsername = existingDeveloper.getUsername();
 
             if (updateDeveloperVO.getStatus() != null) {
                 existingDeveloper.setStatus(Boolean.parseBoolean(updateDeveloperVO.getStatus()));
@@ -82,11 +92,24 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
             this.developerMapper.updateEntity(existingDeveloper, updateDeveloperVO);
 
-            return this.developerMapper.toDto(this.developerRepository.save(existingDeveloper));
+            // Check if sensitive data was changed
+            boolean sensitiveDataChanged = !originalEmail.equals(existingDeveloper.getEmail()) ||
+                    !originalUsername.equals(existingDeveloper.getUsername());
+
+            UserEntity updatedDeveloper = this.developerRepository.save(existingDeveloper);
+
+            // If sensitive data changed, revoke all user tokens
+            if (sensitiveDataChanged) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedDeveloper.getUsername(),
+                        "Profile updated with sensitive data change");
+            }
+
+            return this.developerMapper.toDto(updatedDeveloper);
         } catch (ObjectNotFoundException | NoContentException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
-            throw this.exceptionShortComponent.noUpdatedException("developer.update.failed", updateDeveloperVO.getId().toString());
+            throw this.exceptionShortComponent.noUpdatedException("developer.update.failed",
+                    updateDeveloperVO.getId().toString());
         }
     }
 
@@ -129,7 +152,8 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
         try {
             var developerEntity = this.developerRepository.findById(id)
-                    .orElseThrow(() -> this.exceptionShortComponent.objectNotFoundException("developer.not.found", id.toString()));
+                    .orElseThrow(() -> this.exceptionShortComponent.objectNotFoundException("developer.not.found",
+                            id.toString()));
             var roleEntity = this.roleService.findByName(this.developerRole);
 
             if (!developerEntity.getRoleEntity().getId().equals(roleEntity.getId())) {
@@ -157,12 +181,10 @@ public class DeveloperServiceImpl implements IDeveloperService {
                     Math.clamp(filterVO.getPage(), 0, Integer.MAX_VALUE),
                     Math.clamp(filterVO.getSize(), 1, 100),
                     Sort.by(Sort.Direction.fromString(filterVO.getSortDirection()),
-                            filterVO.getSortBy())
-            );
+                            filterVO.getSortBy()));
             return this.developerRepository.searchDevelopers(filterVO.getUsername(), filterVO.getFirstName(),
                             filterVO.getLastName(), roleEntity.getId(), filterVO.getEnabled(), pageable)
-                    .map(this.developerMapper::toDto
-                    );
+                    .map(this.developerMapper::toDto);
         } catch (ObjectNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -180,9 +202,17 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
         try {
             UserEntity developer = ((IDeveloperService) AopContext.currentProxy()).getDeveloperEntityById(id);
+            boolean statusChanged = !Objects.equals(developer.getStatus(), status);
             developer.setStatus(status);
 
-            return this.developerMapper.toDto(this.developerRepository.save(developer));
+            UserEntity updatedDeveloper = this.developerRepository.save(developer);
+
+            // If an account was disabled, revoke all tokens
+            if (statusChanged && Boolean.TRUE.equals(!status)) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedDeveloper.getUsername(), "Account disabled");
+            }
+
+            return this.developerMapper.toDto(updatedDeveloper);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -235,6 +265,8 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
         UserEntity developer = ((IDeveloperService) AopContext.currentProxy()).getDeveloperEntityById(id);
         try {
+            this.jwtTokenSecurityService.revokeAllUserTokens(developer.getUsername(), "Account deleted");
+
             this.developerRepository.delete(developer);
         } catch (InvalidParameterException e) {
             throw e;
