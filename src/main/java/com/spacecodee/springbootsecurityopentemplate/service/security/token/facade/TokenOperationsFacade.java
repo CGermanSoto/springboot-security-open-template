@@ -22,9 +22,21 @@ public class TokenOperationsFacade {
         if (isValid) {
             this.tokenLifecycleService.handleTokenAccess(token, "Token validated");
         } else {
-            this.tokenLifecycleService.markTokenAsExpired(token, "Token validation failed");
+            this.tokenLifecycleService.handleExpiredToken(token);
         }
         return isValid;
+    }
+
+    public void initiateNewToken(String token, String username) {
+        this.tokenLifecycleService.initiateToken(token, username);
+    }
+
+    public void activateToken(String token) {
+        this.tokenLifecycleService.activateToken(token);
+    }
+
+    public void performTokenRefresh(String oldToken, String newToken) {
+        this.tokenLifecycleService.refreshToken(oldToken, newToken);
     }
 
     public String extractUsername(String token) {
