@@ -1,16 +1,16 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
-import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtTokenUnexpectedException;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageResolverService;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.state.ITokenStateService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +18,30 @@ import java.time.Instant;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
 
     private final IJwtTokenSecurityService tokenSecurityService;
     private final MessageResolverService messageResolver;
     private final ExceptionShortComponent exceptionComponent;
     private final ITokenStateService tokenStateService;
+    private ITokenLifecycleService self;  // Self-proxy for transactional calls
+
+    // Use constructor injection for required dependencies
+    public TokenLifecycleServiceImpl(IJwtTokenSecurityService tokenSecurityService,
+                                     MessageResolverService messageResolver,
+                                     ExceptionShortComponent exceptionComponent,
+                                     ITokenStateService tokenStateService) {
+        this.tokenSecurityService = tokenSecurityService;
+        this.messageResolver = messageResolver;
+        this.exceptionComponent = exceptionComponent;
+        this.tokenStateService = tokenStateService;
+    }
+
+    // Self-inject the proxy
+    @Autowired
+    public void setSelf(@Lazy ITokenLifecycleService self) {
+        this.self = self;
+    }
 
     @Override
     @Transactional
@@ -76,11 +93,18 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
     @Transactional
     public void expireToken(String token) {
         try {
+            // First, check if the token has already expired to avoid unnecessary updates
             JwtTokenEntity tokenEntity = this.tokenSecurityService.findByToken(token);
-            this.updateTokenState(tokenEntity, TokenStateEnum.EXPIRED);
-            log.info("Token marked as expired");
-        } catch (JwtTokenUnexpectedException e) {
-            throw e;
+
+            if (tokenEntity.getState() == TokenStateEnum.EXPIRED) {
+                log.debug("Token is already in EXPIRED state, skipping update");
+                return;
+            }
+
+            log.info("Manually expiring token for user: {}", tokenEntity.getUserEntity().getUsername());
+
+            // Use the self-proxy instead of direct call
+            self.markTokenAsExpired(token, "Manual expiration via lifecycle service");
         } catch (Exception e) {
             String errorMessage = this.messageResolver.resolveMessage("token.lifecycle.expire.error", e.getMessage());
             log.error(errorMessage);
