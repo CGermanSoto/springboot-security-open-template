@@ -68,11 +68,7 @@ public class PathUtils {
         // Apply pattern replacements
         String antPattern = patternPath;
         for (Map.Entry<Pattern, String> replacement : PATTERN_REPLACEMENTS.entrySet()) {
-            String before = antPattern;
             antPattern = replacement.getKey().matcher(antPattern).replaceAll(replacement.getValue());
-            if (!before.equals(antPattern)) {
-                log.debug("Pattern transformed from '{}' to '{}'", before, antPattern);
-            }
         }
 
         return pathMatcher.match(antPattern, requestPath);
