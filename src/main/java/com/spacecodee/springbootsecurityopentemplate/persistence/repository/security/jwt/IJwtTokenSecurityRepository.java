@@ -16,7 +16,9 @@ public interface IJwtTokenSecurityRepository extends JpaRepository<JwtTokenEntit
 
     Optional<JwtTokenEntity> findByToken(String token);
 
-    void deleteByToken(String token);
+    @Modifying
+    @Query("DELETE FROM JwtTokenEntity t WHERE t.token = :token")
+    void deleteByToken(@Param("token") String token);
 
     @Modifying
     @Query("DELETE FROM JwtTokenEntity t WHERE t.expiryDate < :now")
@@ -34,10 +36,10 @@ public interface IJwtTokenSecurityRepository extends JpaRepository<JwtTokenEntit
     @Query("DELETE FROM JwtTokenEntity t WHERE t.state = 'BLACKLISTED'")
     int deleteBlacklistedTokens();
 
-    Optional<JwtTokenEntity> findJwtTokenEntityByUserEntity_Username(String username);
-
     @Query("SELECT t FROM JwtTokenEntity t WHERE t.expiryDate < :now AND t.isRevoked = false")
     List<JwtTokenEntity> findExpiredTokens(@Param("now") Instant now);
 
     List<JwtTokenEntity> findAllByUserEntity_Username(String username);
+
+    Optional<JwtTokenEntity> findFirstByUserEntity_UsernameOrderByCreatedAtDesc(String username);
 }
