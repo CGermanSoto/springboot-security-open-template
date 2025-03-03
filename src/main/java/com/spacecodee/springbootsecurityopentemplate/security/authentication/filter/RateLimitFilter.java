@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.cache.IRateLimitCacheService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +28,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RateLimitFilter extends OncePerRequestFilter {
 
+    private final TokenOperationsFacade tokenOperationsFacade;
+
+    private final ITokenLifecycleService tokenLifecycleService;
+
     private final IRateLimitCacheService rateLimitCacheService;
+
     private final MessageUtilComponent messageUtilComponent;
+
     private final ObjectMapper objectMapper;
 
     @Value("${security.rate-limit.max-attempts}")
@@ -71,6 +79,17 @@ public class RateLimitFilter extends OncePerRequestFilter {
             String clientIp) throws IOException {
 
         log.warn("Rate limit exceeded for IP: {}", clientIp);
+
+        try {
+            String token = this.tokenOperationsFacade.extractJwtFromRequest(request);
+            if (token != null && !token.isEmpty()) {
+                this.tokenLifecycleService.handleTokenAccess(token, "Rate limit exceeded");
+            }
+        } catch (Exception e) {
+            log.debug("No token found for rate limited request: {}", e.getMessage());
+        }
+
+        // Existing code
         response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         response.setContentType("application/json");
 
