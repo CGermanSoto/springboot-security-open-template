@@ -20,4 +20,6 @@ public interface IJwtTokenSecurityService {
     JwtTokenEntity createNewTokenInLogin(UserSecurityDTO userSecurityDTO, UserEntity user);
 
     JwtTokenEntity refreshExistingTokenOnLogin(UserSecurityDTO userDetails, JwtTokenEntity existingToken);
+
+    int revokeAllUserTokens(String username, String reason);
 }
