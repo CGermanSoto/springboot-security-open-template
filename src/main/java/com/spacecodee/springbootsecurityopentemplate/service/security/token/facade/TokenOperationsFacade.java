@@ -34,7 +34,7 @@ public class TokenOperationsFacade {
     }
 
     public void handleTokenAuthentication(String token) {
-        this.tokenLifecycleService.handleTokenAccess(token, "Token authenticated successfully");
+        this.tokenLifecycleService.handleTokenAccess(token, "Authentication success");
     }
 
     public void handleTokenExpiration(String token, String reason) {
@@ -43,5 +43,9 @@ public class TokenOperationsFacade {
 
     public TokenStateEnum getTokenState(String token) {
         return this.tokenLifecycleService.getTokenState(token);
+    }
+
+    public void activateToken(String token) {
+        this.tokenLifecycleService.activateToken(token);
     }
 }
