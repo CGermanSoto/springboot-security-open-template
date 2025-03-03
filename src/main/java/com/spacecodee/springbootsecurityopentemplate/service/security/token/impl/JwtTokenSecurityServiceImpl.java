@@ -11,6 +11,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEnti
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.security.jwt.IJwtTokenSecurityRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -27,9 +29,14 @@ import java.util.Map;
 public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
 
     private final IJwtTokenSecurityRepository jwtTokenRepository;
+
     private final IJwtTokenSecurityMapper jwtTokenMapper;
+
     private final ExceptionShortComponent exceptionComponent;
+
     private final IJwtProviderService jwtProviderService;
+
+    private final ITokenLifecycleService tokenLifecycleService;
 
     private static final String TOKEN_NOT_FOUND = "token.not.found";
 
@@ -135,6 +142,43 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
         refreshedToken.setUserEntity(existingToken.getUserEntity());
 
         return this.jwtTokenRepository.save(refreshedToken);
+    }
+
+    @Override
+    @Transactional
+    public int revokeAllUserTokens(String username, String reason) {
+        try {
+            List<JwtTokenEntity> userTokens = this.jwtTokenRepository
+                    .findAllByUserEntity_Username(username);
+
+            if (userTokens == null || userTokens.isEmpty()) {
+                return 0;
+            }
+
+            log.info("Revoking {} tokens for user {}: {}", userTokens.size(), username, reason);
+
+            int count = 0;
+            for (JwtTokenEntity token : userTokens) {
+                if (this.revokeToken(token)) {
+                    count++;
+                }
+            }
+
+            return count;
+        } catch (Exception e) {
+            log.error("Failed to revoke tokens for user {}: {}", username, e.getMessage());
+            throw this.exceptionComponent.tokenUnexpectedException("token.revoke.all.failed");
+        }
+    }
+
+    private boolean revokeToken(JwtTokenEntity token) {
+        try {
+            this.tokenLifecycleService.revokeToken(token.getToken());
+            return true;
+        } catch (Exception e) {
+            log.warn("Could not revoke token {}: {}", token.getId(), e.getMessage());
+            return false;
+        }
     }
 
 }
