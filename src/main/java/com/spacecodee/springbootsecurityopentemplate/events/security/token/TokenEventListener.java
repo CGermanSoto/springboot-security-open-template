@@ -17,9 +17,9 @@ public class TokenEventListener {
     @EventListener
     public void handleTokenEvent(@NotNull TokenEvent event) {
         if ("VALIDATE".equals(event.operation())) {
-            tokenStateService.updateTokenAccess(event.token(), event.reason());
+            this.tokenStateService.updateTokenAccess(event.token(), event.reason());
         } else if ("EXPIRE".equals(event.operation())) {
-            tokenStateService.updateTokenState(event.token(), TokenStateEnum.EXPIRED, event.reason());
+            this.tokenStateService.updateTokenState(event.token(), TokenStateEnum.EXPIRED, event.reason());
         }
     }
 }
