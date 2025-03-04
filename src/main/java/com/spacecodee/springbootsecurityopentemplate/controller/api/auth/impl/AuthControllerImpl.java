@@ -11,7 +11,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.auth.jwt.JwtToke
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageParameterHandler;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.auth.IAuthService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.auth.IAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

@@ -4,7 +4,7 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.locale.LocaleRes
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.language.constant.LanguageConstants;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ISecurityCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

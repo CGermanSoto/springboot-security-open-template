@@ -14,6 +14,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.user.manager.IManag
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.user.IManagerRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.manager.IManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +28,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ManagerServiceImpl implements IManagerService {
 
     private final IRoleService roleService;
+
     private final IManagerRepository managerRepository;
+
     private final IManagerMapper managerMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.manager}")
     private String managerRole;
@@ -76,12 +85,27 @@ public class ManagerServiceImpl implements IManagerService {
         try {
             UserEntity existingManager = ((IManagerService) AopContext.currentProxy()).getManagerEntityById(updateManagerVO.getId());
 
+            String originalEmail = existingManager.getEmail();
+            String originalUsername = existingManager.getUsername();
+
             if (updateManagerVO.getStatus() != null) {
                 existingManager.setStatus(Boolean.parseBoolean(updateManagerVO.getStatus()));
             }
+
             this.managerMapper.updateEntity(existingManager, updateManagerVO);
 
-            return this.managerMapper.toDto(this.managerRepository.save(existingManager));
+            boolean sensitiveDataChanged = !originalEmail.equals(existingManager.getEmail()) ||
+                    !originalUsername.equals(existingManager.getUsername());
+
+            UserEntity updatedEditor = this.managerRepository.save(existingManager);
+
+            // If sensitive data changed, revoke all user tokens
+            if (sensitiveDataChanged) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(),
+                        "Profile updated with sensitive data change");
+            }
+
+            return this.managerMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | NoContentException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -178,9 +202,19 @@ public class ManagerServiceImpl implements IManagerService {
 
         try {
             UserEntity managerEntity = ((IManagerService) AopContext.currentProxy()).getManagerEntityById(id);
+            boolean statusChanged = !Objects.equals(managerEntity.getStatus(), status);
             managerEntity.setStatus(status);
 
-            return this.managerMapper.toDto(this.managerRepository.save(managerEntity));
+            UserEntity updatedManager = this.managerRepository.save(managerEntity);
+
+            if (statusChanged && Boolean.TRUE.equals(!status)) {
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedManager.getUsername(), "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, updatedManager.getUsername());
+            }
+
+            return this.managerMapper.toDto(updatedManager);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -233,6 +267,12 @@ public class ManagerServiceImpl implements IManagerService {
 
         UserEntity managerEntity = ((IManagerService) AopContext.currentProxy()).getManagerEntityById(id);
         try {
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(managerEntity.getUsername(),
+                    "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, managerEntity.getUsername());
+
             this.managerRepository.delete(managerEntity);
         } catch (InvalidParameterException e) {
             throw e;

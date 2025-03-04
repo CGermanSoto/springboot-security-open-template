@@ -14,6 +14,7 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.user.viewer.IViewer
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.user.IViewerRepository;
 import com.spacecodee.springbootsecurityopentemplate.service.core.role.IRoleService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.user.viewer.IViewerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +28,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ViewerServiceImpl implements IViewerService {
 
     private final IRoleService roleService;
+
     private final IViewerRepository viewerRepository;
+
     private final IViewerMapper viewerMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final IJwtTokenSecurityService jwtTokenSecurityService;
 
     @Value("${role.default.viewer}")
     private String viewerRole;
@@ -75,12 +84,28 @@ public class ViewerServiceImpl implements IViewerService {
 
         try {
             UserEntity existingViewer = ((IViewerService) AopContext.currentProxy()).getViewerEntityById(updateViewerVO.getId());
+
+            String originalEmail = existingViewer.getEmail();
+            String originalUsername = existingViewer.getUsername();
+
             if (updateViewerVO.getStatus() != null) {
                 existingViewer.setStatus(Boolean.parseBoolean(updateViewerVO.getStatus()));
             }
+
             this.viewerMapper.updateEntity(existingViewer, updateViewerVO);
 
-            return this.viewerMapper.toDto(this.viewerRepository.save(existingViewer));
+            boolean sensitiveDataChanged = !originalEmail.equals(existingViewer.getEmail()) ||
+                    !originalUsername.equals(existingViewer.getUsername());
+
+            UserEntity updatedEditor = this.viewerRepository.save(existingViewer);
+
+            // If sensitive data changed, revoke all user tokens
+            if (sensitiveDataChanged) {
+                this.jwtTokenSecurityService.revokeAllUserTokens(updatedEditor.getUsername(),
+                        "Profile updated with sensitive data change");
+            }
+
+            return this.viewerMapper.toDto(updatedEditor);
         } catch (ObjectNotFoundException | NoContentException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -178,9 +203,19 @@ public class ViewerServiceImpl implements IViewerService {
 
         try {
             UserEntity viewerEntity = ((IViewerService) AopContext.currentProxy()).getViewerEntityById(id);
+            boolean statusChanged = !Objects.equals(viewerEntity.getStatus(), status);
             viewerEntity.setStatus(status);
 
-            return this.viewerMapper.toDto(this.viewerRepository.save(viewerEntity));
+            UserEntity updatedViewer = this.viewerRepository.save(viewerEntity);
+
+            if (statusChanged && Boolean.TRUE.equals(!status)) {
+                int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(updatedViewer.getUsername(), "Account disabled");
+
+                log.info("Revoked {} tokens for disabled user: {}",
+                        revokedCount, viewerEntity.getUsername());
+            }
+
+            return this.viewerMapper.toDto(updatedViewer);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;
         } catch (Exception e) {
@@ -233,6 +268,11 @@ public class ViewerServiceImpl implements IViewerService {
 
         UserEntity viewerEntity = ((IViewerService) AopContext.currentProxy()).getViewerEntityById(id);
         try {
+            int revokedCount = this.jwtTokenSecurityService.revokeAllUserTokens(viewerEntity.getUsername(), "Account deleted");
+
+            log.info("Revoked {} tokens for deleted user: {}",
+                    revokedCount, viewerEntity.getUsername());
+
             this.viewerRepository.delete(viewerEntity);
         } catch (ObjectNotFoundException | InvalidParameterException e) {
             throw e;

@@ -1,8 +1,8 @@
-package com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.impl;
+package com.spacecodee.springbootsecurityopentemplate.cache.impl;
 
 import com.google.common.cache.Cache;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IPermissionCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.IPermissionCacheService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

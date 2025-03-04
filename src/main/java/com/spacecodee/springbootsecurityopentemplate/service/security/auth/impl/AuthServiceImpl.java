@@ -1,4 +1,4 @@
-package com.spacecodee.springbootsecurityopentemplate.service.security.token.auth.impl;
+package com.spacecodee.springbootsecurityopentemplate.service.security.auth.impl;
 
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.AuthResponseDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
@@ -12,7 +12,7 @@ import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtToken
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.auth.IAuthService;
+import com.spacecodee.springbootsecurityopentemplate.service.security.auth.IAuthService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 import io.jsonwebtoken.Claims;
@@ -61,16 +61,40 @@ public class AuthServiceImpl implements IAuthService {
 
             if (existingToken != null) {
                 if (existingToken.isValid() && jwtProviderService.isTokenValid(existingToken.getToken())) {
+                    tokenLifecycleService.activateToken(existingToken.getToken());
                     return this.authMapper.toAuthResponseDTO(existingToken, user);
                 }
 
+                // IMPORTANT: Store the old token value before refreshing
+                String oldTokenValue = existingToken.getToken();
+
+                // Refresh the token
                 JwtTokenEntity refreshedToken = jwtTokenSecurityService.refreshExistingTokenOnLogin(
                         userSecurityDTO,
                         existingToken);
+
+                try {
+                    // Use a separate transaction for token lifecycle update
+                    tokenLifecycleService.refreshToken(oldTokenValue, refreshedToken.getToken());
+                } catch (Exception e) {
+                    // Just log the error but don't rethrow it
+                    log.warn("Non-critical error during token lifecycle refresh: {}", e.getMessage());
+                }
+
                 return authMapper.toAuthResponseDTO(refreshedToken, user);
             }
 
             JwtTokenEntity newToken = jwtTokenSecurityService.createNewTokenInLogin(userSecurityDTO, user);
+
+            try {
+                // Use separate transactions for token lifecycle operations
+                tokenLifecycleService.initiateToken(newToken.getToken(), user.getUsername());
+                tokenLifecycleService.activateToken(newToken.getToken());
+            } catch (Exception e) {
+                // Just log the error but don't rethrow it
+                log.warn("Non-critical error during token lifecycle operations: {}", e.getMessage());
+            }
+
             return authMapper.toAuthResponseDTO(newToken, user);
 
         } catch (BadCredentialsException e) {

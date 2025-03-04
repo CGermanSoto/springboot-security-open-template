@@ -9,10 +9,6 @@ public interface IJwtTokenSecurityService {
 
     void updateTokenToRefresh(UpdateJwtTokenVO token);
 
-    void updateTokenFromLifecycle(JwtTokenEntity tokenEntity);
-
-    void invalidateToken(String token);
-
     JwtTokenEntity findByToken(String token);
 
     JwtTokenEntity handleExistingToken(String username, boolean includeExpired);
@@ -20,4 +16,6 @@ public interface IJwtTokenSecurityService {
     JwtTokenEntity createNewTokenInLogin(UserSecurityDTO userSecurityDTO, UserEntity user);
 
     JwtTokenEntity refreshExistingTokenOnLogin(UserSecurityDTO userDetails, JwtTokenEntity existingToken);
+
+    int revokeAllUserTokens(String username, String reason);
 }

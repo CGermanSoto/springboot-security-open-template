@@ -1,13 +1,13 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authorization.manager;
 
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
+import com.spacecodee.springbootsecurityopentemplate.cache.IPermissionCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
+import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.IPermissionCacheService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ISecurityCacheService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
+import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.utils.PathUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +36,8 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     @Value("${app.api.context-path}")
     private String contextPath;
+
+    private final ITokenLifecycleService tokenLifecycleService;
 
     private final ISecurityCacheService securityCacheService;
 
@@ -89,10 +91,20 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
                 return new AuthorizationDecision(false);
             }
 
+            // Track a successful authorization check
+            this.tokenLifecycleService.handleTokenAccess(token, "Authorization check for " + request.getRequestURI());
+
             String url = this.extractUrl(request);
             String httpMethod = request.getMethod();
 
-            return new AuthorizationDecision(this.hasRequiredPermissions(authentication, url, httpMethod));
+            boolean hasPermissions = this.hasRequiredPermissions(authentication, url, httpMethod);
+
+            // Track permission check result
+            if (!hasPermissions) {
+                this.tokenLifecycleService.handleTokenAccess(token, "Permission denied for " + httpMethod + ":" + url);
+            }
+
+            return new AuthorizationDecision(hasPermissions);
         } catch (Exception e) {
             log.error("Error validating token: {}", e.getMessage());
             return new AuthorizationDecision(false);
@@ -138,13 +150,6 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             log.error("Error checking permissions: {}", e.getMessage(), e);
             return false;
         }
-    }
-
-    private boolean matchesOperation(@NotNull OperationSecurityDTO operation, String url, String httpMethod) {
-        String operationPath = operation.getModuleSecurityDTO().getBasePath() + operation.getPath();
-        boolean matches = PathUtils.matchesPattern(operationPath, url);
-
-        return matches && operation.getHttpMethod().equalsIgnoreCase(httpMethod);
     }
 
     private @NotNull String extractUrl(@NotNull HttpServletRequest request) {
