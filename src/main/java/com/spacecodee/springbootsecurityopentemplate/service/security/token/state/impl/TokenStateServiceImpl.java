@@ -20,10 +20,13 @@ import java.time.Instant;
 public class TokenStateServiceImpl implements ITokenStateService {
 
     private final IJwtTokenSecurityRepository jwtTokenRepository;
+
     private final ITokenEventBusService tokenEventBusService;
+
     private final ExceptionShortComponent exceptionComponent;
 
     private static final String TOKEN_NOT_FOUND = "token.not.found";
+
     private static final String TOKEN_UPDATE_FAILED = "token.update.failed";
 
     @Override
