@@ -69,17 +69,42 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
     @Transactional
     public void refreshToken(String oldToken, String newToken) {
         try {
-            JwtTokenEntity oldTokenEntity = this.tokenRepositoryService.findTokenOrThrow(oldToken);
-            JwtTokenEntity newTokenEntity = this.tokenRepositoryService.findTokenOrThrow(newToken);
+            // Handle old token - continue even if it fails
+            this.updateOldTokenState(oldToken);
 
-            this.updateTokenState(oldTokenEntity, TokenStateEnum.REFRESHED);
-            this.updateTokenState(newTokenEntity, TokenStateEnum.ACTIVE);
+            // Handle new token
+            this.updateNewTokenState(newToken);
 
-            log.info("Token refreshed successfully");
+            log.info("Token refresh process completed");
         } catch (Exception e) {
             String errorMessage = this.messageResolver.resolveMessage("token.lifecycle.refresh.error", e.getMessage());
             log.error(errorMessage);
             throw this.exceptionComponent.tokenUnexpectedException(errorMessage);
+        }
+    }
+
+    private void updateOldTokenState(String oldToken) {
+        try {
+            JwtTokenEntity oldTokenEntity = this.tokenRepositoryService.findTokenOrThrow(oldToken);
+            this.updateTokenState(oldTokenEntity, TokenStateEnum.REFRESHED);
+            log.debug("Old token marked as REFRESHED");
+        } catch (Exception e) {
+            // Don't fail the whole operation if the old token can't be updated
+            log.warn("Could not update old token state: {}. Error: {}",
+                    oldToken, e.getMessage());
+        }
+    }
+
+    private void updateNewTokenState(String newToken) {
+        try {
+            JwtTokenEntity newTokenEntity = this.tokenRepositoryService.findTokenOrThrow(newToken);
+            this.updateTokenState(newTokenEntity, TokenStateEnum.ACTIVE);
+            log.debug("New token marked as ACTIVE");
+        } catch (Exception e) {
+            // Log warning but continue - the token might exist but not be visible in this
+            // transaction
+            log.warn("Could not update new token state: {}. Error: {}",
+                    newToken, e.getMessage());
         }
     }
 
