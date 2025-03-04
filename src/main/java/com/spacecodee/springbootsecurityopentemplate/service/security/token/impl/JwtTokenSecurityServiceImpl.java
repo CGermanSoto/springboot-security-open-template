@@ -68,7 +68,7 @@ public class JwtTokenSecurityServiceImpl implements IJwtTokenSecurityService {
     @Override
     @Transactional(noRollbackFor = JwtTokenNotFoundException.class)
     public JwtTokenEntity handleExistingToken(String username, boolean includeExpired) {
-        JwtTokenEntity existingToken = tokenRepositoryService.findJwtTokenEntityByUserEntity_Username(username)
+        JwtTokenEntity existingToken = tokenRepositoryService.findJwtTokenEntityByUserEntityUsername(username)
                 .orElse(null);
 
         if (existingToken == null) {

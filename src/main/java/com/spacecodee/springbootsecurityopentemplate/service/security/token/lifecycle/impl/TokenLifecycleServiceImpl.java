@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -66,7 +67,7 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void refreshToken(String oldToken, String newToken) {
         try {
             // Handle old token - continue even if it fails
@@ -79,7 +80,7 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
         } catch (Exception e) {
             String errorMessage = this.messageResolver.resolveMessage("token.lifecycle.refresh.error", e.getMessage());
             log.error(errorMessage);
-            throw this.exceptionComponent.tokenUnexpectedException(errorMessage);
+            // Don't rethrow the exception - allows the parent transaction to continue
         }
     }
 

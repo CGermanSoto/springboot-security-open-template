@@ -19,5 +19,5 @@ public interface ITokenRepositoryService {
 
     void deleteByToken(String token);
 
-    Optional<JwtTokenEntity> findJwtTokenEntityByUserEntity_Username(String username);
+    Optional<JwtTokenEntity> findJwtTokenEntityByUserEntityUsername(String username);
 }

@@ -70,7 +70,7 @@ public class TokenRepositoryServiceImpl implements ITokenRepositoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<JwtTokenEntity> findJwtTokenEntityByUserEntity_Username(String username) {
+    public Optional<JwtTokenEntity> findJwtTokenEntityByUserEntityUsername(String username) {
         return this.jwtTokenRepository.findFirstByUserEntity_UsernameOrderByCreatedAtDesc(username);
     }
 

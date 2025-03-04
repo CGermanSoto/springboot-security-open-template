@@ -4,7 +4,6 @@ import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.repository.security.jwt.IJwtTokenSecurityRepository;
-import com.spacecodee.springbootsecurityopentemplate.service.security.token.event.ITokenEventBusService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.state.ITokenStateService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +20,6 @@ public class TokenStateServiceImpl implements ITokenStateService {
 
     private final IJwtTokenSecurityRepository jwtTokenRepository;
 
-    private final ITokenEventBusService tokenEventBusService;
-
     private final ExceptionShortComponent exceptionComponent;
 
     private static final String TOKEN_NOT_FOUND = "token.not.found";
@@ -34,9 +31,9 @@ public class TokenStateServiceImpl implements ITokenStateService {
     public void updateTokenState(String token, TokenStateEnum state, String reason) {
         try {
             JwtTokenEntity tokenEntity = this.findTokenOrThrow(token);
-            updateEntityState(tokenEntity, state, reason);
+            this.updateEntityState(tokenEntity, state, reason);
+
             this.jwtTokenRepository.save(tokenEntity);
-            this.tokenEventBusService.publishTokenStateChange(token, state, reason);
         } catch (Exception e) {
             throw this.exceptionComponent.tokenUnexpectedException(TOKEN_UPDATE_FAILED);
         }
@@ -58,13 +55,17 @@ public class TokenStateServiceImpl implements ITokenStateService {
     @Override
     @Transactional
     public void updateTokenAccess(String token, String operation) {
+        JwtTokenEntity tokenEntity = new JwtTokenEntity();
+
         try {
-            JwtTokenEntity tokenEntity = this.findTokenOrThrow(token);
+            tokenEntity = this.findTokenOrThrow(token);
             tokenEntity.setLastOperation(operation)
                     .setLastAccessAt(Instant.now())
                     .setUsageCount(tokenEntity.getUsageCount() + 1);
 
-            this.saveToken(tokenEntity);
+            this.jwtTokenRepository.save(tokenEntity);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw this.exceptionComponent.tokenUnexpectedException("token.update.concurrent", tokenEntity.getUserEntity().getUsername());
         } catch (DataIntegrityViolationException e) {
             throw this.exceptionComponent.tokenUnexpectedException(TOKEN_UPDATE_FAILED);
         }
@@ -94,15 +95,6 @@ public class TokenStateServiceImpl implements ITokenStateService {
 
         if (state == TokenStateEnum.EXPIRED || state == TokenStateEnum.REVOKED) {
             entity.setValid(false);
-        }
-    }
-
-    private void saveToken(JwtTokenEntity tokenEntity) {
-        try {
-            this.jwtTokenRepository.save(tokenEntity);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            throw this.exceptionComponent.tokenUnexpectedException("token.update.concurrent",
-                    tokenEntity.getUserEntity().getUsername());
         }
     }
 }

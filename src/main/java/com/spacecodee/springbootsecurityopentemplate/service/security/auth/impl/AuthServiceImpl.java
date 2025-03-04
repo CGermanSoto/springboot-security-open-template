@@ -61,23 +61,40 @@ public class AuthServiceImpl implements IAuthService {
 
             if (existingToken != null) {
                 if (existingToken.isValid() && jwtProviderService.isTokenValid(existingToken.getToken())) {
-                    // Activate existing token
                     tokenLifecycleService.activateToken(existingToken.getToken());
                     return this.authMapper.toAuthResponseDTO(existingToken, user);
                 }
 
-                // Refresh existing token
+                // IMPORTANT: Store the old token value before refreshing
+                String oldTokenValue = existingToken.getToken();
+
+                // Refresh the token
                 JwtTokenEntity refreshedToken = jwtTokenSecurityService.refreshExistingTokenOnLogin(
                         userSecurityDTO,
                         existingToken);
-                tokenLifecycleService.refreshToken(existingToken.getToken(), refreshedToken.getToken());
+
+                try {
+                    // Use a separate transaction for token lifecycle update
+                    tokenLifecycleService.refreshToken(oldTokenValue, refreshedToken.getToken());
+                } catch (Exception e) {
+                    // Just log the error but don't rethrow it
+                    log.warn("Non-critical error during token lifecycle refresh: {}", e.getMessage());
+                }
+
                 return authMapper.toAuthResponseDTO(refreshedToken, user);
             }
 
-            // Create a new token
             JwtTokenEntity newToken = jwtTokenSecurityService.createNewTokenInLogin(userSecurityDTO, user);
-            tokenLifecycleService.initiateToken(newToken.getToken(), user.getUsername());
-            tokenLifecycleService.activateToken(newToken.getToken());
+
+            try {
+                // Use separate transactions for token lifecycle operations
+                tokenLifecycleService.initiateToken(newToken.getToken(), user.getUsername());
+                tokenLifecycleService.activateToken(newToken.getToken());
+            } catch (Exception e) {
+                // Just log the error but don't rethrow it
+                log.warn("Non-critical error during token lifecycle operations: {}", e.getMessage());
+            }
+
             return authMapper.toAuthResponseDTO(newToken, user);
 
         } catch (BadCredentialsException e) {
