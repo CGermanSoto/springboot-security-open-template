@@ -59,15 +59,14 @@ public class AuthServiceImpl implements IAuthService {
     @Transactional(noRollbackFor = JwtTokenNotFoundException.class)
     public AuthResponseDTO login(@NotNull LoginVO loginVO) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginVO.getUsername(), loginVO.getPassword()));
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            UserEntity user = userSecurityService.findUserEntityByUsername(userDetails.getUsername());
+            UserEntity user = this.userSecurityService.findUserEntityByUsername(userDetails.getUsername());
             UserSecurityDTO userSecurityDTO = (UserSecurityDTO) userDetails;
 
-            // Cache user details
-            tokenCacheService.cacheUserDetails(user.getUsername(), userSecurityDTO);
+            this.tokenCacheService.cacheUserDetails(user.getUsername(), userSecurityDTO);
 
             JwtTokenEntity existingToken = this.jwtTokenSecurityService.handleExistingToken(user.getUsername(), true);
 
@@ -75,59 +74,55 @@ public class AuthServiceImpl implements IAuthService {
                 if (existingToken.isValid() && jwtProviderService.isTokenValid(existingToken.getToken())) {
                     tokenLifecycleService.activateToken(existingToken.getToken());
 
-                    // Cache the valid existing token and its state
-                    tokenCacheService.cacheToken(existingToken.getToken(), existingToken);
-                    tokenCacheService.cacheTokenState(existingToken.getToken(), TokenStateEnum.ACTIVE);
+                    this.tokenCacheService.cacheToken(existingToken.getToken(), existingToken);
+                    this.tokenCacheService.cacheTokenState(existingToken.getToken(), TokenStateEnum.ACTIVE);
 
                     return this.authMapper.toAuthResponseDTO(existingToken, user);
                 }
 
-                // IMPORTANT: Store the old token value before refreshing
-                String oldTokenValue = existingToken.getToken();
+                JwtTokenEntity refreshedToken = this.jwtTokenSecurityService.refreshExistingTokenOnLogin(userSecurityDTO, existingToken);
 
-                // Refresh the token
-                JwtTokenEntity refreshedToken = jwtTokenSecurityService.refreshExistingTokenOnLogin(userSecurityDTO, existingToken);
+                this.handleTokenLifecycleAndCaching(refreshedToken.getToken(), refreshedToken, user.getUsername(), "refresh");
 
-                try {
-                    // Use a separate transaction for token lifecycle update
-                    tokenLifecycleService.refreshToken(oldTokenValue, refreshedToken.getToken());
-
-                    // Update cache with the new token information
-                    tokenCacheService.removeFromCache(oldTokenValue);
-                    tokenCacheService.cacheToken(refreshedToken.getToken(), refreshedToken);
-                    tokenCacheService.cacheTokenState(refreshedToken.getToken(), TokenStateEnum.ACTIVE);
-
-                } catch (Exception e) {
-                    log.warn("Non-critical error during token lifecycle refresh: {}", e.getMessage());
-                }
-
-                return authMapper.toAuthResponseDTO(refreshedToken, user);
+                return this.authMapper.toAuthResponseDTO(refreshedToken, user);
             }
 
-            JwtTokenEntity newToken = jwtTokenSecurityService.createNewTokenInLogin(userSecurityDTO, user);
+            JwtTokenEntity newToken = this.jwtTokenSecurityService.createNewTokenInLogin(userSecurityDTO, user);
 
-            try {
-                // Use separate transactions for token lifecycle operations
-                tokenLifecycleService.initiateToken(newToken.getToken(), user.getUsername());
-                tokenLifecycleService.activateToken(newToken.getToken());
+            this.handleTokenLifecycleAndCaching(newToken.getToken(), newToken, user.getUsername(), "new");
 
-                // Cache the newly created token and its state
-                tokenCacheService.cacheToken(newToken.getToken(), newToken);
-                tokenCacheService.cacheTokenState(newToken.getToken(), TokenStateEnum.ACTIVE);
-
-            } catch (Exception e) {
-                // Just log the error but don't rethrow it
-                log.warn("Non-critical error during token lifecycle operations: {}", e.getMessage());
-            }
-
-            return authMapper.toAuthResponseDTO(newToken, user);
+            return this.authMapper.toAuthResponseDTO(newToken, user);
 
         } catch (BadCredentialsException e) {
-            throw exceptionComponent.invalidCredentialsException("auth.invalid.credentials",
-                    loginVO.getUsername());
+            throw this.exceptionComponent.invalidCredentialsException("auth.invalid.credentials", loginVO.getUsername());
         } catch (Exception e) {
             log.error("Unexpected error during login: ", e);
-            throw exceptionComponent.tokenUnexpectedException("token.unexpected");
+            throw this.exceptionComponent.tokenUnexpectedException("token.unexpected");
+        }
+    }
+
+    /**
+     * Handles token lifecycle operations and caching
+     *
+     * @param token         The token string
+     * @param tokenEntity   The token entity object
+     * @param username      The username associated with the token
+     * @param operationType The type of operation (new/refresh)
+     */
+    private void handleTokenLifecycleAndCaching(String token, JwtTokenEntity tokenEntity,
+                                                String username, String operationType) {
+        try {
+            if ("new".equals(operationType)) {
+                this.tokenLifecycleService.initiateToken(token, username);
+                this.tokenLifecycleService.activateToken(token);
+            } else if ("refresh".equals(operationType)) {
+                this.tokenLifecycleService.refreshToken(token, tokenEntity.getToken());
+            }
+
+            tokenCacheService.cacheToken(token, tokenEntity);
+            tokenCacheService.cacheTokenState(token, TokenStateEnum.ACTIVE);
+        } catch (Exception e) {
+            log.warn("Non-critical error during {} token lifecycle operations: {}", operationType, e.getMessage());
         }
     }
 
