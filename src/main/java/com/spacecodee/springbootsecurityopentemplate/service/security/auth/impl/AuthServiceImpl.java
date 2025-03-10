@@ -80,9 +80,11 @@ public class AuthServiceImpl implements IAuthService {
                     return this.authMapper.toAuthResponseDTO(existingToken, user);
                 }
 
-                JwtTokenEntity refreshedToken = this.jwtTokenSecurityService.refreshExistingTokenOnLogin(userSecurityDTO, existingToken);
+                JwtTokenEntity refreshedToken = this.jwtTokenSecurityService
+                        .refreshExistingTokenOnLogin(userSecurityDTO, existingToken);
 
-                this.handleTokenLifecycleAndCaching(refreshedToken.getToken(), refreshedToken, user.getUsername(), "refresh");
+                this.handleTokenLifecycleAndCaching(refreshedToken.getToken(), refreshedToken, user.getUsername(),
+                        "refresh");
 
                 return this.authMapper.toAuthResponseDTO(refreshedToken, user);
             }
@@ -94,7 +96,8 @@ public class AuthServiceImpl implements IAuthService {
             return this.authMapper.toAuthResponseDTO(newToken, user);
 
         } catch (BadCredentialsException e) {
-            throw this.exceptionComponent.invalidCredentialsException("auth.invalid.credentials", loginVO.getUsername());
+            throw this.exceptionComponent.invalidCredentialsException("auth.invalid.credentials",
+                    loginVO.getUsername());
         } catch (Exception e) {
             log.error("Unexpected error during login: ", e);
             throw this.exceptionComponent.tokenUnexpectedException("token.unexpected");
@@ -110,7 +113,7 @@ public class AuthServiceImpl implements IAuthService {
      * @param operationType The type of operation (new/refresh)
      */
     private void handleTokenLifecycleAndCaching(String token, JwtTokenEntity tokenEntity,
-                                                String username, String operationType) {
+            String username, String operationType) {
         try {
             if ("new".equals(operationType)) {
                 this.tokenLifecycleService.initiateToken(token, username);
@@ -146,6 +149,9 @@ public class AuthServiceImpl implements IAuthService {
 
             JwtTokenEntity updatedToken = this.jwtTokenSecurityService.findByToken(newToken);
 
+            // Replace nested try-catch with method call
+            this.updateTokenCache(token, newToken, updatedToken, username, userSecurityDTO);
+
             return this.authMapper.toAuthResponseDTO(updatedToken, user);
         } catch (ExpiredJwtException e) {
             throw this.exceptionComponent.tokenExpiredException("token.expired");
@@ -154,6 +160,37 @@ public class AuthServiceImpl implements IAuthService {
         } catch (Exception e) {
             log.error("Error refreshing token: ", e);
             throw this.exceptionComponent.tokenUnexpectedException("token.refresh.failed");
+        }
+    }
+
+    /**
+     * Updates token cache during token refresh operations
+     *
+     * @param oldToken       The old token to be removed from cache
+     * @param newToken       The new token to be added to cache
+     * @param newTokenEntity The entity for the new token
+     * @param username       The username associated with the token
+     * @param userDetails    The user security details
+     */
+    private void updateTokenCache(String oldToken, String newToken, JwtTokenEntity newTokenEntity,
+            String username, UserSecurityDTO userDetails) {
+        try {
+            // Remove old token from cache
+            this.tokenCacheService.removeFromCache(oldToken);
+
+            // Cache the new token
+            this.tokenCacheService.cacheToken(newToken, newTokenEntity);
+
+            // Update token state in cache
+            this.tokenCacheService.cacheTokenState(newToken, TokenStateEnum.ACTIVE);
+
+            // Also update user details cache to ensure it's fresh
+            this.tokenCacheService.cacheUserDetails(username, userDetails);
+
+            log.debug("Token cache updated successfully during token refresh");
+        } catch (Exception e) {
+            // Just log the error but don't rethrow it as caching is non-critical
+            log.warn("Non-critical error updating token cache during refresh: {}", e.getMessage());
         }
     }
 
