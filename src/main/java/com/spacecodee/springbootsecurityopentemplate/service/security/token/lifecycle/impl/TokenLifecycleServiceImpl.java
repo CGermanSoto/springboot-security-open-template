@@ -91,8 +91,7 @@ public class TokenLifecycleServiceImpl implements ITokenLifecycleService {
             log.debug("Old token marked as REFRESHED");
         } catch (Exception e) {
             // Don't fail the whole operation if the old token can't be updated
-            log.warn("Could not update old token state: {}. Error: {}",
-                    oldToken, e.getMessage());
+            log.warn("Could not update old token state: Error: {}", e.getMessage());
         }
     }
 
