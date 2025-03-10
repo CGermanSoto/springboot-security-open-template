@@ -113,7 +113,7 @@ public class AuthServiceImpl implements IAuthService {
      * @param operationType The type of operation (new/refresh)
      */
     private void handleTokenLifecycleAndCaching(String token, JwtTokenEntity tokenEntity,
-            String username, String operationType) {
+                                                String username, String operationType) {
         try {
             if ("new".equals(operationType)) {
                 this.tokenLifecycleService.initiateToken(token, username);
@@ -173,7 +173,7 @@ public class AuthServiceImpl implements IAuthService {
      * @param userDetails    The user security details
      */
     private void updateTokenCache(String oldToken, String newToken, JwtTokenEntity newTokenEntity,
-            String username, UserSecurityDTO userDetails) {
+                                  String username, UserSecurityDTO userDetails) {
         try {
             this.tokenCacheService.removeFromCache(oldToken);
             this.tokenCacheService.cacheToken(newToken, newTokenEntity);
@@ -224,21 +224,38 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public boolean validateToken(String token) {
         try {
-            JwtTokenEntity tokenEntity = this.jwtTokenSecurityService.findByToken(token);
+            JwtTokenEntity tokenEntity = this.tokenCacheService.getFromCache(token);
+
+            if (tokenEntity == null) {
+                tokenEntity = this.jwtTokenSecurityService.findByToken(token);
+                if (tokenEntity != null) {
+                    this.tokenCacheService.cacheToken(token, tokenEntity);
+                } else {
+                    log.debug("The Token not found in database");
+                    return false;
+                }
+            }
+
             if (!tokenEntity.isValid()) {
                 log.debug("Token is marked as invalid in database");
+                return false;
+            }
+
+            TokenStateEnum currentState = this.tokenCacheService.getTokenStateFromCache(token);
+
+            if (currentState == null) {
+                currentState = this.tokenLifecycleService.getTokenState(token);
+                this.tokenCacheService.cacheTokenState(token, currentState);
+            }
+
+            if (currentState != TokenStateEnum.ACTIVE) {
+                log.debug("Token is not in ACTIVE state. Current state: {}", currentState);
                 return false;
             }
 
             boolean isValid = this.jwtProviderService.isTokenValid(token);
             if (!isValid) {
                 log.debug("Token failed JWT validation");
-                return false;
-            }
-
-            TokenStateEnum currentState = this.tokenLifecycleService.getTokenState(token);
-            if (currentState != TokenStateEnum.ACTIVE) {
-                log.debug("Token is not in ACTIVE state. Current state: {}", currentState);
                 return false;
             }
 
