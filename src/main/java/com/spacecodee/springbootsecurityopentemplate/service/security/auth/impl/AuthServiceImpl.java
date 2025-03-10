@@ -196,11 +196,28 @@ public class AuthServiceImpl implements IAuthService {
             this.tokenLifecycleService.revokeToken(token);
             this.tokenLifecycleService.markTokenAsExpired(token, "User logout");
             this.tokenLifecycleService.handleTokenAccess(token, "Logout operation");
+            this.updateCacheOnLogout(token, username);
 
             log.info("User {} logged out successfully", username);
         } catch (Exception e) {
             log.error("Error during logout: {}", e.getMessage());
             throw this.exceptionComponent.tokenUnexpectedException("auth.logout.failed");
+        }
+    }
+
+    /**
+     * Updates the token cache during logout operations
+     *
+     * @param token    The token being invalidated
+     * @param username The username associated with the token
+     */
+    private void updateCacheOnLogout(String token, String username) {
+        try {
+            this.tokenCacheService.removeFromCache(token);
+
+            log.debug("Token cache updated successfully during logout for user: {}", username);
+        } catch (Exception e) {
+            log.warn("Non-critical error updating token cache during logout: {}", e.getMessage());
         }
     }
 
