@@ -175,21 +175,13 @@ public class AuthServiceImpl implements IAuthService {
     private void updateTokenCache(String oldToken, String newToken, JwtTokenEntity newTokenEntity,
             String username, UserSecurityDTO userDetails) {
         try {
-            // Remove old token from cache
             this.tokenCacheService.removeFromCache(oldToken);
-
-            // Cache the new token
             this.tokenCacheService.cacheToken(newToken, newTokenEntity);
-
-            // Update token state in cache
             this.tokenCacheService.cacheTokenState(newToken, TokenStateEnum.ACTIVE);
-
-            // Also update user details cache to ensure it's fresh
             this.tokenCacheService.cacheUserDetails(username, userDetails);
 
             log.debug("Token cache updated successfully during token refresh");
         } catch (Exception e) {
-            // Just log the error but don't rethrow it as caching is non-critical
             log.warn("Non-critical error updating token cache during refresh: {}", e.getMessage());
         }
     }
