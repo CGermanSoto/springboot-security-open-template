@@ -1,5 +1,6 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.auth.impl;
 
+import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.AuthResponseDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
@@ -39,12 +40,20 @@ import java.util.Map;
 public class AuthServiceImpl implements IAuthService {
 
     private final IJwtProviderService jwtProviderService;
+
     private final IJwtTokenSecurityService jwtTokenSecurityService;
+
     private final IUserSecurityService userSecurityService;
+
     private final IAuthMapper authMapper;
+
     private final ITokenLifecycleService tokenLifecycleService;
+
     private final AuthenticationManager authenticationManager;
+
     private final ExceptionShortComponent exceptionComponent;
+
+    private final ITokenCacheService tokenCacheService;
 
     @Override
     @Transactional(noRollbackFor = JwtTokenNotFoundException.class)
@@ -57,11 +66,19 @@ public class AuthServiceImpl implements IAuthService {
             UserEntity user = userSecurityService.findUserEntityByUsername(userDetails.getUsername());
             UserSecurityDTO userSecurityDTO = (UserSecurityDTO) userDetails;
 
+            // Cache user details
+            tokenCacheService.cacheUserDetails(user.getUsername(), userSecurityDTO);
+
             JwtTokenEntity existingToken = this.jwtTokenSecurityService.handleExistingToken(user.getUsername(), true);
 
             if (existingToken != null) {
                 if (existingToken.isValid() && jwtProviderService.isTokenValid(existingToken.getToken())) {
                     tokenLifecycleService.activateToken(existingToken.getToken());
+
+                    // Cache the valid existing token and its state
+                    tokenCacheService.cacheToken(existingToken.getToken(), existingToken);
+                    tokenCacheService.cacheTokenState(existingToken.getToken(), TokenStateEnum.ACTIVE);
+
                     return this.authMapper.toAuthResponseDTO(existingToken, user);
                 }
 
@@ -69,15 +86,18 @@ public class AuthServiceImpl implements IAuthService {
                 String oldTokenValue = existingToken.getToken();
 
                 // Refresh the token
-                JwtTokenEntity refreshedToken = jwtTokenSecurityService.refreshExistingTokenOnLogin(
-                        userSecurityDTO,
-                        existingToken);
+                JwtTokenEntity refreshedToken = jwtTokenSecurityService.refreshExistingTokenOnLogin(userSecurityDTO, existingToken);
 
                 try {
                     // Use a separate transaction for token lifecycle update
                     tokenLifecycleService.refreshToken(oldTokenValue, refreshedToken.getToken());
+
+                    // Update cache with the new token information
+                    tokenCacheService.removeFromCache(oldTokenValue);
+                    tokenCacheService.cacheToken(refreshedToken.getToken(), refreshedToken);
+                    tokenCacheService.cacheTokenState(refreshedToken.getToken(), TokenStateEnum.ACTIVE);
+
                 } catch (Exception e) {
-                    // Just log the error but don't rethrow it
                     log.warn("Non-critical error during token lifecycle refresh: {}", e.getMessage());
                 }
 
@@ -90,6 +110,11 @@ public class AuthServiceImpl implements IAuthService {
                 // Use separate transactions for token lifecycle operations
                 tokenLifecycleService.initiateToken(newToken.getToken(), user.getUsername());
                 tokenLifecycleService.activateToken(newToken.getToken());
+
+                // Cache the newly created token and its state
+                tokenCacheService.cacheToken(newToken.getToken(), newToken);
+                tokenCacheService.cacheTokenState(newToken.getToken(), TokenStateEnum.ACTIVE);
+
             } catch (Exception e) {
                 // Just log the error but don't rethrow it
                 log.warn("Non-critical error during token lifecycle operations: {}", e.getMessage());
