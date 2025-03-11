@@ -10,7 +10,6 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.base.BaseExcepti
 import com.spacecodee.springbootsecurityopentemplate.exceptions.util.ExceptionShortComponent;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
-import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.security.user.IUserSecurityService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -32,7 +31,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -46,8 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ExceptionShortComponent exceptionComponent;
 
     private final ISecurityPathService securityPathService;
-
-    private final ITokenCacheService tokenCacheService;
 
     private final MessageUtilComponent messageUtilComponent;
 
@@ -131,12 +127,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (this.tokenOperations.validateToken(jwt)) {
             String username = this.tokenOperations.extractUsername(jwt);
 
-            var userDetails = Optional.ofNullable(this.tokenCacheService.getUserDetailsFromCache(username))
-                    .orElseGet(() -> {
-                        UserSecurityDTO details = this.userService.findByUsername(username);
-                        this.tokenCacheService.cacheUserDetails(username, details);
-                        return details;
-                    });
+            // Get user details directly from service without caching
+            UserSecurityDTO userDetails = this.userService.findByUsername(username);
 
             var authentication = this.createAuthentication(username, userDetails);
             authentication.setDetails(new WebAuthenticationDetails(request));
@@ -148,7 +140,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Contract("_, _ -> new")
     private @NotNull UsernamePasswordAuthenticationToken createAuthentication(String username,
-                                                                              @NotNull UserSecurityDTO userDetails) {
+            @NotNull UserSecurityDTO userDetails) {
         return new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
     }
 }
