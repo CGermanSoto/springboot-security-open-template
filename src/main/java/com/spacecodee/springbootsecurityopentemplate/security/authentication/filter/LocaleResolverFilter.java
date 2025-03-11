@@ -4,7 +4,6 @@ import com.spacecodee.springbootsecurityopentemplate.exceptions.locale.LocaleRes
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
 import com.spacecodee.springbootsecurityopentemplate.language.constant.LanguageConstants;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
-import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,9 +30,11 @@ import java.util.Locale;
 public class LocaleResolverFilter extends OncePerRequestFilter {
 
     private final MessageUtilComponent messageUtilComponent;
+
     private final ISecurityPathService securityPathService;
+
     private final LocaleResolver localeResolver;
-    private final ISecurityCacheService securityCacheService;
+
     private static final String DEFAULT_LOCALE = LanguageConstants.DEFAULT_LOCALE;
 
     @Override
@@ -67,17 +68,11 @@ public class LocaleResolverFilter extends OncePerRequestFilter {
     }
 
     private @NotNull String resolveLocale(@NotNull HttpServletRequest request) {
-        String localeKey = request.getHeader("Accept-Language");
-
-        return this.securityCacheService.getCachedLocale(
-                localeKey,
-                () -> {
-                    Locale resolvedLocale = this.localeResolver.resolveLocale(request);
-                    if (!this.isValidLocale(resolvedLocale.toString())) {
-                        resolvedLocale = Locale.forLanguageTag(DEFAULT_LOCALE);
-                    }
-                    return resolvedLocale;
-                }).toString().toLowerCase();
+        Locale resolvedLocale = this.localeResolver.resolveLocale(request);
+        if (!this.isValidLocale(resolvedLocale.toString())) {
+            resolvedLocale = Locale.forLanguageTag(DEFAULT_LOCALE);
+        }
+        return resolvedLocale.toString().toLowerCase();
     }
 
     private boolean isValidLocale(String locale) {
