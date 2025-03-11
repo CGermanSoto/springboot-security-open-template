@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 public class TokenCacheServiceImpl implements ITokenCacheService {
 
     private final Cache<String, JwtTokenEntity> tokenCache;
+
     private final Cache<String, TokenStateEnum> tokenStateCache;
+
     private final Cache<String, UserSecurityDTO> userDetailsCache;
+
     private final ExceptionShortComponent exceptionComponent;
 
     @Override
