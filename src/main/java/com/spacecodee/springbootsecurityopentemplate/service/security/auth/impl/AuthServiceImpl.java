@@ -1,9 +1,7 @@
 package com.spacecodee.springbootsecurityopentemplate.service.security.auth.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
 import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.auth.AuthResponseDTO;
-import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.UserSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.auth.LoginVO;
 import com.spacecodee.springbootsecurityopentemplate.data.vo.jwt.UpdateJwtTokenVO;
@@ -14,7 +12,6 @@ import com.spacecodee.springbootsecurityopentemplate.mappers.security.auth.IAuth
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.JwtTokenEntity;
 import com.spacecodee.springbootsecurityopentemplate.persistence.entity.UserEntity;
 import com.spacecodee.springbootsecurityopentemplate.service.security.auth.IAuthService;
-import com.spacecodee.springbootsecurityopentemplate.service.security.operation.IOperationSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtProviderService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.IJwtTokenSecurityService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
@@ -35,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -59,10 +55,6 @@ public class AuthServiceImpl implements IAuthService {
 
     private final ITokenCacheService tokenCacheService;
 
-    private final ISecurityCacheService securityCacheService;
-
-    private final IOperationSecurityService operationSecurityService;
-
     @Override
     @Transactional(noRollbackFor = JwtTokenNotFoundException.class)
     public AuthResponseDTO login(@NotNull LoginVO loginVO) {
@@ -76,10 +68,7 @@ public class AuthServiceImpl implements IAuthService {
 
             this.tokenCacheService.cacheUserDetails(user.getUsername(), userSecurityDTO);
 
-            // Cache user operations to avoid database lookups during authorization checks
-            List<OperationSecurityDTO> operations = this.operationSecurityService
-                    .extractUserOperations(userSecurityDTO);
-            this.securityCacheService.getUserOperations(user.getUsername(), () -> operations);
+            // Removed security cache service usage
 
             JwtTokenEntity existingToken = this.jwtTokenSecurityService.handleExistingToken(user.getUsername(), true);
 
@@ -210,8 +199,7 @@ public class AuthServiceImpl implements IAuthService {
             this.tokenLifecycleService.markTokenAsExpired(token, "User logout");
             this.tokenLifecycleService.handleTokenAccess(token, "Logout operation");
 
-            // Clear user operations from cache on logout
-            this.securityCacheService.refreshCaches();
+            // Removed security cache service usage
             this.updateCacheOnLogout(token, username);
 
             log.info("User {} logged out successfully", username);
@@ -274,12 +262,6 @@ public class AuthServiceImpl implements IAuthService {
                 log.debug("Token failed JWT validation");
                 return false;
             }
-
-            // If token is valid, ensure we have user operations cached
-            String username = this.jwtProviderService.extractUsername(token);
-            UserSecurityDTO userSecurityDTO = this.userSecurityService.findByUsername(username);
-            List<OperationSecurityDTO> operations = this.operationSecurityService.extractUserOperations(userSecurityDTO);
-            this.securityCacheService.getUserOperations(username, () -> operations);
 
             this.tokenLifecycleService.handleTokenAccess(token, "Token validation");
 
