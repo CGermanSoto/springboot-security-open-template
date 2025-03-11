@@ -1,9 +1,10 @@
 package com.spacecodee.springbootsecurityopentemplate.security.path.impl;
 
-import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
 import com.spacecodee.springbootsecurityopentemplate.constants.SecurityConstants;
+import com.spacecodee.springbootsecurityopentemplate.data.dto.security.OperationSecurityPathDTO;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
 import com.spacecodee.springbootsecurityopentemplate.utils.PathUtils;
+import com.spacecodee.springbootsecurityopentemplate.service.security.operation.IOperationSecurityService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +19,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityPathServiceImpl implements ISecurityPathService {
 
-    private final ISecurityCacheService securityCacheService;
+    private final IOperationSecurityService operationSecurityService;
+
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     public boolean isPublicPath(@NotNull String path) {
         String normalizedPath = PathUtils.normalizeRequestPath(path);
-        List<String> publicPaths = this.securityCacheService.getPublicPaths();
+        List<String> publicPaths = this.operationSecurityService.findByPublicAccess()
+                .stream()
+                .map(OperationSecurityPathDTO::getFullPath)
+                .toList();
+
         return publicPaths.stream()
                 .anyMatch(publicPath -> this.pathMatcher.match(publicPath, normalizedPath));
     }
@@ -55,5 +61,4 @@ public class SecurityPathServiceImpl implements ISecurityPathService {
     public boolean isRefreshTokenPath(@NotNull String path) {
         return path.endsWith(SecurityConstants.REFRESH_TOKEN_PATH);
     }
-
 }
