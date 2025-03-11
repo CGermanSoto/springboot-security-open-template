@@ -12,6 +12,14 @@ public interface IOperationSecurityMapper {
     @Mapping(target = "moduleSecurityDTO", source = "moduleEntity")
     OperationSecurityDTO toOperationSecurityDTO(OperationEntity operationEntity);
 
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "tag", source = "tag")
+    @Mapping(target = "path", source = "path")
+    @Mapping(target = "httpMethod", source = "httpMethod")
+    @Mapping(target = "permitAll", source = "permitAll")
+    @Mapping(target = "moduleSecurityDTO", ignore = true)
+    OperationSecurityDTO toOperationSecurityDTO(OperationSecurityDTO operationDTO);
+
     @Mapping(target = "fullPath", source = ".", qualifiedByName = "buildFullPath")
     OperationSecurityPathDTO toOperationSecurityPathDTO(OperationEntity operationEntity);
 
@@ -22,4 +30,5 @@ public interface IOperationSecurityMapper {
         }
         return operationEntity.getModuleEntity().getBasePath() + operationEntity.getPath();
     }
+
 }
