@@ -28,9 +28,6 @@ public class SecurityCacheConfig {
     @Value("${security.cache.expire-after-minutes}")
     private int expireAfterMinutes;
 
-    @Value("${security.rate-limit.duration-minutes}")
-    private int rateLimitDurationMinutes;
-
     private <T> @NotNull Cache<String, T> buildCache(int expiresInMinutes) {
         return CacheBuilder.newBuilder()
                 .maximumSize(this.maxSize)
@@ -69,8 +66,4 @@ public class SecurityCacheConfig {
         return buildCache(this.expireAfterMinutes);
     }
 
-    @Bean("rateLimitCache")
-    Cache<String, Integer> rateLimitCache() {
-        return buildCache(this.rateLimitDurationMinutes);
-    }
 }
