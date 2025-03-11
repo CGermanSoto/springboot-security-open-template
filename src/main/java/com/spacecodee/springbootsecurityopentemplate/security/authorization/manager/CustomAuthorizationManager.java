@@ -1,6 +1,5 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authorization.manager;
 
-import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
 import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
@@ -37,8 +36,6 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private String contextPath;
 
     private final ITokenLifecycleService tokenLifecycleService;
-
-    private final ISecurityCacheService securityCacheService;
 
     private final IUserSecurityService userSecurityService;
 
@@ -119,11 +116,10 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             String username = authentication.getPrincipal().toString();
             var userDetails = this.userSecurityService.findByUsername(username);
 
-            // Get permissions directly from user details
-            var operations = this.securityCacheService.getUserOperations(username,
-                    () -> userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
-                            .map(PermissionSecurityDTO::getOperationDTO)
-                            .toList());
+            // Get permissions directly from user details without using cache
+            var operations = userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
+                    .map(PermissionSecurityDTO::getOperationDTO)
+                    .toList();
 
             List<String> permissions = operations.stream()
                     .map(op -> op.getHttpMethod() + ":" +
