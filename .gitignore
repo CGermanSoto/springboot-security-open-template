@@ -4,6 +4,7 @@
 error.log
 error.json
 .github/copilot-instructions.md
+cache-impl.md
 
 HELP.md
 .gradle

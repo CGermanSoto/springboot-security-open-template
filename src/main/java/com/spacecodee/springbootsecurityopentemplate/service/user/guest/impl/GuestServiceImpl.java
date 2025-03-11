@@ -184,8 +184,7 @@ public class GuestServiceImpl implements IGuestService {
 
             return this.guestRepository.searchGuests(filterVO.getUsername(), filterVO.getFirstName(), filterVO.getLastName(),
                             roleEntity.getId(), filterVO.getEnabled(), pageable)
-                    .map(this.guestMapper::toDto
-                    );
+                    .map(this.guestMapper::toDto);
 
         } catch (ObjectNotFoundException e) {
             throw e;

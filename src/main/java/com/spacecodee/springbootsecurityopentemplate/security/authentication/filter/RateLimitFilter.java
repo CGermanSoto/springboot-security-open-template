@@ -3,7 +3,6 @@ package com.spacecodee.springbootsecurityopentemplate.security.authentication.fi
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spacecodee.springbootsecurityopentemplate.data.common.response.ApiErrorPojo;
 import com.spacecodee.springbootsecurityopentemplate.language.MessageUtilComponent;
-import com.spacecodee.springbootsecurityopentemplate.cache.IRateLimitCacheService;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.facade.TokenOperationsFacade;
 import com.spacecodee.springbootsecurityopentemplate.service.security.token.lifecycle.ITokenLifecycleService;
 import jakarta.servlet.FilterChain;
@@ -21,6 +20,8 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -28,11 +29,11 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RateLimitFilter extends OncePerRequestFilter {
 
+    private final Map<String, Integer> rateLimitMap = new ConcurrentHashMap<>();
+
     private final TokenOperationsFacade tokenOperationsFacade;
 
     private final ITokenLifecycleService tokenLifecycleService;
-
-    private final IRateLimitCacheService rateLimitCacheService;
 
     private final MessageUtilComponent messageUtilComponent;
 
@@ -58,7 +59,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String clientIp = this.getClientIP(request);
 
         try {
-            int attempts = this.rateLimitCacheService.incrementAttempts(clientIp);
+            int attempts = this.incrementAttempts(clientIp);
             this.addRateLimitHeaders(response, attempts);
 
             if (attempts > this.maxAttempts) {
@@ -71,6 +72,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
             log.error("Rate limit error for IP {}: {}", clientIp, e.getMessage());
             filterChain.doFilter(request, response);
         }
+    }
+
+    private int incrementAttempts(String key) {
+        int attempts = rateLimitMap.getOrDefault(key, 0);
+        rateLimitMap.put(key, attempts + 1);
+        return attempts + 1;
     }
 
     private void handleRateLimitExceeded(
@@ -89,7 +96,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
             log.debug("No token found for rate limited request: {}", e.getMessage());
         }
 
-        // Existing code
         response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         response.setContentType("application/json");
 
@@ -131,5 +137,4 @@ public class RateLimitFilter extends OncePerRequestFilter {
         }
         return xfHeader.split(",")[0].trim();
     }
-
 }

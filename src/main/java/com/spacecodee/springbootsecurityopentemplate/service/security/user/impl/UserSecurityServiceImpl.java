@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserSecurityServiceImpl implements IUserSecurityService {
 
     private final IUserSecurityRepository userRepository;
+
     private final IUserSecurityMapper userDetailsMapper;
+
     private final ExceptionShortComponent exceptionShortComponent;
 
     private static final String USER_NOT_EXISTS_BY_USERNAME = "user.not.exists.by.username";
@@ -31,7 +33,8 @@ public class UserSecurityServiceImpl implements IUserSecurityService {
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserSecurityDTO)
                 .orElseThrow(
-                        () -> this.exceptionShortComponent.objectNotFoundException(UserSecurityServiceImpl.USER_NOT_EXISTS_BY_USERNAME));
+                        () -> this.exceptionShortComponent.objectNotFoundException(
+                                UserSecurityServiceImpl.USER_NOT_EXISTS_BY_USERNAME));
     }
 
     @Transactional(readOnly = true)
@@ -40,14 +43,16 @@ public class UserSecurityServiceImpl implements IUserSecurityService {
         return this.userRepository.findByUsername(username)
                 .map(this.userDetailsMapper::toUserSecurityDTO)
                 .orElseThrow(
-                        () -> this.exceptionShortComponent.usernameNotFoundException(UserSecurityServiceImpl.USER_NOT_EXISTS_BY_USERNAME));
+                        () -> this.exceptionShortComponent.usernameNotFoundException(
+                                UserSecurityServiceImpl.USER_NOT_EXISTS_BY_USERNAME));
     }
 
     @Transactional(readOnly = true)
     @Override
     public UserEntity findUserEntityByUsername(String username) {
         return this.userRepository.findByUsername(username)
-                .orElseThrow(() -> this.exceptionShortComponent.userNotFoundException(UserSecurityServiceImpl.USER_NOT_EXISTS_BY_USERNAME,
+                .orElseThrow(() -> this.exceptionShortComponent.userNotFoundException(
+                        UserSecurityServiceImpl.USER_NOT_EXISTS_BY_USERNAME,
                         username));
     }
 }

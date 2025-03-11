@@ -33,7 +33,7 @@ public class ViewerFilterVO {
     @Max(value = 100, message = "{viewer.size.max}")
     private Integer size = 10;
 
-    @Pattern(regexp = "^(username|fullName|lastName)$", message = "{viewer.sort.invalid}")
+    @Pattern(regexp = "^(username|firstName|lastName)$", message = "{viewer.sort.invalid}")
     private String sortBy = "username";
 
     @Pattern(regexp = "^(ASC|DESC)$", message = "{viewer.sort.direction.invalid}")

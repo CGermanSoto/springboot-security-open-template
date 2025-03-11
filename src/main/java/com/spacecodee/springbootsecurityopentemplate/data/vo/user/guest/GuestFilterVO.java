@@ -30,7 +30,7 @@ public class GuestFilterVO {
     @Max(value = 100, message = "{guest.size.max}")
     private Integer size = 10;
 
-    @Pattern(regexp = "^(username|fullName|lastName)$", message = "{guest.sort.invalid}")
+    @Pattern(regexp = "^(username|firstName|lastName)$", message = "{guest.sort.invalid}")
     private String sortBy = "username";
 
     @Pattern(regexp = "^(ASC|DESC)$", message = "{guest.sort.direction.invalid}")

@@ -1,8 +1,5 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authorization.manager;
 
-import com.spacecodee.springbootsecurityopentemplate.cache.IPermissionCacheService;
-import com.spacecodee.springbootsecurityopentemplate.cache.ISecurityCacheService;
-import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
@@ -39,21 +36,15 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     private final ITokenLifecycleService tokenLifecycleService;
 
-    private final ISecurityCacheService securityCacheService;
-
     private final IUserSecurityService userSecurityService;
 
     private final ISecurityPathService securityPathService;
 
-    private final ITokenCacheService tokenCacheService;
-
     private final TokenOperationsFacade tokenOperationsFacade;
-
-    private final IPermissionCacheService permissionCacheService;
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication,
-                                       @NotNull RequestAuthorizationContext context) {
+            @NotNull RequestAuthorizationContext context) {
         return Optional.of(context)
                 .map(this::extractRequest)
                 .filter(request -> !this.isPublicAccess(request))
@@ -73,7 +64,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     @Contract("_, _ -> new")
     private @NotNull AuthorizationDecision validateAuthentication(Authentication authentication,
-                                                                  HttpServletRequest request) {
+            HttpServletRequest request) {
         if (!this.isValidAuthentication(authentication)) {
             log.warn(CustomAuthorizationManager.INVALID_AUTH_TYPE);
             return new AuthorizationDecision(false);
@@ -87,7 +78,6 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             if (currentState != TokenStateEnum.ACTIVE) {
                 log.warn("Token is not active. Current state: {}", currentState);
                 this.tokenOperationsFacade.handleTokenExpiration(token, "Token state check failed");
-                this.tokenCacheService.cacheTokenState(token, currentState);
                 return new AuthorizationDecision(false);
             }
 
@@ -121,28 +111,20 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         try {
             String username = authentication.getPrincipal().toString();
             var userDetails = this.userSecurityService.findByUsername(username);
-            String roleId = String.valueOf(userDetails.getRoleSecurityDTO().getId());
 
-            // Get permissions from cache
-            List<String> permissions = this.permissionCacheService.getPermissionsFromCache(roleId);
+            // Get permissions directly from user details
+            var operations = userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
+                    .map(PermissionSecurityDTO::getOperationDTO)
+                    .toList();
+
+            List<String> permissions = operations.stream()
+                    .map(op -> op.getHttpMethod() + ":" +
+                            (op.getModuleSecurityDTO() != null ? op.getModuleSecurityDTO().getBasePath() : "") +
+                            op.getPath())
+                    .toList();
 
             // Build the request permission pattern
             String requestedPermission = httpMethod + ":" + url;
-
-            if (permissions == null || permissions.isEmpty()) {
-                var operations = this.securityCacheService.getUserOperations(username,
-                        () -> userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
-                                .map(PermissionSecurityDTO::getOperationDTO)
-                                .toList());
-
-                permissions = operations.stream()
-                        .map(op -> op.getHttpMethod() + ":" +
-                                (op.getModuleSecurityDTO() != null ? op.getModuleSecurityDTO().getBasePath() : "") +
-                                op.getPath())
-                        .toList();
-
-                this.permissionCacheService.cachePermissions(roleId, permissions);
-            }
 
             return permissions.stream()
                     .anyMatch(permission -> PathUtils.matchesPattern(permission, requestedPermission));
@@ -162,5 +144,4 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
         return url;
     }
-
 }
