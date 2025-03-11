@@ -1,6 +1,5 @@
 package com.spacecodee.springbootsecurityopentemplate.security.authorization.manager;
 
-import com.spacecodee.springbootsecurityopentemplate.cache.ITokenCacheService;
 import com.spacecodee.springbootsecurityopentemplate.data.dto.security.PermissionSecurityDTO;
 import com.spacecodee.springbootsecurityopentemplate.enums.TokenStateEnum;
 import com.spacecodee.springbootsecurityopentemplate.security.path.ISecurityPathService;
@@ -41,8 +40,6 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     private final ISecurityPathService securityPathService;
 
-    private final ITokenCacheService tokenCacheService;
-
     private final TokenOperationsFacade tokenOperationsFacade;
 
     @Override
@@ -81,7 +78,6 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             if (currentState != TokenStateEnum.ACTIVE) {
                 log.warn("Token is not active. Current state: {}", currentState);
                 this.tokenOperationsFacade.handleTokenExpiration(token, "Token state check failed");
-                this.tokenCacheService.cacheTokenState(token, currentState);
                 return new AuthorizationDecision(false);
             }
 
@@ -116,7 +112,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             String username = authentication.getPrincipal().toString();
             var userDetails = this.userSecurityService.findByUsername(username);
 
-            // Get permissions directly from user details without using cache
+            // Get permissions directly from user details
             var operations = userDetails.getRoleSecurityDTO().getPermissionDTOList().stream()
                     .map(PermissionSecurityDTO::getOperationDTO)
                     .toList();
