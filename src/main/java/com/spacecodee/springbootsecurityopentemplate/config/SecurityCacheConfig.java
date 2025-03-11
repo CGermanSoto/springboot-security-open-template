@@ -73,9 +73,4 @@ public class SecurityCacheConfig {
     Cache<String, Integer> rateLimitCache() {
         return buildCache(this.rateLimitDurationMinutes);
     }
-
-    @Bean("permissionCache")
-    Cache<String, List<String>> permissionCache() {
-        return buildCache(this.expireAfterMinutes);
-    }
 }
