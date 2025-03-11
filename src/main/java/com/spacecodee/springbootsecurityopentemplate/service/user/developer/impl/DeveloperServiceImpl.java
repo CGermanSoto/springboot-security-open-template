@@ -180,14 +180,16 @@ public class DeveloperServiceImpl implements IDeveloperService {
 
         try {
             var roleEntity = this.roleService.findByName(this.developerRole);
+
             var pageable = PageRequest.of(
                     Math.clamp(filterVO.getPage(), 0, Integer.MAX_VALUE),
                     Math.clamp(filterVO.getSize(), 1, 100),
-                    Sort.by(Sort.Direction.fromString(filterVO.getSortDirection()),
-                            filterVO.getSortBy()));
+                    Sort.by(Sort.Direction.fromString(filterVO.getSortDirection()), filterVO.getSortBy()));
+
             return this.developerRepository.searchDevelopers(filterVO.getUsername(), filterVO.getFirstName(),
                             filterVO.getLastName(), roleEntity.getId(), filterVO.getEnabled(), pageable)
                     .map(this.developerMapper::toDto);
+
         } catch (ObjectNotFoundException e) {
             throw e;
         } catch (Exception e) {
